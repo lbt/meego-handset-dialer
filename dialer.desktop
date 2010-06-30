@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Dialer
+Icon=icons-Applications-dialer
+Exec=dialer
+Comment=MeeGo voice call application
+OnlyShowIn=X-DUI;X-MeeGo;X-MeeGoTouch;

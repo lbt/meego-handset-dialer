@@ -1,0 +1,24 @@
+dialer
+Copyright (C) 2009, Intel Corporation, 2008, 2009.
+
+dialer is a simple Voice Call Dialer/Manager based on Qt 4.7 and MTF 0.20+
+It depends on:
+ - ofono, for telephony services
+ - callhistory ofono plugin, for call history tracking
+ - libseaside, for contacts data access
+
+-----------------------------------------------------------------------------
+ Build
+-----------------------------------------------------------------------------
+$ qmake
+$ make
+
+-----------------------------------------------------------------------------
+ Install
+-----------------------------------------------------------------------------
+$ sudo make install
+
+-----------------------------------------------------------------------------
+ Running
+-----------------------------------------------------------------------------
+$ dialer

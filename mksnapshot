@@ -1,0 +1,61 @@
+#!/bin/bash
+[ "${1}z" = "z" ] && {
+	echo "usage: $0 MAJOR.MINOR.MICRO"
+	exit
+}
+git update-index --ignore-submodules --refresh &&
+git diff-files --ignore-submodules --quiet &&
+git diff-index --ignore-submodules --cached --quiet HEAD -- || {
+	echo "can not lay new tag -- your working tree is not up-to-date"
+	exit
+}
+
+tag=$1
+git tag -l | grep $tag && {
+	echo "can not lay tag -- it already exists."
+	echo "run 'git tag -d version-$tag' to remove."
+	exit
+}
+
+version=(${tag//./ })
+
+
+# NOTE: Uses only first file that defines VERSION
+PRO_FILE=$(grep -El "VERSION ?= ?[0-9]+\.[0-9]+\.[0-9]+$" *.pr[io]|head -n1)
+
+[ "x$PRO_FILE" == "x" ] && {
+	# No .pr[io] files set VERSION, assume automake and change configure.ac
+	sed -i -e "s#_version_major, [^)]*)#_version_major, ${version[0]})#g" \
+		-e "s#_version_minor, [^)]*)#_version_minor, ${version[1]})#g" \
+		-e "s#_version_micro, [^)]*)#_version_micro, ${version[2]})#g" \
+		configure.ac
+} || {
+	# At least one .pro file exisits, modify VERSION tag in first .pro file
+	# TODO: fix this to be smarter than just modifying first .pro file
+	#       maybe looking for which one holds the VERSION tag?
+	sed -i	-e "s#VERSION = .*#VERSION = ${tag}#g" $PRO_FILE
+}
+
+echo -e "Changes in ${tag}\n" > ChangeLog.tmp &&
+git log --pretty=oneline --abbrev=3 --abbrev-commit -r $(git describe --tags --abbrev=0).. >> ChangeLog.tmp &&
+echo "" >> ChangeLog.tmp &&
+cat ChangeLog >> ChangeLog.tmp &&
+mv ChangeLog.tmp ChangeLog &&
+[ "x$PRO_FILE" == "x" ] && {
+	git commit -s ChangeLog configure.ac -m "Updated ChangeLog and configure.ac to version $tag" > /dev/null &&
+	git tag version-$tag && {
+		echo "Version set to $tag and tag laid."
+		echo "Make sure to 'git-push --tags' if you want to distribute."
+	} || {
+		echo "Version update failed.  Reason unknown.  Try git-diff."
+	}
+} || {
+	git commit -s ChangeLog $PRO_FILE -m "Updated ChangeLog and $PRO_FILE to version $tag" > /dev/null &&
+	git tag version-$tag && {
+		echo "Version set to $tag and tag laid."
+		echo "Make sure to 'git-push --tags' if you want to distribute."
+	} || {
+		echo "Version update failed.  Reason unknown.  Try git-diff."
+	}
+}
+

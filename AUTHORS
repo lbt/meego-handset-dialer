@@ -1,0 +1,10 @@
+Original Author:
+Shane Bryan <shane.bryan@linux.intel.com>
+
+Overall Maintainers:
+Shane Bryan <shane.bryan@linux.intel.com>
+
+Contributors:
+Kevron Rees <kevronx_m_rees@linux.intel.com>
+ - DBus service adaptor for remote calls
+

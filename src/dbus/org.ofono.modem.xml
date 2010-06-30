@@ -1,0 +1,273 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="">
+	<interface name="org.ofono.Modem">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.SimManager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="ChangePin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="EnterPin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="ResetPin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="LockPin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="UnlockPin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.VoiceCallManager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="Dial">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="Transfer"/>
+		<method name="SwapCalls"/>
+		<method name="ReleaseAndAnswer"/>
+		<method name="HoldAndAnswer"/>
+		<method name="HangupAll"/>
+		<method name="PrivateChat">
+			<arg type="o" direction="in"/>
+			<arg type="ao" direction="out"/>
+		</method>
+		<method name="CreateMultiparty">
+			<arg type="ao" direction="out"/>
+		</method>
+		<method name="HangupMultiparty"/>
+		<method name="SendTones">
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.MessageWaiting">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.CallForwarding">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="DisableAll">
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.CallSettings">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.CallBarring">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="DisableAll">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="DisableAllIncoming">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="DisableAllOutgoing">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="ChangePassword">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="IncomingBarringInEffect"/>
+		<signal name="OutgoingBarringInEffect"/>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.SupplementaryServices">
+		<method name="Initiate">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="out"/>
+			<arg type="v" direction="out"/>
+		</method>
+		<method name="Cancel"/>
+	</interface>
+	<interface name="org.ofono.CallMeter">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="Reset">
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+		<signal name="NearMaximumWarning"/>
+	</interface>
+	<interface name="org.ofono.CallVolume">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.CbsManager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+		<signal name="IncomingBroadcast">
+			<arg type="s"/>
+			<arg type="q"/>
+		</signal>
+		<signal name="EmergencyBroadcast">
+			<arg type="s"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.NetworkRegistration">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="Register"/>
+		<method name="Deregister"/>
+		<method name="ProposeScan">
+			<arg type="ao" direction="out"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.Phonebook">
+		<method name="Import">
+			<arg type="s" direction="out"/>
+		</method>
+	</interface>
+	<interface name="org.ofono.SmsManager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="SendMessage">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+		<signal name="IncomingMessage">
+			<arg type="s"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+		<signal name="ImmediateMessage">
+			<arg type="s"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+	</interface>
+	<node name="operator"/>
+</node>

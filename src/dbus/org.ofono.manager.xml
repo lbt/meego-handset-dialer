@@ -1,0 +1,24 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="">
+	<interface name="org.ofono.Manager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+	<interface name="org.ofono.CallHistory">
+		<method name="GetVoiceHistory">
+			<arg type="a(usqii)" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfHistoryEvent"/>
+		</method>
+		<method name="SetVoiceHistoryRead"/>
+		<signal name="VoiceHistoryChanged">
+			<arg type="u"/>
+		</signal>
+	</interface>
+</node>
