@@ -163,7 +163,25 @@
 			<arg type="s" direction="out"/>
 			<arg type="v" direction="out"/>
 		</method>
+		<method name="Respond">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="out"/>
+		</method>
 		<method name="Cancel"/>
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<signal name="NotificationReceived">
+			<arg type="s"/>
+		</signal>
+		<signal name="RequestReceived">
+			<arg type="s"/>
+		</signal>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
 	</interface>
 	<interface name="org.ofono.CallMeter">
 		<method name="GetProperties">
@@ -198,7 +216,7 @@
 			<arg type="v"/>
 		</signal>
 	</interface>
-	<interface name="org.ofono.CbsManager">
+	<interface name="org.ofono.CellBroadcast">
 		<method name="GetProperties">
 			<arg type="a{sv}" direction="out"/>
 			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
@@ -269,5 +287,27 @@
 			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
 		</signal>
 	</interface>
-	<node name="operator"/>
+	<interface name="org.ofono.DataConnectionManager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="CreateContext">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="RemoveContext">
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="DeactivateAll"/>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
 </node>
