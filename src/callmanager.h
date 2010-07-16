@@ -75,10 +75,10 @@ public Q_SLOTS:
     // Hang up the multi-party call (all participating calls released)
     hangupMultipartyCall()
 
-    // Sends the DTMF tones to the network
-    sendTones()
-
      */
+
+    // Sends the DTMF tones to the network
+    void sendTones(const QString toneid);
 
 Q_SIGNALS:
     void callsChanged();
@@ -98,6 +98,7 @@ private Q_SLOTS:
     void hangupAllFinished(QDBusPendingCallWatcher *watcher);
     void swapFinished(QDBusPendingCallWatcher *watcher);
     void holdAndAnswerFinished(QDBusPendingCallWatcher *watcher);
+    void sendTonesFinished(QDBusPendingCallWatcher *watcher);
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
 

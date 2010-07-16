@@ -170,12 +170,21 @@ void CallManager::hangupMultipartyCall()
     TRACE
 }
 
-void CallManager::sendTones()
+ */
+
+void CallManager::sendTones(const QString toneid)
 {
     TRACE
-}
 
- */
+    QDBusPendingReply<> reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = SendTones(toneid);
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(sendTonesFinished(QDBusPendingCallWatcher*)));
+}
 
 /*
  * Private slots for DBus async replies
@@ -387,6 +396,17 @@ void CallManager::holdAndAnswerFinished(QDBusPendingCallWatcher *watcher)
 
     if (reply.isError())
         qCritical() << QString("HoldAndAnswer() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+}
+
+void CallManager::sendTonesFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+    QDBusPendingReply<> reply = *watcher;
+
+    if (reply.isError())
+        qCritical() << QString("SendTones() Failed: %1 - %2")
                        .arg(reply.error().name())
                        .arg(reply.error().message());
 }
