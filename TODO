@@ -1,0 +1,225 @@
+Introduction
+============
+
+The follow list are features still to be implimented in the dialer application.
+
+Each entry has the fields:
+- <brief description>
+  Details:    As much info as is needed to understand the purpose, complexity,
+              impact and dependancies of the feature.  The goal being to allow
+              those interested in helping to determine if they have the
+              knowledge and time to do so.
+  Priority:   An indicator of the project perceived urgency for implementation.
+              Values are: Low, Medium, High
+  Complexity: A estimate of the difficulty to implement or potential impact to
+              the rest of the project.
+              Values are: C1, C2, C4 and C8 (See "What is Complexity?" below)
+  BMC#:       Bugzilla id from bugs.meego.com (optional, but recomended)
+  Owner:      Who has accpted (or been assigned to) the task
+
+
+What is Complexity?
+==================
+
+First, I am borrowing this from the Ofono project, so if you are familiar
+with how they use it, it is the same here.
+
+Complexity scale: C1, C2, C4 and C8.
+
+The complexity scale is exponential, with complexity 1 being the lowest
+complexity.  Complexity is a function of both task 'complexity' and task
+'scope'.
+
+The general rule of thumb is that a complexity 1 task should take 1-2 weeks
+for a person very familiar with oFono codebase.  Higher complexity tasks
+require more time and have higher uncertainty.
+
+Higher complexity tasks should be refined into several lower complexity tasks
+once the task is better understood.
+
+
+
+===============================================================================
+TODO:
+
+Dialer Features
+---------------
+
+- Add Voicemail dialing
+  Details:      Bind leypad "1" key to voicemail number and call it when
+                when "press and hold" event occurs.  Depends on voicemail
+                number property being set in ofono (see also Call Settings UI).
+  Priority:     High
+  Complexity:   C1
+  BMC#:         BMC#2659
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Add Call elapsed time indicator in all call views
+  Details:      
+  Priority:     Medium
+  Complexity:   C1
+  BMC#:         BMC#548, BMC#2245, BMC#2658
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Add event feedback (haptic, audio, other)
+  Details:      
+  Priority:     Low
+  Complexity:   C1
+  BMC#:         BMC#2661
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Add Advice Of Charge (Cost) to all call views
+  Details:      
+  Priority:     Medium
+  Complexity:   C1
+  BMC#:         BMC#2658
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Convert to libseaside contact widgets
+  Details:      Once libseaside provides widgets for contact cards (simple,
+                full and edit) and lists, dialer needs to rip our it's local
+                versions and use the libseaside ones. This includes using
+                avatars provided by libseaside
+
+  Priority:     High
+  Complexity:   C1
+  BMC#:         BMC#3244
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Multi-party call capabilities
+  Details:      
+  Priority:     High
+  Complexity:   C2
+  BMC#:         BMC#550, BMC#2806
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Send DTMF tones
+  Details:     
+  Priority:     Medium
+  Complexity:   C1
+  BMC#:         BMC#2811
+  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+
+- Audio routing integration
+  Details:      
+  Priority:     High
+  Complexity:   C4
+  BMC#:         
+  Owner:        Kevron Rees <kevron.m.rees@intel.com>
+
+- Volume up/down and Mute
+  Details:      
+                NOTE: Depends on Audio routing integration
+  Priority:     High
+  Complexity:   C2
+  BMC#:         BMC#2809
+  Owner:        
+
+- User Determined User Busy
+  Details:      
+  Priority:     Medium
+  Complexity:   C1
+  BMC#:         BMC#2794
+  Owner:        
+
+- Explicit Call Transfer
+  Details:      
+  Priority:     Medium
+  Complexity:   C1
+  BMC#:         BMC#2803
+  Owner:        
+
+- Private Conversation during multi-party call
+  Details:      
+  Priority:     Low
+  Complexity:   C4
+  BMC#:         BMC#2807
+  Owner:        
+
+- Split Multi-party call
+  Details:      
+  Priority:     High
+  Complexity:   C2
+  BMC#:         BMC#2808
+  Owner:        
+
+- Auto redial / Call Completion to Busy Subscriber
+  Details:      
+  Priority:     Medium
+  Complexity:   C2
+  BMC#:         BMC#2804
+  Owner:        
+
+- Support of Emergency call w/ and w/o SIM
+  Details:      
+  Priority:     Medium
+  Complexity:   C4
+  BMC#:         
+  Owner:        
+
+- Play ringtones on incoming call
+  Details:      
+  Priority:     Medium
+  Complexity:   C2
+  BMC#:         BMC#2661
+  Owner:        
+
+- Integrated hands-free
+  Details:      
+  Priority:     Low
+  Complexity:   
+  BMC#:         
+  Owner:        
+
+System Interaction tasks
+------------------------
+
+- Hook up incoming call notice to MeeGoTouch platform notification system
+  Details:      
+  Priority:     High
+  Complexity:   C1
+  BMC#:         BMC#1507
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
+- Ringtones associated per contact
+  Details:      Should be able to set/get a ringtone for each contact.  This
+                is mostly a requirement on libseaside, but dialer will need to
+                determine if, for an incoming call, the contact associated with
+                the lineid has a ringtone preference set, and use it instead of
+                and defaults if so
+  Priority:     Medium
+  Complexity:   C4
+  BMC#:         BMC#2661
+  Owner:        
+
+- Call settings UI
+  Details:      A meegotouchcp plugin for letting the user see (and change
+                when allowed) the various dialer and ofono settings
+  Priority:     High
+  Complexity:   C2
+  BMC#:         
+  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+
+- Visual voice mail
+  Details:      
+  Priority:     Low
+  Complexity:   C4
+  BMC#:         
+  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+
+
+Misc other tasks
+----------------
+
+- Turn ofono interfaces and proxy classes into a standalone library
+  Details:      Since there are now more than one app using/needing the 
+                ofono proxy classes I wrote for dialer originally, it is time
+                to break this out into it's own lib to be used by dialer,
+                settings, status monitoring, emergency calling from lock screen,
+                and maybe even sms eventually.
+  Priority:     High
+  Complexity:   C1
+  BMC#:         
+  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+
+
