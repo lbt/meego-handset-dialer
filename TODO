@@ -171,11 +171,25 @@ Dialer Features
   BMC#:         
   Owner:        
 
+- Re-factor to take advantage of pre-start mode
+  Details:      In pre-start mode, dialer can perform more daemon-like tasks
+                while not consuming Gfx/System memory and CPU.  Allows it to
+                function as incoming call notifier/handler, event history 
+                capture, and other useful tasks even when not visible.
+  Priority:     High
+  Complexity:   C2
+  BMC#:         
+  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
+
 System Interaction tasks
 ------------------------
 
 - Hook up incoming call notice to MeeGoTouch platform notification system
-  Details:      
+  Details:      This is already done, mostly, only problem is that the API
+                for specifying actions on the notification seems broken or
+                still undefined/unimplimented.  Need to diagnose this and/or
+                find out from the MTF devs how to allow a notification to have
+                actions associated with them.
   Priority:     High
   Complexity:   C1
   BMC#:         BMC#1507
