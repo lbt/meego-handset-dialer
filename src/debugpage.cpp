@@ -24,6 +24,8 @@ DebugPage::DebugPage() :
     GenericPage(),
     mInfo(new MLabel()),
     mBox(new MContainer()),
+    vmInfo(new MLabel()),
+    vmBox(new MContainer()),
     nInfo(new MLabel()),
     nBox(new MContainer()),
     cInfo(new MLabel()),
@@ -53,6 +55,16 @@ void DebugPage::refreshContent()
             mBox->setText("None");
         }
 
+        // Voicemail
+        if ((mp->voicemail() != 0) && mp->voicemail()->isValid()) {
+            qDebug("refreshing voicemail info");
+            vmInfo->setText(QString(mp->voicemail()->dumpProperties().join("")));
+            vmBox->setText(mp->voicemail()->path());
+        } else {
+            vmInfo->setText("No MessageWaiting service available");
+            vmBox->setText("None");
+        }
+
         // Network
         if ((mp->network() != 0) && mp->network()->isValid()) {
             qDebug("refreshing call info");
@@ -72,6 +84,8 @@ void DebugPage::refreshContent()
         }
     } else {
         mInfo->setText("No modem available");
+        mBox->setText("None");
+        mInfo->setText("No MessageWaiting service available");
         mBox->setText("None");
         nInfo->setText("No network available");
         nBox->setText("None");
@@ -94,6 +108,18 @@ void DebugPage::createContent()
     mInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
                                      QSizePolicy::MinimumExpanding));
     mBox->setCentralWidget(mInfo);
+
+    // MessageWaiting
+    vmBox->setTitle("MessageWaiting:");
+    vmBox->setText("None");
+    vmBox->setObjectName("debugModem");
+    vmBox->setIconID("small-mobile");
+    vmInfo->setText("No MessageWaiting service available");
+    vmInfo->setObjectName("debugLabel");
+    vmInfo->setAlignment(Qt::AlignTop);
+    vmInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
+                                     QSizePolicy::MinimumExpanding));
+    vmBox->setCentralWidget(vmInfo);
 
     // Network
     nBox->setTitle("Network:");
@@ -118,13 +144,15 @@ void DebugPage::createContent()
                                      QSizePolicy::MinimumExpanding));
     cBox->setCentralWidget(cInfo);
 
-    landscape->addItem(mBox, 0, 0, 2, 1, Qt::AlignTop|Qt::AlignLeft);
+    landscape->addItem(mBox, 0, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
+    landscape->addItem(vmBox,1, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
     landscape->addItem(nBox, 0, 1, 1, 1, Qt::AlignTop|Qt::AlignLeft);
     landscape->addItem(cBox, 1, 1, 1, 1, Qt::AlignTop|Qt::AlignLeft);
 
     portrait->addItem(mBox,  0, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
-    portrait->addItem(nBox,  1, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
-    portrait->addItem(cBox,  2, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
+    portrait->addItem(vmBox, 1, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
+    portrait->addItem(nBox,  2, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
+    portrait->addItem(cBox,  3, 0, 1, 1, Qt::AlignTop|Qt::AlignLeft);
 
     refreshContent();
 }

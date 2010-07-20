@@ -35,6 +35,8 @@ private slots:
 private:
     MLabel     *mInfo;
     MContainer *mBox;
+    MLabel     *vmInfo;
+    MContainer *vmBox;
     MLabel     *nInfo;
     MContainer *nBox;
     MLabel     *cInfo;
