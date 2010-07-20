@@ -72,6 +72,7 @@ public:
     CallManager* callManager() const;
     VolumeManager* volumeManager() const;
     HistoryProxy* history() const;
+    VoicemailProxy* voicemail() const;
 
 public slots:
     void managerDBusGetPropDone(QDBusPendingCallWatcher *call);
@@ -83,6 +84,7 @@ private:
     CallManager  *m_callManager;
     VolumeManager *m_volumeManager;
     HistoryProxy  *m_history;
+    VoicemailProxy *m_voicemail;
 };
 
 #endif
