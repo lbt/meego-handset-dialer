@@ -105,6 +105,143 @@ QStringList ModemProxy::dumpProperties()
 }
 
 /*
+ * VoicemailProxy (aka MessageWaiting) implementation
+ */
+
+VoicemailProxy::VoicemailProxy(const QString &objectPath)
+    : org::ofono::MessageWaiting(OFONO_SERVICE,
+                                 objectPath,
+                                 QDBusConnection::systemBus())
+{
+    if (!isValid()) {
+        qDebug() << "Failed to connect to Ofono: \n\t" << lastError().message();
+    } else {
+        m_path = objectPath;
+        QDBusPendingReply<QVariantMap> reply;
+        QDBusPendingCallWatcher * watcher;
+
+        reply = GetProperties();
+        watcher = new QDBusPendingCallWatcher(reply);
+
+        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                this, SLOT(voicemailDBusGetPropDone(QDBusPendingCallWatcher*)));
+        connect(this, SIGNAL(PropertyChanged(const QString&, const QDBusVariant&)),
+                SLOT(voicemailPropertyChanged(const QString&, const QDBusVariant&)));
+    }
+}
+
+VoicemailProxy::~VoicemailProxy()
+{
+}
+
+QString VoicemailProxy::path() const { return m_path; }
+QString VoicemailProxy::mailbox() const { return m_mailbox; }
+int     VoicemailProxy::count() const { return m_count; }
+bool    VoicemailProxy::waiting() const { return m_waiting; }
+
+void VoicemailProxy::setMailbox(QString lineid)
+{
+    if (lineid.isEmpty() || (m_mailbox == lineid))
+        return;
+
+    QDBusPendingReply<> reply;
+    reply = SetProperty("VoicemailMailboxNumber", QDBusVariant(lineid));
+    reply.waitForFinished();
+
+    if (reply.isError())
+        qCritical() << "SetProperty \"VoicemailMailboxNumber\" failed: " <<
+                       reply.error().message();
+    else
+        m_mailbox = lineid;
+}
+
+void VoicemailProxy::voicemailDBusGetPropDone(QDBusPendingCallWatcher *call)
+{
+    QDBusPendingReply<QVariantMap> reply = *call;
+
+    if (reply.isError()) {
+      // TODO: Handle this properly, by setting states, or disabling features...
+      qDebug() << "org.ofono.MessageWaiting.getProperties() failed: " <<
+                  reply.error().message();
+    } else {
+      QVariantMap properties = reply.value();
+      bool waiting = qdbus_cast<bool>(properties["VoicemailWaiting"]);
+      int count = qdbus_cast<int>(properties["VoicemailMessageCount"]);
+      QString mailbox = qdbus_cast<QString>(properties["VoicemailMailboxNumber"]);
+
+      if (count != m_count) {
+          m_count = count;
+          emit messagesWaitingChanged();
+      }
+      if (waiting != m_waiting) {
+          m_waiting = waiting;
+          emit messagesWaitingChanged();
+      }
+      if (!mailbox.isEmpty() && (mailbox != m_mailbox)) {
+          m_mailbox = mailbox;
+          emit mailboxChanged();
+      }
+
+#ifdef WANT_DEBUG
+      qDebug() << "Voicemail Details:";
+      qDebug() << dumpProperties().join("");
+#endif
+
+      // First sucessfull GetProperties == connected
+      if (!m_connected) {
+          m_connected = true;
+          emit connected();
+      }
+    }
+}
+
+void VoicemailProxy::voicemailPropertyChanged(const QString &in0, const QDBusVariant &in1)
+{
+    qDebug() << QString("Property \"%1\" changed...").arg(in0);
+    bool waiting;
+    int count;
+    QString mailbox;
+    if (in0 == "VoicemailWaiting") {
+        waiting = qdbus_cast<bool>(in1.variant());
+    } else if (in0 == "VoicemailMessageCount") {
+        count = qdbus_cast<int>(in1.variant());
+    } else if (in0 == "VoicemailMailboxNumber") {
+        mailbox = qdbus_cast<QString>(in1.variant());
+    } else
+        qDebug() << QString("Unexpected property changed...");
+
+    if ((count != m_count) || (waiting != m_waiting)) {
+        m_count = count;
+        m_waiting = waiting;
+        emit messagesWaitingChanged();
+    }
+    if (!mailbox.isEmpty() && (mailbox != m_mailbox)) {
+        m_mailbox = mailbox;
+        emit mailboxChanged();
+    }
+
+#ifdef WANT_DEBUG
+      qDebug() << "Voicemail Details:";
+      qDebug() << dumpProperties().join("");
+#endif
+}
+
+QStringList VoicemailProxy::dumpProperties()
+{
+    m_properties.clear();
+
+    m_properties << "<ul>";
+    m_properties << "<li>VoicemailWaiting: " +
+                    QString(m_waiting?"true":"false") + "</li>";
+    m_properties << "<li>VoicemailMessageCount: " +
+                    QString::number(m_count) + "</li>";
+    m_properties << "<li>VoicemailMailboxNumber: " + m_mailbox + "</li>";
+    m_properties << "</ul>";
+
+    return m_properties;
+}
+
+/*
  * CallVolume Manager implementation
  */
 

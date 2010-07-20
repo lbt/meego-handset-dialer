@@ -64,6 +64,46 @@ private:
     bool        m_connected;
 };
 
+class VoicemailProxy: public org::ofono::MessageWaiting
+{
+    Q_OBJECT
+    Q_PROPERTY(bool waiting READ waiting)
+    Q_PROPERTY(int count  READ count)
+    Q_PROPERTY(QString mailbox READ mailbox WRITE setMailbox)
+
+public:
+    VoicemailProxy(const QString &objectPath);
+    virtual ~VoicemailProxy();
+
+    QString  path() const;
+    bool     waiting() const;
+    int      count() const;
+    QString  mailbox() const;
+
+    QStringList dumpProperties();
+
+public slots:
+    void setMailbox(QString lineid);
+
+Q_SIGNALS:
+    void messagesWaitingChanged();
+    void mailboxChanged();
+    void connected();
+    void disconnected();
+
+private slots:
+    void voicemailDBusGetPropDone(QDBusPendingCallWatcher *call);
+    void voicemailPropertyChanged(const QString &in0, const QDBusVariant &in1);
+
+private:
+    QStringList m_properties; // raw return from GetProperties
+    QString     m_path;
+    bool        m_waiting;
+    int         m_count;
+    QString     m_mailbox;
+    bool        m_connected;
+};
+
 class VolumeManager: public org::ofono::CallVolume
 {
     Q_OBJECT
