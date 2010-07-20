@@ -26,6 +26,7 @@ M_REGISTER_WIDGET(DialerKeyPad)
 #define OPTION_INDEX 0
 #define BUTTON_INDEX 1
 #define CONTROL_INDEX 2
+#define BUTTON_ID_KEY 11
 
 enum _NumericButtons {
     _NumericButton_1 = 0,
@@ -439,7 +440,19 @@ void DialerKeyPad::callSpeedDial()
 {
     TRACE
     qDebug() << "Call Speed Dial invoked";
-    SHOW_TBD
+
+    int id = dynamic_cast<MAction *>(sender())->data().toInt();
+
+    if (id == 0) { // 0 index == "1" key == voicemail
+        ManagerProxy *mp = ManagerProxy::instance();
+        if ((mp->voicemail() != 0) && (mp->voicemail()->isValid()) &&
+             m_target && !mp->voicemail()->mailbox().isEmpty()) {
+            m_target->setText(mp->voicemail()->mailbox());
+        }
+    }
+    else {
+        SHOW_TBD
+    }
 }
 
 void DialerKeyPad::setSpeedDial()
@@ -470,6 +483,7 @@ void DialerKeyPad::constructNumericKeypad(MGridLayoutPolicy *policy)
                 label = "Call Speed Dial";
             MAction *callSD = new MAction(label, button);
             callSD->setLocation(MAction::ObjectMenuLocation);
+            callSD->setData(k);
             connect(callSD,SIGNAL(triggered()),SLOT(callSpeedDial()));
             button->addAction(callSD);
             if (k != 0) {  // 0 index == "1" key, which is always voicemail
