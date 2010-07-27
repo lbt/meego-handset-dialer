@@ -193,7 +193,8 @@ void PeopleItemCellCreator::updateCell(const QModelIndex& index,
     SEASIDE_SHORTCUTS
     SEASIDE_SET_MODEL_AND_ROW(index.model(),index.row());
 
-    card->setName(SEASIDE_FIELD(Name, String));
+    card->setName(QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                                   .arg(SEASIDE_FIELD(FirstName, String)));
     card->setPhoto(SEASIDE_FIELD(Avatar, String));
     card->setLastCommTime(SEASIDE_FIELD(CommTimestamp,DateTime));
     card->setPresence((Seaside::Presence)SEASIDE_FIELD(Presence,Int));

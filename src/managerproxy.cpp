@@ -216,7 +216,8 @@ void HistoryProxy::sendMissedCallNotification(QList<CallHistoryEvent> missed)
                 QModelIndex person = matches.at(0); //First match wins
                 SEASIDE_SHORTCUTS
                 SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-                name = SEASIDE_FIELD(Name, String);
+                name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                                        .arg(SEASIDE_FIELD(FirstName, String));
                 photo = SEASIDE_FIELD(Avatar, String);
             }
         } else {

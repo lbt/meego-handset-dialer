@@ -292,7 +292,8 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
             QModelIndex person = matches.at(0); //First match is all we look at
             SEASIDE_SHORTCUTS
             SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-            name = SEASIDE_FIELD(Name, String);
+            name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                                    .arg(SEASIDE_FIELD(FirstName, String));
             photo = SEASIDE_FIELD(Avatar, String);
             presence = (Seaside::Presence)SEASIDE_FIELD(Presence,Int);
             favorite = (SEASIDE_FIELD(Favorite,Bool))?"1":"0";

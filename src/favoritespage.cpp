@@ -94,7 +94,7 @@ void FavoritesPage::startCompleting(const QString & prefix)
     TRACE
     QRegExp   exp;
     int filterCol = filter->filterKeyColumn();
-    int   sortCol = Seaside::ColumnName;
+    int   sortCol = Seaside::ColumnLastName;
     int  sortRole = Seaside::DataRole;
     SeasideProxyModel::FilterType seasideFilter = SeasideProxyModel::FilterFavorites;
     Qt::SortOrder order = Qt::AscendingOrder;
@@ -180,7 +180,7 @@ void FavoritesPage::createContent()
 
     filter->setSortRole(Seaside::DataRole);
     filter->setFilter(SeasideProxyModel::FilterFavorites);
-    filter->sort(Seaside::ColumnName, Qt::AscendingOrder);
+    filter->sort(Seaside::ColumnLastName, Qt::AscendingOrder);
 
     matches->setCellCreator(cellCreator);
     matches->setItemModel(filter);

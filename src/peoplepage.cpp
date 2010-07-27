@@ -102,7 +102,7 @@ void PeoplePage::startCompleting(const QString & prefix)
     if (!completer->candidateSourceModel())
         completer->setCandidateSourceModel(filter);
 
-    sortCol = Seaside::ColumnName;
+    sortCol = Seaside::ColumnLastName;
 
     if (prefix.isEmpty())
         exp = MATCH_ALL;

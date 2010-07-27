@@ -109,7 +109,7 @@ void DialerApplication::init()
     m_seasideProxy->setDynamicSortFilter(true);
     m_seasideProxy->setFilterKeyColumn(-1);
     m_seasideProxy->setFilterRegExp(MATCH_ALL);
-    m_seasideProxy->sort(Seaside::ColumnName, Qt::AscendingOrder);
+    m_seasideProxy->sort(Seaside::ColumnLastName, Qt::AscendingOrder);
 
     m_historyModel = new HistoryTableModel();
     m_historyProxy = new QSortFilterProxyModel();
