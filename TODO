@@ -45,15 +45,6 @@ TODO:
 Dialer Features
 ---------------
 
-- Add Voicemail dialing
-  Details:      Bind leypad "1" key to voicemail number and call it when
-                when "press and hold" event occurs.  Depends on voicemail
-                number property being set in ofono (see also Call Settings UI).
-  Priority:     High
-  Complexity:   C1
-  BMC#:         BMC#2659
-  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
-
 - Add Call elapsed time indicator in all call views
   Details:      
   Priority:     Medium
