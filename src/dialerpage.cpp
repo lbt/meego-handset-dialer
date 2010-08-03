@@ -16,6 +16,8 @@
 #include "dialerkeypad.h"
 #include "callitem.h"
 #include "callitemmodel.h"
+#include "dialerapplication.h"
+#include "seasidesyncmodel.h"
 #include <MLayout>
 #include <MGridLayoutPolicy>
 #include <MApplicationWindow>
@@ -132,6 +134,30 @@ void DialerPage::updateCalls()
 {
     CallManager *cm = dynamic_cast<CallManager *>(sender());
     CallItem *activeCall = cm->activeCall();
+    if (activeCall && !activeCall->peopleItem()) {
+        QString lineid = activeCall->lineID();
+        QString name = "Unknown Caller";
+        QString photo  = DEFAULT_AVATAR_ICON;
+        SeasideSyncModel *contacts = DA_SEASIDEMODEL;
+        QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
+        QModelIndexList matches = contacts->match(first, Qt::DisplayRole,
+                                                  QVariant(lineid),1);
+        if (!matches.isEmpty()) {
+            QModelIndex match = matches.at(0); //First match wins
+            SEASIDE_SHORTCUTS
+            SEASIDE_SET_MODEL_AND_ROW(match.model(), match.row());
+            name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                                    .arg(SEASIDE_FIELD(FirstName, String));
+            photo = SEASIDE_FIELD(Avatar, String);
+        }
+ 
+        PeopleItem *person = new PeopleItem();
+        person->setName(name);
+        person->setPhoto(photo);
+        person->setPhone(lineid);
+
+        activeCall->setPeopleItem(person);
+    }
     if (activeCall && (m_policy->indexOf(activeCall) < 0)) {
         m_policy->insertItem(0, activeCall, Qt::AlignCenter);
     }

@@ -18,13 +18,16 @@
 #include <QGraphicsSceneEvent>
 #include <MCancelEvent>
 #include <MSeparator>
+#include <QTimer>
 #include <QDebug>
 
 CallItemView::CallItemView(CallItem *controller)
     : MWidgetView(controller),
+      m_duration(new MLabel("00:00:00", controller)),
       m_status(new MLabel("...", controller)),
       m_picturePath(QString()),
-      m_picture(QPixmap())
+      m_picture(QPixmap()),
+      m_updateTimer(this)
 {
     TRACE
 
@@ -57,6 +60,12 @@ PeopleItem *CallItemView::peopleItem() const
 {
     TRACE
     return m_controller->peopleItem(); //m_peopleItem;
+}
+
+MLabel *CallItemView::durationLabel() const
+{
+    TRACE
+    return m_duration;
 }
 
 MLabel *CallItemView::statusLabel() const
@@ -98,19 +107,24 @@ void CallItemView::initLayout()
     MWidget *spacer = new MWidget();
     spacer->setObjectName("callItemCenterSpacer");
     spacer->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                      QSizePolicy::MinimumExpanding));
-    statusLabel()->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                             QSizePolicy::Preferred));
+                                      QSizePolicy::Expanding));
+    durationLabel()->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
+                                               QSizePolicy::Expanding));
+    durationLabel()->setAlignment(Qt::AlignRight);
+    statusLabel()->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
+                                             QSizePolicy::Expanding));
+    statusLabel()->setAlignment(Qt::AlignRight);
     if (peopleItem()) {
         peopleItem()->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                                QSizePolicy::Preferred));
-        layout()->addItem(peopleItem(),  0, 0, Qt::AlignTop|Qt::AlignLeft);
+                                                QSizePolicy::Expanding));
+        layout()->addItem(peopleItem(),0, 0, 1, 3, Qt::AlignTop|Qt::AlignLeft);
     } else {
         MLabel *lineid = new MLabel(m_controller->lineID());
-        layout()->addItem(lineid,  0, 0, Qt::AlignTop|Qt::AlignLeft);
+        layout()->addItem(lineid,  0, 0, 1, 3, Qt::AlignTop|Qt::AlignLeft);
     }
-    layout()->addItem(spacer,        1, 0, Qt::AlignCenter);
-    layout()->addItem(statusLabel(), 2, 0, Qt::AlignBottom|Qt::AlignHCenter);
+    layout()->addItem(spacer,          1, 0, 1, 1, Qt::AlignCenter);
+    layout()->addItem(statusLabel(),   1, 1, 1, 1, Qt::AlignRight);
+    layout()->addItem(durationLabel(), 1, 2, 1, 1, Qt::AlignRight);
 
     QString thumb = "";
     if (!thumb.isEmpty()) {
@@ -119,6 +133,15 @@ void CallItemView::initLayout()
                                               .arg("images/people/fullsize")
                                               .arg(thumb);
     }
+
+    m_updateTimer.start(1000);
+    connect(&m_updateTimer, SIGNAL(timeout()), SLOT(updateDurationLabel()));
+}
+
+void CallItemView::updateDurationLabel()
+{
+    QTime t = QTime(0,0).addSecs(m_controller->duration()/1000);
+    durationLabel()->setText(t.toString(Qt::TextDate));
 }
 
 void CallItemView::updateStatusLabel()
@@ -134,6 +157,7 @@ void CallItemView::applyStyle()
 
     if (peopleItem())
         peopleItem()->setObjectName(style()->peopleItemObjectName());
+    durationLabel()->setObjectName(style()->durationObjectName());
     statusLabel()->setObjectName(style()->statusObjectName());
     if (!m_picturePath.isEmpty()) {
         QRect s = QRect(QPoint(0,0),sizeHint(Qt::PreferredSize).toSize());

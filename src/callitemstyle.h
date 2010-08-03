@@ -22,6 +22,7 @@ class CallItemStyle : public MWidgetStyle
     M_STYLE_ATTRIBUTE (QString, photoImage, PhotoImage)
     M_STYLE_ATTRIBUTE (QString, peopleItemObjectName, PeopleItemObjectName)
     M_STYLE_ATTRIBUTE (QString, statusObjectName, StatusObjectName)
+    M_STYLE_ATTRIBUTE (QString, durationObjectName, DurationObjectName)
 };
 
 class CallItemStyleContainer : public MWidgetStyleContainer

@@ -32,6 +32,7 @@ public:
     virtual void drawBackground(QPainter* painter,
                                 const QStyleOptionGraphicsItem* option) const;
 protected slots:
+    virtual void updateDurationLabel();
     virtual void updateStatusLabel();
     virtual void updateData(const QList<const char *> &modifications);
 
@@ -45,6 +46,7 @@ protected:
 
 private:
     PeopleItem *peopleItem() const;
+    MLabel *durationLabel() const;
     MLabel *statusLabel() const;
     QGraphicsGridLayout *layout() const;
 
@@ -58,11 +60,13 @@ private:
 
 private:
     CallItem            *m_controller;
-    MLabel            *m_status;
+    MLabel              *m_duration;
+    MLabel              *m_status;
     QGraphicsGridLayout *m_layout;
     bool                 m_pressed;
     QString              m_picturePath;
     QPixmap              m_picture;
+    QTimer               m_updateTimer;
 
     Q_DISABLE_COPY(CallItemView)
 };
