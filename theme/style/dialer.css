@@ -110,16 +110,17 @@ MApplicationPageStyle.Portrait {
     minimum-size: 50% 30%;
     maximum-size: 50% 40%;
 }
+*/
 
 #alertName {
-    font: "Droid Sans Bold" 6mm;
+    font: "Droid Sans Bold" 3.2mm;
+    color: white;
 }
 
 #alertNumber {
-    font: "Droid Sans" 6mm;
+    font: "Droid Sans" 3.2mm;
     color: gray;
 }
-*/
 
 /* ***********************************************
  * DialerPage properties
