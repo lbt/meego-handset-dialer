@@ -66,6 +66,10 @@ public:
     virtual ~ManagerProxy();
 
     static ManagerProxy *instance();
+    void setModem(QString modempath);
+    void setNetwork(QString modempath);
+    void setCallManager(QString modempath);
+    QList<QString> getModemList();
 
     ModemProxy* modem() const;
     NetworkProxy* network() const;
@@ -85,6 +89,7 @@ private:
     VolumeManager *m_volumeManager;
     HistoryProxy  *m_history;
     VoicemailProxy *m_voicemail;
+    QList<QString> m_modemList;
 };
 
 #endif

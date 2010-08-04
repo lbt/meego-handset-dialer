@@ -97,6 +97,7 @@ void ManagerProxy::managerDBusGetPropDone(QDBusPendingCallWatcher *call)
       // Read the list of available Modems
       foreach (QDBusObjectPath p, paths) {
         // FIXME: Handle multiple modems...
+        m_modemList.append(QString(p.path()));
         if (m_modemPath.isNull() || m_modemPath.isEmpty()) {
             m_modemPath = QString(p.path());
             m_modem = new ModemProxy(m_modemPath);
@@ -329,3 +330,37 @@ QSettings *HistoryProxy::cache() const
     TRACE
     return (m_cache->status() == QSettings::NoError)?m_cache:NULL;
 }
+
+QList<QString> ManagerProxy::getModemList()
+{
+    return m_modemList;
+}
+
+void ManagerProxy::setModem(QString modemPath)
+{
+    if (m_modemList.contains(modemPath)) {
+        if (m_modem)
+            delete m_modem;
+
+        m_modem = new ModemProxy(modemPath);
+    }
+}
+
+void ManagerProxy::setNetwork(QString modempath)
+{
+    if(m_modem->isValid()) {
+        if (m_network)
+            delete m_network;
+        m_network = new NetworkProxy(modempath);
+    }
+}
+
+void ManagerProxy::setCallManager(QString modempath)
+{
+    if(m_modem->isValid()) {
+        if (m_callManager)
+            delete m_callManager;
+        m_callManager = new CallManager(modempath);
+    }
+}
+
