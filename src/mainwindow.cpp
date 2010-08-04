@@ -30,6 +30,9 @@ MainWindow::MainWindow() :
     MApplicationWindow(),
     m_lastPage(0),
     m_alert(new AlertDialog()),
+#ifdef IVI_HFP
+    m_bluetoothDialog(new BluetoothDialog()),
+#endif
     m_search(new SearchBar()),
     m_keypad(0),
     m_incomingCall(0),
@@ -215,6 +218,12 @@ bool MainWindow::event(QEvent *event)
         } else if (Qt::Key_F10 == kev->key()) {
             MainWindow::simulateIncomingCall();
             return true;
+#ifdef IVI_HFP
+        // Trap "F2" as trigger to select modem
+        } else if (Qt::Key_F2 == kev->key()) {
+            MainWindow::showBluetoothDialog();
+            return true;
+#endif
         }
     }
     return MApplicationWindow::event(event);
@@ -238,6 +247,18 @@ DialerKeyPad *MainWindow::keypad()
 }
 
 #ifdef IVI_HFP
+void MainWindow::showBluetoothDialog()
+{
+    TRACE
+    qDebug("Handling an bluetooth selection...");
+    ManagerProxy *mp = ManagerProxy::instance();
+
+    if (mp->isValid())
+    {
+        m_bluetoothDialog->appear();
+    }
+}
+
 void MainWindow::displayBannerMessage(QString msg)
 {
     MInfoBanner* infoBanner = new MInfoBanner(MInfoBanner::Information);

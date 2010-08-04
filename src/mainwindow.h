@@ -14,6 +14,9 @@
 #include "genericpage.h"
 #include "callitem.h"
 #include "alertdialog.h"
+#ifdef IVI_HFP
+#include "bluetoothdialog.h"
+#endif
 #include "dialerkeypad.h"
 #include "searchbar.h"
 #include <QDebug>
@@ -44,6 +47,9 @@ public Q_SLOTS:
     void call(QString no);
     void accept();
     void showTBD();
+#ifdef IVI_HFP
+    void showBluetoothDialog();
+#endif
 
 private Q_SLOTS:
     void callStateChanged();
@@ -51,6 +57,9 @@ private Q_SLOTS:
 private:
     MApplicationPage *m_lastPage;
     AlertDialog        *m_alert;
+#ifdef IVI_HFP
+    BluetoothDialog    *m_bluetoothDialog;
+#endif
     SearchBar          *m_search;
     DialerKeyPad       *m_keypad;
     MRemoteAction       m_acceptAction;
