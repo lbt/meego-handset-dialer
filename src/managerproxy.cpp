@@ -328,6 +328,8 @@ void HistoryProxy::initCache()
 QSettings *HistoryProxy::cache() const
 {
     TRACE
+    if (!m_cache) return NULL;
+
     return (m_cache->status() == QSettings::NoError)?m_cache:NULL;
 }
 
