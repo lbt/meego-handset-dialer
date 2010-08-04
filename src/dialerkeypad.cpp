@@ -19,6 +19,9 @@
 #include <MWidgetView>
 #include <MSceneManager>
 #include <MAction>
+#ifdef IVI_HFP
+#include <QTextCursor>
+#endif
 
 #include <MWidgetCreator>
 M_REGISTER_WIDGET(DialerKeyPad)
@@ -130,7 +133,14 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       m_controlBox(new MStylableWidget()),
       m_add(new MButton()),
       m_call(new MButton()),
+#ifdef IVI_HFP
+      m_hide(new MButton()),
+      m_bksp(new MButton()),
+      m_pressed(false),
+      m_tapnhold(this)
+#else
       m_hide(new MButton())
+#endif
 {
     TRACE
     m_box->setParent(this);
@@ -409,14 +419,31 @@ void DialerKeyPad::createControlBox()
     m_hide->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
+#ifdef IVI_HFP
+    m_bksp->setObjectName("dialerBkspButton");
+    m_bksp->setIconID("icon-m-common-backspace");
+    m_bksp->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
+                                      QSizePolicy::MinimumExpanding));
+
+    policy->insertItem(0, m_add, Qt::AlignRight|Qt::AlignBottom);
+    policy->insertItem(1, m_call, Qt::AlignRight|Qt::AlignBottom);
+    policy->insertItem(2, m_bksp, Qt::AlignRight|Qt::AlignBottom);
+#else
     policy->insertItem(0, m_add, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(1, m_call, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(2, m_hide, Qt::AlignHCenter|Qt::AlignBottom);
+#endif
 
     connect(m_add,  SIGNAL(clicked(bool)), SLOT(addPressed()));
     connect(m_call, SIGNAL(clicked(bool)), SLOT(callPressed(bool)));
     connect(m_call, SIGNAL(toggled(bool)), SLOT(callToggled(bool)));
     connect(m_hide, SIGNAL(clicked(bool)), SLOT(setKeypadVisible(bool)));
+#ifdef IVI_HFP
+    // Hook up backspace key
+    m_tapnhold.setSingleShot(true);
+    connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
+    connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
+#endif
 }
 
 void DialerKeyPad::setKeypadVisible(bool visible)
@@ -624,3 +651,38 @@ void DialerKeyPad::callsChanged()
     }
 */
 }
+
+#ifdef IVI_HFP
+void DialerKeyPad::doClear()
+{
+    TRACE
+    m_pressed = false;
+    m_target->clear();
+}
+
+void DialerKeyPad::doBackspace()
+{
+    TRACE
+    m_target->textCursor().deletePreviousChar();
+}
+
+void DialerKeyPad::handleBkspPress()
+{
+    TRACE
+    m_pressed = true;
+    m_tapnhold.start(500);
+    connect(&m_tapnhold, SIGNAL(timeout()), this, SLOT(doClear()));
+}
+
+void DialerKeyPad::handleBkspRelease()
+{
+    TRACE
+    if (m_tapnhold.isActive())
+        m_tapnhold.stop();
+
+    if (m_pressed) {
+        m_pressed = false;
+        doBackspace();
+    }
+}
+#endif

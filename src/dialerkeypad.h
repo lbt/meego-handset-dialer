@@ -20,6 +20,9 @@
 #include <MButton>
 #include <MContainer>
 #include <MStylableWidget>
+#ifdef IVI_HFP
+#include <QTimer>
+#endif
 
 typedef enum _DialerKeypadType {
     DialerKeypadNumeric,
@@ -67,6 +70,11 @@ private:
     QList<MButton*>      m_buttons;
     MStylableWidget     *m_controlBox;
     MButton             *m_add, *m_call, *m_hide;
+#ifdef IVI_HFP
+    MButton             *m_bksp;
+    bool                 m_pressed;
+    QTimer               m_tapnhold;
+#endif
 
     void constructNumericKeypad(MGridLayoutPolicy*);
     void constructQwertyKeypad();
@@ -90,6 +98,12 @@ private Q_SLOTS:
     void callsChanged();
     void callSpeedDial();
     void setSpeedDial();
+#ifdef IVI_HFP
+    void doClear();
+    void doBackspace();
+    void handleBkspPress();
+    void handleBkspRelease();
+#endif
 };
 
 #endif // DIALERKEYPAD_H

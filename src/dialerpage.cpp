@@ -88,9 +88,11 @@ void DialerPage::createContent()
     m_entry->setFocusPolicy(Qt::NoFocus);
     m_entry->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                        QSizePolicy::Expanding));
+#ifndef IVI_HFP
     m_bksp->setObjectName("dialerBkspButton");
     m_bksp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
                                        QSizePolicy::Expanding));
+#endif
 
     MStylableWidget *foo = new MStylableWidget();
     foo->setObjectName("dialerActiveCall");
@@ -104,11 +106,13 @@ void DialerPage::createContent()
 
     // Widget layout
     m_policy->setContentsMargins(0, -1, 0, -1);
-    m_policy->insertItem(0, foo, Qt::AlignCenter);
-    m_policy->addItem(bar, Qt::AlignCenter);
+    m_policy->insertItem(0, foo, Qt::AlignRight);
+    m_policy->addItem(bar, Qt::AlignRight);
     landscape->addItem(m_entry,  0, 0, 1, 1, Qt::AlignLeft);
-    landscape->addItem(m_bksp,   0, 1, 1, 1, Qt::AlignRight|Qt::AlignVCenter);
-    landscape->addItem(m_layout, 1, 0, 1, 2, Qt::AlignCenter);
+#ifndef IVI_HFP
+    landscape->addItem(m_bksp,   0, 1, 1, 1, Qt::AlignLeft);
+#endif
+    landscape->addItem(m_layout, 1, 0, 1, 2, Qt::AlignLeft);
 
     portrait->addItem(m_entry,  0, 0, 1, 1, Qt::AlignLeft);
     portrait->addItem(m_bksp,   0, 1, 1, 1, Qt::AlignRight|Qt::AlignVCenter);
@@ -118,6 +122,7 @@ void DialerPage::createContent()
     connect(this, SIGNAL(appeared()), SLOT(pageShown()));
     connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
 
+#ifndef IVI_HFP
     CallManager *cm = ManagerProxy::instance()->callManager();
     if (cm->isValid())
         connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
@@ -128,6 +133,7 @@ void DialerPage::createContent()
     m_tapnhold.setSingleShot(true);
     connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
     connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
+#endif
 }
 
 void DialerPage::updateCalls()
@@ -163,6 +169,19 @@ void DialerPage::updateCalls()
     }
 }
 
+#ifdef IVI_HFP
+void DialerPage::updateCallManager()
+{
+    CallManager *cm = ManagerProxy::instance()->callManager();
+
+    if (cm && cm->isValid())
+        connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
+    else
+        qCritical("DialerPage: CallManager not ready yet!");
+}
+#endif
+
+#ifndef IVI_HFP
 void DialerPage::doClear()
 {
     TRACE
@@ -195,3 +214,4 @@ void DialerPage::handleBkspRelease()
         doBackspace();
     }
 }
+#endif

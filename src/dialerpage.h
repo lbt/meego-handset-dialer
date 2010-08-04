@@ -27,14 +27,21 @@ public:
     virtual ~DialerPage();
     virtual void createContent();
 
+#ifdef IVI_HFP
+public Q_SLOTS:
+    void updateCallManager();
+#endif
+
 private Q_SLOTS:
     void pageShown();
     void pageHidden();
     void updateCalls();
+#ifndef IVI_HFP
     void doClear();
     void doBackspace();
     void handleBkspPress();
     void handleBkspRelease();
+#endif
 
 private:
     CallItem    *m_activeCall;
