@@ -123,6 +123,82 @@ MApplicationPageStyle.Portrait {
 }
 
 /* ***********************************************
+ * Bluetooth Dialog properties
+ * ***********************************************/
+#bluetoothPanel {
+    preferred-size: 90% 50%;
+    minimum-size: 90% 50%;
+    maximum-size: 90% 50%;
+}
+
+#bluetoothConnectButton  {
+    text-color: white;
+    preferred-size: 40% 24mm;
+    minimum-size: 40% 24mm;
+}
+
+#bluetoothConnectButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+#bluetoothOtherButton  {
+    text-color: white;
+    preferred-size: 90% 24mm;
+    minimum-size: 90% 24mm;
+}
+
+#bluetoothOtherButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+#bluetoothToggleButton  {
+    text-color: white;
+    preferred-size: 45% 24mm;
+    minimum-size: 45% 24mm;
+}
+
+#bluetoothToggleButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+#bluetoothCancelButton  {
+    text-color: white;
+    preferred-size: 50% 24mm;
+    minimum-size: 50% 24mm;
+}
+
+#bluetoothCancelButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+/* ***********************************************
+ * Modem Dialog properties
+ * ***********************************************/
+#modemListPanel {
+    preferred-size: 90% 50%;
+    minimum-size: 90% 50%;
+    maximum-size: 90% 50%;
+}
+
+#modemPathButton  {
+    text-color: white;
+    preferred-size: 40% 24mm;
+    minimum-size: 40% 24mm;
+}
+
+#modemPathButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+#modemListCancelButton  {
+    text-color: white;
+}
+
+#modemListCancelButton:pressed  {
+    text-color: $MUX_COLOR_BUTTON_ACTIVE_FOREGROUND;
+}
+
+/* ***********************************************
  * DialerPage properties
  * ***********************************************/
 #phoneNumber {
@@ -792,4 +868,12 @@ MContainerStyle#peopleBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
+}
+
+#popupMessage {
+    font: "Droid Sans Bold" 88px;
+    text-color:     Yellow;
+    preferred-size: 100% 20%;
+    minimum-size:   100% 20%;
+    maximum-size:   100% 20%;
 }

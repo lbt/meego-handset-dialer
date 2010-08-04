@@ -27,6 +27,12 @@ PeopleItemStyle {
     maximum-size:   100% -1;
 }
 
+PeopleItemStyle.Landscape {
+    preferred-size: 100% 15%;
+    minimum-size:   50% 15%;
+    maximum-size:   100% 15%;
+}
+
 PeopleItemStyle:pressed {
     background-color: $COLOR_SELECT;
 }
