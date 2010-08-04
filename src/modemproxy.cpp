@@ -50,11 +50,13 @@ void ModemProxy::setPowered(bool is_powered)
         return;
 
     QDBusPendingReply<QVariantMap> reply;
-    reply = SetProperty("Powered", QDBusVariant(m_powered?"true":"false"));
+    reply = SetProperty("Powered", QDBusVariant(is_powered?true:false));
     if (reply.isError())
         qCritical() << "SetProperty \"Powered\" failed!";
-    else
+    else {
         m_powered = is_powered;
+        emit poweredChanged(m_powered);
+    }
 }
 
 void ModemProxy::modemDBusGetPropDone(QDBusPendingCallWatcher *call)
