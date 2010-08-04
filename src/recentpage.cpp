@@ -155,8 +155,9 @@ void RecentPage::createContent()
      */
     entry->setTextInteractionFlags(Qt::TextEditable);
 
-    landscape->addItem(box,    0, 0, 2, 1, Qt::AlignLeft);
-    landscape->addItem(entry,  1, 0, 1, 1, Qt::AlignLeft);
+    landscape->addItem(entry,   0, 0, 1, 3, Qt::AlignRight);
+    landscape->addItem(bksp,    0, 3, 1, 1, Qt::AlignRight);
+    landscape->addItem(box,     1, 0, 1, 4, Qt::AlignCenter);
 
     portrait->addItem(entry,   0, 0, 1, 3, Qt::AlignRight);
     portrait->addItem(bksp,    0, 3, 1, 1, Qt::AlignRight);

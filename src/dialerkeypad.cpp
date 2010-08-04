@@ -252,10 +252,17 @@ void DialerKeyPad::updateLayoutPolicy()
     QSizeF ks = m_box->sizeHint(Qt::PreferredSize);
     QSizeF ss = sceneManager()->visibleSceneSize();
 
+#ifdef IVI_HFP
+    if (isVisible())
+        setPos(QPointF(ss.rwidth(),ss.rheight()) + QPointF(-(ks.rwidth()), -(ks.rheight())));
+    else
+        setPos(QPointF(ss.rwidth(),ss.rheight()) + QPointF(-(ks.rwidth()), +(ks.rheight())));
+#else
     if (isVisible())
         setPos(QPointF(0,ss.rheight()) + QPointF(0, -(ks.rheight())));
     else
         setPos(QPointF(0,ss.rheight()) + QPointF(0, +(ks.rheight())));
+#endif
 
     // Finally, sync up the button states
     updateButtonStates();
@@ -333,10 +340,17 @@ void DialerKeyPad::createOptionBox()
     m_nway->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
+#ifdef IVI_HFP
+    policy->insertItem(0, m_mute, Qt::AlignRight|Qt::AlignBottom);
+    policy->insertItem(1, m_hold, Qt::AlignRight|Qt::AlignBottom);
+    policy->insertItem(2, m_spkr, Qt::AlignRight|Qt::AlignBottom);
+    policy->insertItem(3, m_nway, Qt::AlignRight|Qt::AlignBottom);
+#else
     policy->insertItem(0, m_mute, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(1, m_hold, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(2, m_spkr, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(3, m_nway, Qt::AlignHCenter|Qt::AlignBottom);
+#endif
 
     connect(m_mute,  SIGNAL(clicked(bool)), SLOT(mutePressed(bool)));
     connect(m_hold,  SIGNAL(clicked(bool)), SLOT(holdPressed(bool)));
