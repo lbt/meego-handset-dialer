@@ -45,12 +45,12 @@ MApplicationPageStyle.Portrait {
  * Incoming Call Alert properties
  * ***********************************************/
 #alertPanel.Landscape {
-    preferred-size: 90% 60%;
+    preferred-size: 90% 50%;
     minimum-size: 90% 50%;
-    maximum-size: 90% 60%;
+    maximum-size: 90% 50%;
 }
 
-#alertPanel.Landscape {
+#alertPanel.Portrait {
     preferred-size: 90% 50%;
     minimum-size: 90% 50%;
     maximum-size: 90% 50%;
@@ -133,8 +133,8 @@ MApplicationPageStyle.Portrait {
 }
 
 #phoneNumber.Landscape {
-    minimum-size:   48%  $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   48%  $HEIGHT_NAVIGATIONBAR;
+    minimum-size:   80%  $HEIGHT_NAVIGATIONBAR;
+    maximum-size:   80%  $HEIGHT_NAVIGATIONBAR;
 }
 #phoneNumber.Portrait {
     minimum-size:   80%  $HEIGHT_NAVIGATIONBAR;
@@ -182,9 +182,9 @@ MContainerStyle#listBox {
     margin-left: -$MARGIN_LARGE;
 }
 #listBox.Landscape {
-    preferred-size: 50% 85%;
-    minimum-size:   50% 85%;
-    maximum-size:   50% 85%;
+    preferred-size: 100% 65%;
+    minimum-size:   100% 65%;
+    maximum-size:   100% 65%;
 }
 #listBox.Portrait {
     preferred-size: 100% 85%;
@@ -193,9 +193,9 @@ MContainerStyle#listBox {
 }
 
 #listView.Landscape {
-    preferred-size: 50% 85%;
-    minimum-size:   50% 85%;
-    maximum-size:   50% 85%;
+    preferred-size: 100% 60%;
+    minimum-size:   100% 60%;
+    maximum-size:   100% 60%;
 }
 #listView.Portrait {
     preferred-size: 100% 85%;
@@ -221,16 +221,16 @@ MContainerStyle#listBox {
     padding-left:   0;
     padding-right:  0;
     padding-bottom: 0;
-    margin-top:     -0.8mm;
+    margin-top:     0;
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    horizontal-align: right;
-    vertical-align: top;
-    preferred-size: 50% 90%;
-    minimum-size:   50% 90%;
-    maximum-size:   60% 90%;
-    offset: 0 $HEIGHT_NAVIGATIONBAR;
+    horizontal-align: center;
+    vertical-align: bottom;
+    preferred-size: 100% $HEIGHT_NAVIGATIONBAR;
+    minimum-size:   100% $HEIGHT_NAVIGATIONBAR;
+    maximum-size:   100% $HEIGHT_NAVIGATIONBAR;
+    offset: 0 0;
 }
 
 #SearchBarOverlay.Portrait {
@@ -271,16 +271,16 @@ MContainerStyle#listBox {
     padding-left:   0;
     padding-right:  0;
     padding-bottom: 0;
-    margin-top:     -0.8mm;
+    margin-top:     0;
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
     horizontal-align: right;
-    vertical-align: top;
-    preferred-size: 50% 90%;
-    minimum-size:   50% 90%;
-    maximum-size:   60% 90%;
-    offset: 0 $HEIGHT_NAVIGATIONBAR;
+    vertical-align: bottom;
+    preferred-size: 50% 0;
+    minimum-size:   50% 0;
+    maximum-size:   50% 0;
+    offset: 0 -$HEIGHT_NAVIGATIONBAR;
 }
 
 #keypadOverlay.Portrait {
@@ -382,7 +382,7 @@ MContainerStyle#listBox {
     margin-right:   0;
 }
 
-#muteButton {
+#muteButton.Portrait {
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
@@ -394,7 +394,19 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
-#holdButton {
+#muteButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#holdButton.Portrait {
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
@@ -406,7 +418,19 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
-#speakerButton {
+#holdButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#speakerButton.Portrait {
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
@@ -418,7 +442,19 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
-#multiButton {
+#speakerButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#multiButton.Portrait {
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
@@ -430,7 +466,19 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
-#addButton {
+#multiButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#addButton.Portrait {
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
@@ -442,7 +490,19 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
-#callButton {
+#addButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#callButton.Portrait {
     background-image: "dialer-call-button-background" 4 4 4 4;
     margin-top:     0;
     margin-left:    0;
@@ -451,6 +511,19 @@ MContainerStyle#listBox {
     preferred-size: 50% $HEIGHT_NAVIGATIONBAR;
     minimum-size:   50% $HEIGHT_NAVIGATIONBAR;
     maximum-size:   50% $HEIGHT_NAVIGATIONBAR;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#callButton.Landscape {
+    background-image: "dialer-call-button-background" 4 4 4 4;
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 25% 14%;
+    minimum-size:   25% 14%;
+    maximum-size:   25% 14%;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
 }
@@ -467,7 +540,7 @@ MContainerStyle#listBox {
     background-image: "dialer-end-button-background-pressed" 4 4 4 4;
 }
 
-#hideButton {
+#hideButton.Portrait {
     background-image: "meegotouch-button-background" 10px 10px 10px 10px;
     margin-top:     0;
     margin-left:    0;
@@ -476,6 +549,19 @@ MContainerStyle#listBox {
     preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
     minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
     maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
+    icon-align: center;
+}
+
+#hideButton.Landscape {
+    background-image: "meegotouch-button-background" 10px 10px 10px 10px; 
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
 }
@@ -492,7 +578,7 @@ MContainerStyle#listBox {
     background-image: "meegotouch-button-background-pressed" 10px 10px 10px 10px;
 }
 
-#numericButton {
+#numericButton.Portrait {
     font:           "Droid Sans Bold" 3mm;
     text-color:     #FCC536;
     padding-top:    0;
@@ -508,6 +594,24 @@ MContainerStyle#listBox {
     preferred-size: 33.5% $HEIGHT_TOPBARS;
     minimum-size:   33%   $HEIGHT_TOPBARS;
     maximum-size:   34%   $HEIGHT_TOPBARS;
+}
+
+#numericButton.Landscape {
+    font:           "Droid Sans Bold" 3mm;
+    text-color:     #FCC536;
+    padding-top:    0;
+    padding-left:   0;
+    padding-right:  0;
+    padding-bottom: 0.5mm;
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    icon-align:     bottom;
+    icon-size:      41 14;
+    preferred-size: 16.7% 13%;
+    minimum-size:   16.7% 13%;
+    maximum-size:   16.7% 13%;
 }
 
 /* ***********************************************
@@ -574,7 +678,7 @@ MContainerStyle#peopleBox {
     dialog-preferred-size: 75% -1;
 }
 
-#dialerEntryLabel {
+#dialerEntryLabel.Portrait {
     background-opacity: 0.0;
     font: "Droid Sans Bold" 5mm;
     text-color:     white;
@@ -588,8 +692,21 @@ MContainerStyle#peopleBox {
     margin-bottom:  0;
 }
 
-#dialerBkspButton {
-    background-opacity: 0.0;
+#dialerEntryLabel.Landscape {
+    background-opacity: 0.1;
+    font: "Droid Sans Bold" 5mm;
+    text-color:     white;
+    prompt-color:   white;
+    preferred-size: 48% 10mm;
+    minimum-size:   40% 10mm;
+    maximum-size:   48% 10mm;
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+}
+
+#dialerBkspButton.Portrait {
     margin-top:     0;
     margin-left:    -1;
     margin-right:   0;
@@ -603,11 +720,25 @@ MContainerStyle#peopleBox {
     maximum-size:   10mm 10mm;
 }
 
+#dialerBkspButton.Landscape {
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+    padding-left:   0;
+    padding-right:  0;
+    icon-size:      $SIZE_ICON_XLARGE $SIZE_ICON_XLARGE;
+    icon-align:     right;
+    preferred-size: 12.5% 14%;
+    minimum-size:   12.5% 14%;
+    maximum-size:   12.5% 14%;
+}
+
 #dialerBkspButton:pressed {
     background-opacity: 0.0;
 }
 
-#dialerActiveCall {
+#dialerActiveCall.Portrait {
     preferred-size: 90% 15mm;
     minimum-size:   80% 15mm;
     maximum-size:   -1  15mm;
@@ -621,10 +752,38 @@ MContainerStyle#peopleBox {
     margin-bottom:  0;
 }
 
-#dialerInactiveCall {
+#dialerActiveCall.Landscape {
+    preferred-size: 45% 15mm;
+    minimum-size:   40% 15mm;
+    maximum-size:   -1 15mm;
+    padding-top:    5mm;
+    padding-left:   5mm;
+    padding-right:  5mm;
+    padding-bottom: 5mm;
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+}
+
+#dialerInactiveCall.Portrait {
     preferred-size: 90% 15mm;
     minimum-size:   80% 15mm;
     maximum-size:   -1  15mm;
+    padding-top:    5mm;
+    padding-left:   5mm;
+    padding-right:  5mm;
+    padding-bottom: 5mm;
+    margin-top:     0;
+    margin-left:    0;
+    margin-right:   0;
+    margin-bottom:  0;
+}
+
+#dialerInactiveCall.Landscape {
+    preferred-size: 45% 15mm;
+    minimum-size:   40% 15mm;
+    maximum-size:   -1 15mm;
     padding-top:    5mm;
     padding-left:   5mm;
     padding-right:  5mm;

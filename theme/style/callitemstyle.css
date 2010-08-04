@@ -29,6 +29,12 @@ CallItemStyle {
     padding-bottom: 0;
 }
 
+CallItemStyle.Landscape {
+    preferred-size: 49% 15mm;
+    minimum-size:   40% 15mm;
+    maximum-size:   49% 50%;
+}
+
 #callItemPeopleItem {
     nameObjectName:         "callPeopleItemName";
     phoneObjectName:        "callPeopleItemPhone";
@@ -55,12 +61,24 @@ CallItemStyle {
     maximum-size:   98% 50%;
 }
 
+#callItemPeopleItem.Landscape {
+    preferred-size: 49% 12mm;
+    minimum-size:   40% 12mm;
+    maximum-size:   49% 50%;
+}
+
 #callItemCenterSpacer {
     background-image: ;
     background-color: ;
     preferred-size: 98% 3mm;
     minimum-size:   -1 -1;
     maximum-size:   98% 3mm;
+}
+
+#callItemCenterSpacer.Landscape {
+    preferred-size: 49% 3mm%;
+    minimum-size:   -1% -1;
+    maximum-size:   49% 3mm%;
 }
 
 #callItemStatusName {
@@ -83,6 +101,12 @@ CallItemStyle {
     maximum-size:   25% 3mm;
 }
 
+#callItemStatusName.Landscape {
+    preferred-size: -1% 3mm;
+    minimum-size:   -1% -1;
+    maximum-size:   25% 3mm;
+}
+
 #callItemDurationName {
     background-image: ;
     background-color: ;
@@ -98,6 +122,12 @@ CallItemStyle {
     padding-right:  $MARGIN_MEDIUM;
     padding-bottom: 0;
 
+    preferred-size: -1 3mm;
+    minimum-size:   -1 -1;
+    maximum-size:   25% 3mm;
+}
+
+#callItemDurationName.Landscape {
     preferred-size: -1 3mm;
     minimum-size:   -1 -1;
     maximum-size:   25% 3mm;
