@@ -437,8 +437,34 @@ void CallManager::callStateChanged()
                 .arg(call->path())
                 .arg(call->lineID())
                 .arg(call->state());
+#ifdef IVI_HFP
+    if (call->state() == CallItemModel::STATE_ACTIVE) {
+        qDebug() << QString("Route microphone and speakers");
+        m_pactl = new PAControl();
+        connect(m_pactl, SIGNAL(finished()), this, SLOT(paFinished()));
+        m_pactl->createLoopbacks();
+    }
+    else if (call->state() == CallItemModel::STATE_NONE) {
+        qDebug() << QString("Unroute microphone and speakers");
+        m_pactl = new PAControl();
+        connect(m_pactl, SIGNAL(finished()), this, SLOT(paFinished()));
+        m_pactl->removeLoopbacks();
+    }
+#endif
     emit callsChanged();
 }
+
+#ifdef IVI_HFP
+void CallManager::paFinished() {
+    /* handle status checks */
+    if(m_pactl != NULL) {
+        /* fix me delete this thread */
+        //delete m_pactl;
+        m_pactl = NULL;
+    }
+    qDebug() << QString("Routing thread finished");
+}
+#endif
 
 QStringList CallManager::dumpProperties()
 {

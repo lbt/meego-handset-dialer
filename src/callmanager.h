@@ -11,6 +11,9 @@
 #ifndef CALLMANAGER_H
 #define CALLMANAGER_H
 
+#ifdef IVI_HFP
+#include "pacontrol.h"
+#endif
 #include "callitem.h"
 #include "modem_interface.h"
 #include <QtDBus>
@@ -101,6 +104,9 @@ private Q_SLOTS:
     void sendTonesFinished(QDBusPendingCallWatcher *watcher);
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
+#ifdef IVI_HFP
+    void paFinished();
+#endif
 
 private:
     QStringList        m_properties;
@@ -110,6 +116,9 @@ private:
     QList<CallItem *>  m_multipartyCallItems;
     CallItem          *m_activeCall;
     bool               m_connected;
+#ifdef IVI_HFP
+    PAControl         *m_pactl;
+#endif
 
     Q_DISABLE_COPY(CallManager)
 };
