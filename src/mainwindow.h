@@ -32,6 +32,9 @@ public:
     void simulateIncomingCall();
     bool event(QEvent *event);
     SearchBar *searchBar();
+#ifdef IVI_HFP
+    void displayBannerMessage(QString msg);
+#endif
     DialerKeyPad *keypad();
 
     QList<GenericPage *> m_pages;

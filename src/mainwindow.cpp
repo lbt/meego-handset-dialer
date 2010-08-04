@@ -23,6 +23,7 @@
 #include <MNotification>
 #include <MToolBar>
 #include <QDateTime>
+#include <MInfoBanner>
 #include "dialer_adaptor.h"
 
 MainWindow::MainWindow() :
@@ -235,3 +236,15 @@ DialerKeyPad *MainWindow::keypad()
     }
     return m_keypad;
 }
+
+#ifdef IVI_HFP
+void MainWindow::displayBannerMessage(QString msg)
+{
+    MInfoBanner* infoBanner = new MInfoBanner(MInfoBanner::Information);
+    infoBanner->setObjectName("popupMessage");
+    infoBanner->setBodyText(msg);
+    infoBanner->appear(MSceneWindow::DestroyWhenDone);
+
+    QTimer::singleShot(1000, infoBanner, SLOT(disappear()));
+}
+#endif
