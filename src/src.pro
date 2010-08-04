@@ -42,6 +42,8 @@ SOURCES += main.cpp \
     searchbar.cpp \
     dbustypes.cpp \
     pacontrol.cpp \
+    bluetoothdialog.cpp \
+    modemlistdialog.cpp \
 
 HEADERS += \
     common.h \
@@ -69,6 +71,8 @@ HEADERS += \
     searchbar.h \
     dbustypes.h \
     pacontrol.h \
+    bluetoothdialog.h \
+    modemlistdialog.h \
     $$MODEL_HEADERS \
     $$STYLE_HEADERS \
     $$DBUS_INTERFACE_HEADERS \
