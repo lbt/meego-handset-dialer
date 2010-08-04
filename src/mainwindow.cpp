@@ -44,7 +44,11 @@ MainWindow::MainWindow() :
     }
 
     TRACE
+#ifdef IVI_HFP
+    if (orientation() != M::Landscape)
+#else
     if (orientation() != M::Portrait)
+#endif
         setOrientationAngle(M::Angle270);
     // TODO: If we *REALLY* only support portrait, need to uncomment next line
     setOrientationLocked(true);

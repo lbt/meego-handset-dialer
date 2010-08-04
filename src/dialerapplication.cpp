@@ -226,7 +226,11 @@ void DialerApplication::createMainWindow()
 
     qDebug() << dumpDisplayInfo().join("\n");
 
+#ifdef IVI_HFP
+    if (m_mainWindow->orientation() != M::Landscape)
+#else
     if (m_mainWindow->orientation() != M::Portrait)
+#endif
         m_mainWindow->setOrientationAngle(M::Angle270);
     // TODO: If we *REALLY* only support portrait, need to uncomment next line
     //m_mainWindow->setKeepCurrentOrientation(true);
