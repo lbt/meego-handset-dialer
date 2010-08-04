@@ -11,6 +11,9 @@
 #include "common.h"
 #include "mainwindow.h"
 #include "dialerapplication.h"
+#ifdef IVI_HFP
+#include "dialerpage.h"
+#endif
 #include "managerproxy.h"
 #include "genericpage.h"
 #include <MDialog>
@@ -24,6 +27,9 @@
 #include <MToolBar>
 #include <QDateTime>
 #include <MInfoBanner>
+#ifdef IVI_HFP
+#include <QTimer>
+#endif
 #include "dialer_adaptor.h"
 
 MainWindow::MainWindow() :
@@ -32,6 +38,7 @@ MainWindow::MainWindow() :
     m_alert(new AlertDialog()),
 #ifdef IVI_HFP
     m_bluetoothDialog(new BluetoothDialog()),
+    m_timer(0),
 #endif
     m_search(new SearchBar()),
     m_keypad(0),
@@ -65,6 +72,11 @@ MainWindow::MainWindow() :
                                                  DBUS_SERVICE_PATH,
                                                  DBUS_SERVICE,
                                                  "accept");
+
+#ifdef IVI_HFP
+    connect(m_bluetoothDialog, SIGNAL(modemChanged(QString)),
+            this, SLOT(modemChanged(QString)));
+#endif
 }
 
 void MainWindow::showDebugPage()
@@ -259,6 +271,170 @@ void MainWindow::showBluetoothDialog()
     }
 }
 
+void MainWindow::modemChanged(QString path)
+{
+    TRACE
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (mp->isValid())
+    {
+        /* create a new ManagerProxy instance */
+        qDebug() << QString("Changing modem:");
+
+        delete mp;
+        ManagerProxy *mp = ManagerProxy::instance();
+        mp->setModem(path);
+
+        if (mp->modem() && mp->modem()->isValid())
+        {
+            qDebug() << QString("Connec to new modem: ") << mp->modem()->path();
+            connect(mp->modem(), SIGNAL(connected()), this,
+                                        SLOT(modemConnected()));
+            connect(mp->modem(), SIGNAL(disconnected()), this,
+                                        SLOT(modemDisconnected()));
+        }
+
+        MGConfItem *preferedModem = new MGConfItem("/apps/hfdialer/preferedModem");
+        preferedModem->set(QVariant(path));
+    }
+}
+
+void MainWindow::modemConnected()
+{
+    TRACE
+    qDebug() << QString("Modem connected: ");
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (mp->isValid() && mp->modem() && mp->modem()->isValid())
+    {
+
+        if (mp->modem()->powered())
+        {
+            /* connect now, modem is enabled */
+            qDebug() << QString("Modem is powered: ");
+            this->connectCallManager();
+        }
+        else
+        {
+            /* enable the modem first, defer connect */
+            qDebug() << QString("Modem is not powered: set property to true");
+            connect(mp->modem(), SIGNAL(poweredChanged(bool)), this,
+                                        SLOT(modemIsPowered(bool)));
+            mp->modem()->setPowered(true);
+        }
+    }
+}
+
+void MainWindow::modemDisconnected()
+{
+    TRACE
+    qDebug() << QString("Modem disconnected");
+}
+
+void MainWindow::modemIsPowered(bool isPowered)
+{
+    qDebug() << QString("Modem Powered: ") << isPowered;
+    if(isPowered)
+    {
+        this->connectCallManager();
+    }
+}
+
+void MainWindow::networkConnected()
+{
+    TRACE
+    qDebug() << QString("Network connected");
+}
+
+void MainWindow::networkDisconnected()
+{
+    TRACE
+    qDebug() << QString("Network disconnected");
+}
+
+void MainWindow::callManagerConnected()
+{
+    TRACE
+    qDebug() << QString("CallManager connected");
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (mp->callManager() && mp->callManager()->isValid()) {
+        connect(mp->callManager(), SIGNAL(incomingCall(CallItem*)),
+                this,  SLOT(handleIncomingCall(CallItem*)));
+
+        connect (mp->callManager(), SIGNAL(callsChanged()),
+                 keypad(), SLOT(callsChanged()));
+        this->displayBannerMessage("Handsfree Connected");
+        if(m_timer)
+        {
+            if (m_timer->isActive())
+                m_timer->stop();
+            delete m_timer;
+            m_timer = NULL;
+        }
+    }
+}
+
+void MainWindow::callManagerDisconnected()
+{
+    TRACE
+    qDebug() << QString("CallManager disconnected");
+    this->displayBannerMessage("Handsfree Disconnected");
+}
+
+void MainWindow::connectCallManager()
+{
+    qDebug() << QString("Connect to CallManager");
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (mp && mp->isValid() && !mp->modem()->path().isEmpty())
+    {
+        if (m_timer)
+        {
+            if (m_timer->isActive())
+                m_timer->stop();
+            delete m_timer;
+            m_timer = NULL;
+        }
+        m_tries = 2;    // try connecting 2 times
+        m_timer = new QTimer(this);
+        connect(m_timer, SIGNAL(timeout()), this, SLOT(connectCallManagerTimerDone()));
+        m_timer->start(2000); // wait for 2 seconds for retry
+    }
+}
+
+void MainWindow::connectCallManagerTimerDone()
+{
+    qDebug() << QString("Trying to connect to CallManager....") << m_tries;
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (m_tries >0 && mp && mp->isValid() && !mp->modem()->path().isEmpty())
+    {
+        mp->setNetwork(mp->modem()->path());
+        mp->setCallManager(mp->modem()->path());
+
+        disconnect(mp->callManager(), SIGNAL(incomingCall(CallItem*)));
+
+        connect(mp->network(), SIGNAL(connected()), this,
+                                      SLOT(networkConnected()));
+        connect(mp->network(), SIGNAL(disconnected()), this,
+                                      SLOT(networkDisconnected()));
+        connect(mp->callManager(), SIGNAL(connected()), this,
+                                          SLOT(callManagerConnected()));
+        connect(mp->callManager(), SIGNAL(disconnected()), this,
+                                          SLOT(callManagerDisconnected()));
+
+        DialerPage* page = dynamic_cast<DialerPage*>(m_pages.at(GenericPage::PAGE_DIALER));
+        connect(mp->callManager(), SIGNAL(connected()), page,
+                                            SLOT(updateCallManager()));
+        m_tries--;
+    }
+    else
+    {
+        if (m_timer->isActive())
+            m_timer->stop();
+        delete m_timer;
+        m_timer = NULL;
+    }
+}
+#endif
+
+#ifdef IVI_HFP
 void MainWindow::displayBannerMessage(QString msg)
 {
     MInfoBanner* infoBanner = new MInfoBanner(MInfoBanner::Information);

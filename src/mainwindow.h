@@ -53,18 +53,35 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void callStateChanged();
+#ifdef IVI_HFP
+    void modemChanged(QString path);
+    void modemIsPowered(bool);
+    void modemConnected();
+    void networkConnected();
+    void callManagerConnected();
+    void modemDisconnected();
+    void networkDisconnected();
+    void callManagerDisconnected();
+    void connectCallManagerTimerDone();
+#endif
 
 private:
     MApplicationPage *m_lastPage;
     AlertDialog        *m_alert;
 #ifdef IVI_HFP
     BluetoothDialog    *m_bluetoothDialog;
+    QTimer             *m_timer;
+    int                 m_tries;
 #endif
     SearchBar          *m_search;
     DialerKeyPad       *m_keypad;
     MRemoteAction       m_acceptAction;
     CallItem           *m_incomingCall;
     MMessageBox        *m_tbd;
+
+#ifdef IVI_HFP
+    void connectCallManager();
+#endif
 
     Q_DISABLE_COPY(MainWindow);
 };

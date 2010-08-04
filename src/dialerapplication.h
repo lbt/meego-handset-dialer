@@ -47,12 +47,14 @@ public:
     MButtonGroup          *headerButtonGroup();
 
 private Q_SLOTS:
+#ifndef IVI_HFP
     void modemConnected();
     void networkConnected();
     void callManagerConnected();
     void modemDisconnected();
     void networkDisconnected();
     void callManagerDisconnected();
+#endif
     void createMainWindow();
     QStringList dumpDisplayInfo();
     void setError(const QString msg);
@@ -62,10 +64,12 @@ private Q_SLOTS:
 private:
     void init();
 
+#ifndef IVI_HFP
     ManagerProxy *m_manager;
     ModemProxy   *m_modem;
     NetworkProxy *m_network;
     CallManager  *m_callManager;
+#endif
     MainWindow   *m_mainWindow;
     bool          m_connected;
     QString       m_lastError;
@@ -77,6 +81,9 @@ private:
 
     MButtonGroup        *m_header;
     MGConfItem          *m_lastPage;
+#ifdef IVI_HFP
+    MGConfItem          *m_preferedModem;
+#endif
 
     Q_DISABLE_COPY(DialerApplication);
 };

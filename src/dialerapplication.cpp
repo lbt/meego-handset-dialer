@@ -119,6 +119,53 @@ void DialerApplication::init()
     m_historyProxy->sort(HistoryTableModel::COLUMN_CALLSTART,
                          Qt::DescendingOrder);
 
+#ifdef IVI_HFP
+    ManagerProxy *mp = ManagerProxy::instance();
+    if (!mp || !mp->isValid())
+        setError("Failed to connect to org.ofono.Manager: is ofonod running?");
+    else {
+        m_connected = true;
+
+        m_lastPage = new MGConfItem("/apps/hfdialer/lastPage");
+        m_preferedModem = new MGConfItem("/apps/hfdialer/preferedModem");
+
+        // We now have enough to get started with GUI stuff
+        createMainWindow();
+
+        if(mp->getModemList().isEmpty()) //no modem found
+            return;
+
+        /* only 1 available, automatically choose the first modem */
+        if(mp->getModemList().size()==2)
+        {
+            mp->setModem(mp->getModemList().first());
+        }
+        /* more than 1 modem, see if it is the prefered modem */
+        else
+        {
+            QString prefered = m_preferedModem->value().toString();
+            if (mp->getModemList().contains(prefered))
+            {
+                int index = mp->getModemList().indexOf(prefered);
+                mp->setModem(mp->getModemList().at(index));
+            }
+        }
+
+        if (mp->modem() && mp->modem()->isValid())
+        {
+            connect(mp->modem(), SIGNAL(connected()), m_mainWindow,
+                                        SLOT(modemConnected()));
+            connect(mp->modem(), SIGNAL(disconnected()), m_mainWindow,
+                                        SLOT(modemDisconnected()));
+        }
+        else
+        {
+            /* none matching, ask user to choose */
+            m_mainWindow->showBluetoothDialog();
+        }
+        return;
+    }
+#else
     m_manager = ManagerProxy::instance();
     if (!m_manager || !m_manager->isValid())
         setError("Failed to connect to org.ofono.Manager: is ofonod running?");
@@ -139,8 +186,10 @@ void DialerApplication::init()
                                       SLOT(callManagerConnected()));
     connect(m_manager->callManager(), SIGNAL(disconnected()),
                                       SLOT(callManagerDisconnected()));
+#endif
 }
 
+#ifndef IVI_HFP
 void DialerApplication::modemConnected()
 {
     TRACE
@@ -179,6 +228,7 @@ void DialerApplication::callManagerDisconnected()
 {
     TRACE
 }
+#endif
 
 int DialerApplication::showErrorDialog()
 {
@@ -214,13 +264,17 @@ int DialerApplication::showErrorDialog()
 void DialerApplication::createMainWindow()
 {
     TRACE
+#ifndef IVI_HFP
     disconnect(m_callManager, SIGNAL(incomingCall(CallItem*)));
+#endif
 
     if (!m_mainWindow)
         m_mainWindow = new MainWindow();
 
+#ifndef IVI_HFP
     connect(m_callManager, SIGNAL(incomingCall(CallItem*)),
             m_mainWindow,  SLOT(handleIncomingCall(CallItem*)));
+#endif
 
     m_mainWindow->show();
 
