@@ -10,6 +10,8 @@ PKGCONFIG += meegotouch
 
 !win32-msvc*:QMAKE_CXXFLAGS += -g
 
+# DEFINES += IVI_HFP
+
 # Features
 DEFINES += DBUS_SERVICE_PATH=\\\"/com/meego/${QMAKE_TARGET}\\\"
 DEFINES += DBUS_SERVICE=\\\"com.meego.${QMAKE_TARGET}\\\"
