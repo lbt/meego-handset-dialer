@@ -6,7 +6,7 @@ PKGCONFIG += QtNetwork
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 MGEN_OUTDIR = .gen
-LIBS += -lseaside
+LIBS += -lseaside -lpulse
 
 target.path = $$M_INSTALL_BIN
 
@@ -41,6 +41,7 @@ SOURCES += main.cpp \
     historytablemodel.cpp \
     searchbar.cpp \
     dbustypes.cpp \
+    pacontrol.cpp \
 
 HEADERS += \
     common.h \
@@ -67,6 +68,7 @@ HEADERS += \
     historytablemodel.h \
     searchbar.h \
     dbustypes.h \
+    pacontrol.h \
     $$MODEL_HEADERS \
     $$STYLE_HEADERS \
     $$DBUS_INTERFACE_HEADERS \
