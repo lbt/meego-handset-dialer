@@ -435,6 +435,15 @@ void DialerKeyPad::handleButtonClicked()
     if (m_target && button && !button->text().isEmpty()) {
         m_target->insert(button->text());
     }
+
+    CallManager *cm = ManagerProxy::instance()->callManager();
+    if (!cm->isValid()) {
+        qDebug() << "Unable to determine if in active call, no valid connection";
+        return;
+    }
+    if (cm->activeCall()) {
+      cm->sendTones(button->text());
+    }
 }
 
 void DialerKeyPad::callSpeedDial()
