@@ -31,6 +31,7 @@ MainWindow::MainWindow() :
     m_alert(new AlertDialog()),
     m_search(new SearchBar()),
     m_keypad(0),
+    m_acceptAction(DBUS_SERVICE, DBUS_SERVICE_PATH, DBUS_SERVICE, "accept"),
     m_incomingCall(0),
     m_tbd(0)
 {
@@ -52,11 +53,6 @@ MainWindow::MainWindow() :
     m_pages.clear();
     m_search->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                         QSizePolicy::MinimumExpanding));
-
-    MRemoteAction m_acceptAction = MRemoteAction(DBUS_SERVICE,
-                                                 DBUS_SERVICE_PATH,
-                                                 DBUS_SERVICE,
-                                                 "accept");
 }
 
 void MainWindow::showDebugPage()
