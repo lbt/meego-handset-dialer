@@ -1,1 +1,22 @@
+Changes in 0.1.11
+
+e3da... Fixed: Toolbar alignment and icons (BMC#4067)
+dd56... Updated: TODO file (BMC #548, #3393, #1507, #2811)
+16bf... Add DTMF tone sending when in call
+650e... Fixed incoming call remote action
+76b5... Fix initial keypad layout regression in last commit
+e51b... Fixed: Solved segfault on accept/reject (BMC#3472)
+b45b... Fixed: Made incoming call info visible (BMC#3393)
+6801... Fixed: Added missing call information (BMC#548)
+600b... Voicemail task completed
+da67... Updated to work with libseaside-0.0.26
+a243... Added Voicemail info to debug page
+f786... Make voicemail button use mailbox data
+a972... Add reference to VoicemailProxy into ManagerProxy class
+dae8... Add Voicemail (MessageWaiting) proxy class
+c165... Updated TODO list
+6ac4... Adding TODO file to begin tracking tasks
+55ab... Implement the SendTones method for DTMF work to follow
+ffab... Sync up introspection files with ofono 0.24 API
+
 
