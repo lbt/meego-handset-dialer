@@ -122,10 +122,10 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       m_optionsVisible(true),
       m_incall(false),
       m_optionBox(new MStylableWidget()),
-      m_mute(new MButton()),
-      m_hold(new MButton()),
-      m_spkr(new MButton()),
-      m_nway(new MButton()),
+      m_mute(new MButton("Mute")),
+      m_hold(new MButton("Hold")),
+      m_spkr(new MButton("Speaker")),
+      m_nway(new MButton("Merge Calls")),
       m_buttonBox(new MStylableWidget()),
       m_controlBox(new MStylableWidget()),
       m_add(new MButton()),
@@ -207,19 +207,44 @@ void DialerKeyPad::updateButtonStates()
     bool haveCalls = false;
 
     if (cm && cm->isValid())
-        haveCalls = (cm->calls().length() > 0);
+        haveCalls = ((cm->calls().length() > 0) ||
+                     (cm->multipartyCalls().length() > 0));
 
     // Sync up the dial/hangup button state
     m_call->setChecked(haveCalls);
 
     // Sync up the mute button state
-    if (vm && vm->isValid())
+    if (vm && vm->isValid()) {
         m_mute->setChecked(vm->muted());
+        m_mute->setText((vm->muted())?"Un-mute":"Mute");
+    }
 
-    // Sync up the mute button state
-    if (cm && cm->isValid() && cm->activeCall())
-        m_hold->setChecked((cm->activeCall()->state() ==
-                            CallItemModel::STATE_HELD));
+    // Sync up the hold button state
+    if (cm && cm->isValid()) {
+        m_hold->setEnabled(true); // Start by re-enabling the button
+        if (cm->activeCall() && cm->heldCall())
+            m_hold->setText("Swap");
+        else if (cm->activeCall()) {
+            m_hold->setText("Hold");
+            m_hold->setChecked(false);
+        }
+        else if (cm->heldCall()) {
+            m_hold->setText("Un-Hold");
+            m_hold->setChecked(true);
+        }
+        else {
+            m_hold->setEnabled(false);
+            m_hold->setChecked(false);
+        }
+    }
+
+    // Sync up the merge button state
+    if (cm && cm->isValid()) {
+        if (cm->multipartyCalls().length() > 0)
+            m_nway->setText("Add");
+        else
+            m_nway->setText("Merge Calls");
+    }
 }
 
 void DialerKeyPad::updateLayoutPolicy()
@@ -301,8 +326,8 @@ void DialerKeyPad::createOptionBox()
 
     m_mute->setObjectName("muteButton");
     m_mute->setViewType(MButton::toggleType);
-    m_mute->setIconID("icon-m-telephony-ongoing-muted");
-    m_mute->setToggledIconID("icon-m-telephony-ongoing-muted-on");
+//    m_mute->setIconID("icon-m-telephony-ongoing-muted");
+//    m_mute->setToggledIconID("icon-m-telephony-ongoing-muted-on");
     m_mute->setCheckable(true);
     m_mute->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
@@ -310,16 +335,16 @@ void DialerKeyPad::createOptionBox()
     m_hold->setObjectName("holdButton");
     m_hold->setViewType(MButton::toggleType);
     m_hold->setCheckable(true);
-    m_hold->setIconID("icon-dialer-hold");
-    m_hold->setToggledIconID("icon-dialer-hold-on");
+//    m_hold->setIconID("icon-dialer-hold");
+//    m_hold->setToggledIconID("icon-dialer-hold-on");
     m_hold->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
     m_spkr->setObjectName("speakerButton");
     m_spkr->setViewType(MButton::toggleType);
     m_spkr->setCheckable(true);
-    m_spkr->setIconID("icon-dialer-speaker");
-    m_spkr->setToggledIconID("icon-dialer-speaker-on");
+//    m_spkr->setIconID("icon-dialer-speaker");
+//    m_spkr->setToggledIconID("icon-dialer-speaker-on");
     m_spkr->setEnabled(false);
     m_spkr->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
@@ -327,14 +352,13 @@ void DialerKeyPad::createOptionBox()
     m_nway->setObjectName("multiButton");
     m_nway->setViewType(MButton::toggleType);
     m_nway->setCheckable(true);
-    m_nway->setIconID("icon-m-telephony-call-combine");
-    m_nway->setToggledIconID("icon-m-telephony-call-combine-on");
-    m_nway->setEnabled(false);
+//    m_nway->setIconID("icon-m-telephony-call-combine");
+//    m_nway->setToggledIconID("icon-m-telephony-call-combine-on");
     m_nway->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
-    policy->insertItem(0, m_mute, Qt::AlignHCenter|Qt::AlignBottom);
-    policy->insertItem(1, m_hold, Qt::AlignHCenter|Qt::AlignBottom);
+    policy->insertItem(0, m_hold, Qt::AlignHCenter|Qt::AlignBottom);
+    policy->insertItem(1, m_mute, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(2, m_spkr, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(3, m_nway, Qt::AlignHCenter|Qt::AlignBottom);
 
@@ -534,12 +558,32 @@ void DialerKeyPad::callPressed(bool checked)
             qDebug() << "Placing call to: " << number;
             cm->dial(number);
         }
-    } else {
-        CallItem *ac = cm->activeCall();
-        if (ac) {
-            qDebug() << "Hanging up call to: " << ac->lineID();
-            ac->callProxy()->hangup();
+        else
+            // No number to dial, set back to unchecked, Fixes BMC#3284
+            m_call->setChecked(false);
+    }
+    else {
+        CallItem *c = NULL;
+        if (cm->activeCall())
+            c = cm->activeCall();
+        else if (cm->heldCall())
+            c = cm->heldCall();
+        else if (cm->dialingCall()) // Fixes BMC#432
+            c = cm->dialingCall();
+
+        if (c) {
+            if (cm->multipartyCalls().length() &&
+                cm->multipartyCallsAsStrings().contains(c->path())) {
+                qDebug() << "Hanging up MultipartyCall";
+                cm->hangupMultipartyCall();
+            }
+            else {
+                qDebug() << "Hanging up call to: " << c->lineID();
+                c->callProxy()->hangup();
+            }
         }
+        else
+            qWarning() << "Hangup requested when no active or held calls!";
     }
 }
 
@@ -568,9 +612,8 @@ void DialerKeyPad::mutePressed(bool checked)
     qDebug() << QString("mute option %1").arg((checked)?"set":"unset");
     ManagerProxy::instance()->volumeManager()->setMuted(checked);
 
-    // Reset checked state if setMuted() failed
-    if (ManagerProxy::instance()->volumeManager()->muted() != checked)
-        m_mute->setChecked(ManagerProxy::instance()->volumeManager()->muted());
+    // Sync up the button states
+    updateButtonStates();
 }
 
 void DialerKeyPad::holdPressed(bool checked)
@@ -584,6 +627,9 @@ void DialerKeyPad::holdPressed(bool checked)
 
     qDebug() << QString("hold option %1").arg((checked)?"set":"unset");
     cm->swapCalls();
+
+    // Sync up the button states
+    updateButtonStates();
 }
 
 void DialerKeyPad::spkrPressed(bool checked)
@@ -593,15 +639,36 @@ void DialerKeyPad::spkrPressed(bool checked)
         qDebug() << "spkr option enabled";
     else
         qDebug() << "spkr option disabled";
+
+    // Sync up the button states
+    updateButtonStates();
 }
 
 void DialerKeyPad::nwayPressed(bool checked)
 {
     TRACE
-    if (checked)
-        qDebug() << "nway option enabled";
+    CallManager *cm = ManagerProxy::instance()->callManager();
+    if (!cm->isValid()) {
+        qDebug() << "Unable to merge, no valid connection";
+        return;
+    }
+
+    qDebug() << QString("nway option %1").arg((checked)?"set":"unset");
+
+    // If there is already a MultipartyCall, then we want to add an new
+    // participant
+    if (cm->multipartyCalls().length() > 0)
+        if (cm->activeCall() && cm->heldCall())
+            qCritical() << QString("Can't add participant all lines busy!");
+        else
+            qWarning() << QString("Add to MultipartyCall not yet working...");
+    // Otherwise, we're merging existing calls into a MultipartyCall
+    // Fixes BMC#550, and BMC#2806
     else
-        qDebug() << "nway option disabled";
+        cm->createMultipartyCall();
+
+    // Sync up the button states
+    updateButtonStates();
 }
 
 void DialerKeyPad::callsChanged()

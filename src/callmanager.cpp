@@ -15,7 +15,6 @@ CallManager::CallManager(const QString &modemPath)
     : org::ofono::VoiceCallManager(OFONO_SERVICE,
                                    modemPath,
                                    QDBusConnection::systemBus()),
-      m_activeCall(0),
       m_connected(false)
 {
     TRACE
@@ -57,10 +56,22 @@ QList<CallItem *> CallManager::calls() const
     return m_callItems;
 }
 
+QList<QString> CallManager::callsAsStrings() const
+{
+    TRACE
+    return m_calls;
+}
+
 QList<CallItem *> CallManager::multipartyCalls() const
 {
     TRACE
     return m_multipartyCallItems;
+}
+
+QList<QString> CallManager::multipartyCallsAsStrings() const
+{
+    TRACE
+    return m_multipartyCalls;
 }
 
 CallItem *CallManager::activeCall() const
@@ -69,6 +80,26 @@ CallItem *CallManager::activeCall() const
     if (m_callItems.size())
     foreach (CallItem *c, m_callItems)
         if (c->state() == CallItemModel::STATE_ACTIVE)
+            return c;
+    return NULL;
+}
+
+CallItem *CallManager::heldCall() const
+{
+    TRACE
+    if (m_callItems.size())
+    foreach (CallItem *c, m_callItems)
+        if (c->state() == CallItemModel::STATE_HELD)
+            return c;
+    return NULL;
+}
+
+CallItem *CallManager::dialingCall() const
+{
+    TRACE
+    if (m_callItems.size())
+    foreach (CallItem *c, m_callItems)
+        if (c->state() == CallItemModel::STATE_DIALING)
             return c;
     return NULL;
 }
@@ -143,34 +174,112 @@ void CallManager::holdAndAnswer()
 }
 
 /*
- * TODO: Implement remaining Ofono APIs:
- *
+ * Joins the currently Active (or Outgoing, depending
+ * on network support) and Held calls together and
+ * disconnects both calls. In effect transfering
+ * one party to the other. This procedure requires
+ * an Active and Held call and the Explicit Call Transfer
+ * (ECT) supplementary service to be active.
+ */
 void CallManager::transferCalls()
 {
     TRACE
+
+    QDBusPendingReply<> reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = Transfer();
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(transferFinished(QDBusPendingCallWatcher*)));
 }
 
+/*
+ * Releases currently active call and answers the currently
+ * waiting call. Please note that if the current call is
+ * a multiparty call, then all parties in the multi-party
+ * call will be released.
+ */
 void CallManager::releaseAndAnswer()
 {
     TRACE
+
+    QDBusPendingReply<> reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = ReleaseAndAnswer();
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(releaseAndAnswerFinished(QDBusPendingCallWatcher*)));
 }
 
-void CallManager::privateChat(CallItem)
+/*
+ * Places the multi-party call on hold and makes desired
+ * call active. This is used to accomplish private chat
+ * functionality.  Note that if there are only two calls
+ * (three parties) in the multi-party call the result will
+ * be two regular calls, one held and one active. The
+ * Multiparty call will need to be setup again by using the
+ * CreateMultiparty method.  Returns the new list of calls
+ * participating in the multiparty call.
+ */
+void CallManager::privateChat(const CallItem &call)
 {
     TRACE
+
+    QDBusPendingReply<QList<QDBusObjectPath> > reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = PrivateChat(QDBusObjectPath(call.path()));
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(privateChatFinished(QDBusPendingCallWatcher*)));
 }
 
+/*
+ * Joins active and held calls together into a multi-party
+ * call. If one of the calls is already a multi-party
+ * call, then the other call is added to the multiparty
+ * conversation. Returns the new list of calls
+ * participating in the multiparty call.
+ *
+ * There can only be one subscriber controlled multi-party
+ * call according to the GSM specification.
+ */
 void CallManager::createMultipartyCall()
 {
     TRACE
+
+    QDBusPendingReply<QList<QDBusObjectPath> > reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = CreateMultiparty();
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(createMultipartyFinished(QDBusPendingCallWatcher*)));
 }
 
+/*
+ * Hangs up the multi-party call.  All participating
+ * calls are released.
+ */
 void CallManager::hangupMultipartyCall()
 {
     TRACE
-}
 
- */
+    QDBusPendingReply<> reply;
+    QDBusPendingCallWatcher *watcher;
+
+    reply = HangupMultiparty();
+    watcher = new QDBusPendingCallWatcher(reply);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     SLOT(hangupMultipartyFinished(QDBusPendingCallWatcher*)));
+}
 
 void CallManager::sendTones(const QString toneid)
 {
@@ -396,6 +505,84 @@ void CallManager::holdAndAnswerFinished(QDBusPendingCallWatcher *watcher)
 
     if (reply.isError())
         qCritical() << QString("HoldAndAnswer() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+}
+
+void CallManager::transferFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+    QDBusPendingReply<> reply = *watcher;
+
+    if (reply.isError())
+        qCritical() << QString("Transfer() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+}
+
+void CallManager::releaseAndAnswerFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+    QDBusPendingReply<> reply = *watcher;
+
+    if (reply.isError())
+        qCritical() << QString("ReleaseAndAnswer() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+}
+
+void CallManager::privateChatFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+
+    QDBusPendingReply<QList<QDBusObjectPath> > reply = *watcher;
+
+    if (reply.isError()) {
+        qCritical() << QString("PrivateChat() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+        return;
+    } else {
+        QList<QDBusObjectPath> val = reply.value();
+        qDebug() << QString("PrivateChat() Success: paths ==");
+        if (val.size()) {
+            foreach (QDBusObjectPath p, val) {
+                qDebug() << QString("------> %1").arg(p.path());
+            }
+        }
+    }
+}
+
+void CallManager::createMultipartyFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+
+    QDBusPendingReply<QList<QDBusObjectPath> > reply = *watcher;
+
+    if (reply.isError()) {
+        qCritical() << QString("CreateMultiparty() Failed: %1 - %2")
+                       .arg(reply.error().name())
+                       .arg(reply.error().message());
+        return;
+    } else {
+        QList<QDBusObjectPath> val = reply.value();
+        qDebug() << QString("CreateMultiparty() Success: paths ==");
+        if (val.size()) {
+            foreach (QDBusObjectPath p, val) {
+                qDebug() << QString("------> %1").arg(p.path());
+            }
+        }
+    }
+}
+
+void CallManager::hangupMultipartyFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+
+    QDBusPendingReply<> reply = *watcher;
+
+    if (reply.isError())
+        qCritical() << QString("HangupMultiparty() Failed: %1 - %2")
                        .arg(reply.error().name())
                        .arg(reply.error().message());
 }

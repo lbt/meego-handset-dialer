@@ -34,8 +34,12 @@ public:
     bool isValid();
 
     QList<CallItem *> calls() const;
+    QList<QString> callsAsStrings() const;
     QList<CallItem *> multipartyCalls() const;
+    QList<QString> multipartyCallsAsStrings() const;
     CallItem *activeCall() const;
+    CallItem *heldCall() const;
+    CallItem *dialingCall() const;
 
     QStringList dumpProperties();
 
@@ -56,26 +60,20 @@ public Q_SLOTS:
     // and answer the currently waiting call.
     void holdAndAnswer();
 
-    /*
-     * TODO: Implement remaining Ofono APIs:
-     *
-
     // Join Active and Held calls and disconnects from both calls
     void transferCalls();
 
     // Release currently active call and answer the currently waiting call
-    releaseAndAnswer()
+    void releaseAndAnswer();
 
     // Place the multi-party call on hold and makes desired call active
-    privateChat(CallItem)
+    void privateChat(const CallItem &call);
 
     // Join active and held calls together into a multi-party call
-    createMultipartyCall()
+    void createMultipartyCall();
 
     // Hang up the multi-party call (all participating calls released)
-    hangupMultipartyCall()
-
-     */
+    void hangupMultipartyCall();
 
     // Sends the DTMF tones to the network
     void sendTones(const QString toneid);
@@ -98,6 +96,11 @@ private Q_SLOTS:
     void hangupAllFinished(QDBusPendingCallWatcher *watcher);
     void swapFinished(QDBusPendingCallWatcher *watcher);
     void holdAndAnswerFinished(QDBusPendingCallWatcher *watcher);
+    void transferFinished(QDBusPendingCallWatcher *watcher);
+    void releaseAndAnswerFinished(QDBusPendingCallWatcher *watcher);
+    void privateChatFinished(QDBusPendingCallWatcher *watcher);
+    void createMultipartyFinished(QDBusPendingCallWatcher *watcher);
+    void hangupMultipartyFinished(QDBusPendingCallWatcher *watcher);
     void sendTonesFinished(QDBusPendingCallWatcher *watcher);
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
@@ -108,7 +111,6 @@ private:
     QList<CallItem *>  m_callItems;
     QList<QString>     m_multipartyCalls;
     QList<CallItem *>  m_multipartyCallItems;
-    CallItem          *m_activeCall;
     bool               m_connected;
 
     Q_DISABLE_COPY(CallManager)
