@@ -45,13 +45,6 @@ TODO:
 Dialer Features
 ---------------
 
-- Add Call elapsed time indicator in all call views
-  Details:      
-  Priority:     Medium
-  Complexity:   C1
-  BMC#:         BMC#548, BMC#2245, BMC#2658
-  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
-
 - Add event feedback (haptic, audio, other)
   Details:      
   Priority:     Low
@@ -83,13 +76,6 @@ Dialer Features
   Complexity:   C2
   BMC#:         BMC#550, BMC#2806
   Owner:        Shane Bryan <shane.bryan@linux.intel.com>
-
-- Send DTMF tones
-  Details:     
-  Priority:     Medium
-  Complexity:   C1
-  BMC#:         BMC#2811
-  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
 
 - Audio routing integration
   Details:      
@@ -174,17 +160,6 @@ Dialer Features
 
 System Interaction tasks
 ------------------------
-
-- Hook up incoming call notice to MeeGoTouch platform notification system
-  Details:      This is already done, mostly, only problem is that the API
-                for specifying actions on the notification seems broken or
-                still undefined/unimplimented.  Need to diagnose this and/or
-                find out from the MTF devs how to allow a notification to have
-                actions associated with them.
-  Priority:     High
-  Complexity:   C1
-  BMC#:         BMC#1507
-  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
 
 - Ringtones associated per contact
   Details:      Should be able to set/get a ringtone for each contact.  This

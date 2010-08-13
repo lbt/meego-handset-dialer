@@ -297,47 +297,47 @@ void DialerApplication::createMainWindow()
         dAction = new MWidgetAction(m_mainWindow);
         dAction->setLocation(MAction::ToolBarLocation);
         dAction->setCheckable(true);
-        dAction->setIconID("icon-dialer-phone-off");
         dial = new MButton();
         dial->setObjectName("headerButton");
         dial->setViewType("toolbartab");
         dial->setCheckable(true);
+        dial->setIconID("icon-dialer-phone-off");
         dial->setToggledIconID("icon-dialer-phone-on");
         dAction->setWidget(dial);
 
         // Recent button
         rAction = new MWidgetAction(m_mainWindow);
         rAction->setCheckable(true);
-        rAction->setIconID("icon-dialer-history-off");
         rAction->setLocation(MAction::ToolBarLocation);
         recent = new MButton();
         recent->setObjectName("headerButton");
         recent->setViewType("toolbartab");
         recent->setCheckable(true);
+        recent->setIconID("icon-dialer-history-off");
         recent->setToggledIconID("icon-dialer-history-on");
         rAction->setWidget(recent);
 
         // People button
         pAction = new MWidgetAction(m_mainWindow);
         pAction->setCheckable(true);
-        pAction->setIconID("icon-dialer-people-off");
         pAction->setLocation(MAction::ToolBarLocation);
         people = new MButton();
         people->setObjectName("headerButton");
         people->setViewType("toolbartab");
         people->setCheckable(true);
+        people->setIconID("icon-dialer-people-off");
         people->setToggledIconID("icon-dialer-people-on");
         pAction->setWidget(people);
 
         // Favorites button
         fAction = new MWidgetAction(m_mainWindow);
         fAction->setCheckable(true);
-        fAction->setIconID("icon-dialer-favorite-off");
         fAction->setLocation(MAction::ToolBarLocation);
         favs = new MButton();
         favs->setObjectName("headerButton");
         favs->setViewType("toolbartab");
         favs->setCheckable(true);
+        favs->setIconID("icon-dialer-favorite-off");
         favs->setToggledIconID("icon-dialer-favorite-on");
         fAction->setWidget(favs);
 

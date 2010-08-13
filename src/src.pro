@@ -84,7 +84,7 @@ DBUS_INTERFACES += dbus/org.ofono.manager.xml \
     dbus/org.ofono.modem.xml \
     dbus/org.ofono.operator.xml \
     dbus/org.ofono.voicecall.xml \
-    dbus/org.ofono.primarydatacontext.xml \
+#    dbus/org.ofono.primarydatacontext.xml \
 
     system(qdbusxml2cpp -i dbustypes.h -p manager_interface.h: dbus/org.ofono.manager.xml)
 

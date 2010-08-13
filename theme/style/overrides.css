@@ -12,6 +12,7 @@
  * Portrait Settings
  */
 MDockWidgetStyle.Portrait {
+    offset: 0 2.8mm;
     vertical-align: top;
     horizontal-align: center;
     preferred-size: 75% $HEIGHT_NAVIGATIONBAR;
