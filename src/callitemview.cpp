@@ -64,7 +64,6 @@ PeopleItem *CallItemView::peopleItem() const
 
 MLabel *CallItemView::durationLabel() const
 {
-    TRACE
     return m_duration;
 }
 
@@ -146,8 +145,51 @@ void CallItemView::updateDurationLabel()
 
 void CallItemView::updateStatusLabel()
 {
+    TRACE
     if (!model()->state().isEmpty())
         statusLabel()->setText(model()->state());
+
+    if (peopleItem())
+        peopleItem()->setSelected(false);
+
+    switch (model()->stateType()) {
+    case CallItemModel::STATE_ACTIVE:
+        qDebug() << QString("CallItemView: setModeActive()");
+        style().setModeActive();
+        if (peopleItem())
+            peopleItem()->setSelected(true);
+        break;
+    case CallItemModel::STATE_HELD:
+        qDebug() << QString("CallItemView: setModeHeld()");
+        style().setModeHeld();
+        break;
+    case CallItemModel::STATE_DIALING:
+        qDebug() << QString("CallItemView: setModeDialing()");
+        style().setModeDialing();
+        break;
+    case CallItemModel::STATE_ALERTING:
+        qDebug() << QString("CallItemView: setModeAlerting()");
+        style().setModeAlerting();
+        break;
+    case CallItemModel::STATE_INCOMING:
+        qDebug() << QString("CallItemView: setModeIncoming()");
+        style().setModeIncoming();
+        break;
+    case CallItemModel::STATE_WAITING:
+        qDebug() << QString("CallItemView: setModeWaiting()");
+        style().setModeWaiting();
+        break;
+    case CallItemModel::STATE_DISCONNECTED:
+        qDebug() << QString("CallItemView: setModeDisconnected()");
+        style().setModeDisconnected();
+        break;
+    default:
+        qDebug("CallItemView: setModeDefault()");
+        style().setModeDefault();
+        break;
+    }
+
+    applyStyle();
 }
 
 void CallItemView::applyStyle()
@@ -163,26 +205,31 @@ void CallItemView::applyStyle()
         QRect s = QRect(QPoint(0,0),sizeHint(Qt::PreferredSize).toSize());
         m_picture = QPixmap(m_picturePath).scaledToWidth(s.width()).copy(s);
     }
+
+    update();
 }
 
 void CallItemView::drawBackground(QPainter* painter,
                                   const QStyleOptionGraphicsItem* option) const
 {
     Q_UNUSED(option);
-    if (!m_picture.isNull())
+    if (m_picture.isNull())
+        painter->fillRect(QRectF(QPointF(0, 0), size()),
+                          style()->backgroundColor());
+    else
         painter->drawPixmap(0,0,m_picture);
 }
 
 void CallItemView::updateData(const QList<const char *> &modifications)
 {
     TRACE
-qDebug() << QString("Model data changed...");
     MWidgetView::updateData(modifications);
 
     const char* member;
     for (int i=0; i<modifications.count(); i++) {
         member = modifications[i];
-        qDebug() << QString("\"%1\" element changed in model").arg(member);
+        qDebug() << QString("CallItemView::updateData(): %1 changed")
+                    .arg(member);
 /*
         if (member == CallItemModel::Name) {
             setName(model()->name());
@@ -204,6 +251,7 @@ qDebug() << QString("Model data changed...");
             setFavoriteIcon((model()->favorite())?"favourite":"normal");
         }
 */
+        updateStatusLabel();
     }
 }
 
@@ -213,9 +261,6 @@ void CallItemView::setupModel()
 
 qDebug() << QString("Initial model data setup");
     MWidgetView::setupModel();
-
-    if (!model()->state().isEmpty())
-        updateStatusLabel();
 
 /*
     if (!model()->phone().isEmpty())
@@ -239,6 +284,7 @@ qDebug() << QString("Initial model data setup");
 
     initLayout();
 
+    updateStatusLabel();
 }
 
 void CallItemView::mousePressEvent(QGraphicsSceneMouseEvent *ev)

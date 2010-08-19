@@ -20,16 +20,21 @@ CallItemStyle {
     minimum-size:   80% 15mm;
     maximum-size:   98% 50%;
     margin-top:     0;
-    margin-left:    0;
-    margin-right:   0;
-    margin-bottom:  $MARGIN_MEDIUM;
-    padding-top:    0;
-    padding-left:   0;
-    padding-right:  0;
-    padding-bottom: 0;
+    margin-left:    -1mm;
+    margin-right:   -1mm;
+    margin-bottom:  0;
+    padding-top:    4px;
+    padding-left:   4px;
+    padding-right:  4px;
+    padding-bottom: 4px;
+    background-image: ;
+    background-color: #A7D2DB;
+    background-opacity: 1.0;
 }
 
 #callItemPeopleItem {
+    background-color:       #74888C;
+    background-opacity:     1.0;
     nameObjectName:         "callPeopleItemName";
     phoneObjectName:        "callPeopleItemPhone";
     photoObjectName:        "callPeopleItemPhoto";
@@ -37,9 +42,6 @@ CallItemStyle {
     lastCommIconObjectName: "callPeopleItemLastCommIcon";
     presenceObjectName:     "callPeopleItemPresenceIcon";
     favoriteIconObjectName: "callPeopleItemFavoriteIcon";
-
-    background-image:       "fullscreen-card-bg" 0 0 0 0;
-    background-opacity:     0.5;
 
     margin-top:     0;
     margin-left:    0;
@@ -81,6 +83,72 @@ CallItemStyle {
     preferred-size: -1 3mm;
     minimum-size:   -1 -1;
     maximum-size:   25% 3mm;
+}
+
+CallItemStyle:active {
+    peopleItemObjectName: "Active-callItemPeopleItem";
+}
+CallItemStyle:dialing {
+    peopleItemObjectName: "Dialing-callItemPeopleItem";
+}
+CallItemStyle:alerting {
+    peopleItemObjectName: "Alerting-callItemPeopleItem";
+}
+CallItemStyle:incoming {
+    peopleItemObjectName: "Incoming-callItemPeopleItem";
+}
+CallItemStyle:held {
+    background-color:     #525252;
+    peopleItemObjectName: "Held-callItemPeopleItem";
+}
+CallItemStyle:waiting {
+    background-color:     #525252;
+    peopleItemObjectName: "Waiting-callItemPeopleItem";
+}
+CallItemStyle:disconnected {
+    background-color:     #525252;
+    peopleItemObjectName: "Disconnected-callItemPeopleItem";
+}
+
+#Active-callItemPeopleItem {
+    preferred-size: -1 12mm;
+}
+#Active-callItemPeopleItem:pressed {
+    background-color:       #74888C;
+    background-opacity:     1.0;
+}
+#Active-callItemPeopleItem:selected {
+    background-color:       #74888C;
+    background-opacity:     1.0;
+}
+#Dialing-callItemPeopleItem {
+    preferred-size: -1 12mm;
+}
+#Alerting-callItemPeopleItem {
+    preferred-size: -1 12mm;
+}
+#Incoming-callItemPeopleItem {
+    preferred-size: -1 12mm;
+}
+#Held-callItemPeopleItem {
+    background-color:     #878787;
+    preferred-size: -1 12mm;
+}
+#Held-callItemPeopleItem:pressed {
+    background-color:     #878787;
+    background-opacity:     1.0;
+}
+#Held-callItemPeopleItem:selected {
+    background-color:     #878787;
+    background-opacity:     1.0;
+}
+#Waiting-callItemPeopleItem {
+    background-color:     #878787;
+    preferred-size: -1 12mm;
+}
+#Disconnected-callItemPeopleItem {
+    background-color:     #878787;
+    preferred-size: -1 12mm;
 }
 
 #callItemDurationName {
