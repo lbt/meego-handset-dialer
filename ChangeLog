@@ -1,3 +1,8 @@
+Changes in 0.1.13
+
+b514... Fixed:  Make build require QtContacts
+c1f3... Fixed:  Bad source path for base theme icon install
+
 Changes in 0.1.12
 
 dd12... Changed: Project structure to support seperate tar files
