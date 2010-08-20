@@ -1,3 +1,10 @@
+Changes in 0.1.12
+
+dd12... Changed: Project structure to support seperate tar files
+67b5... Added: Mode based styling to CallItem
+61a1... Fixed: BMC#s 432, 550, 2048, 2806, 3234, 3284
+e504... Temporarily disable building unused interface
+
 Changes in 0.1.11
 
 e3da... Fixed: Toolbar alignment and icons (BMC#4067)
