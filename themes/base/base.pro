@@ -6,7 +6,7 @@ THEME_NAME = $$system(basename $$PWD)
 OTHER_FILES += dialer.conf
 
 # Icon files
-desktop_icon.files = ./icon/icon-Applications-dialer.png
+desktop_icon.files = ./icons/icons-Applications-dialer.svg
 desktop_icon.path = $$M_INSTALL_DATA/pixmaps
 desktop_icon.CONFIG += no_check_exist
 
