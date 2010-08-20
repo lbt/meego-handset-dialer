@@ -14,9 +14,6 @@ PKGCONFIG += meegotouch
 DEFINES += DBUS_SERVICE_PATH=\\\"/com/meego/${QMAKE_TARGET}\\\"
 DEFINES += DBUS_SERVICE=\\\"com.meego.${QMAKE_TARGET}\\\"
 
-# Refine theme target
-M_THEME_DIR = $$M_THEME_DIR/base/meegotouch
-
 # FIXME: This should be defined in meegotouch_defines.prf, but is ending up
 #        as a NULL or empty value in MeeGo OBS
 M_DBUS_SERVICES_DIR = $$M_INSTALL_DATA/dbus-1/services
@@ -24,8 +21,11 @@ M_DBUS_SERVICES_DIR = $$M_INSTALL_DATA/dbus-1/services
 # Defines for directories, for use in source code.
 # They work cross-platform like this.
 {
+    # FIXME: This is bogus and needs to be removed from here and
+    #        callitemview.cpp.  "base" is not garanteed to be the
+    #        current theme, ever!
     # THEMEDIR determines the location of the theme
-    DEFINES += THEMEDIR=\\\"\"$$M_THEME_DIR\"\\\"
+    DEFINES += THEMEDIR=\\\"\"$$M_THEME_DIR/base/meegotouch\"\\\"
 
     # APPLET_LIBS determines the location where all applet binaries are
     DEFINES += APPLET_LIBS=\\\"\"$$M_APPLET_DIR\"\\\"
