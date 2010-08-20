@@ -2,7 +2,7 @@ include (../common.pri)
 TEMPLATE = app
 QT += dbus opengl
 CONFIG += qdbus mobility
-PKGCONFIG += QtNetwork
+PKGCONFIG += QtNetwork QtContacts
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 MGEN_OUTDIR = .gen
