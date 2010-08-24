@@ -79,7 +79,7 @@ void PeoplePage::matchSelected(const QModelIndex &index)
     TRACE
     int row = index.row();
     QStringList result = index.model()->index(row,Seaside::ColumnPhoneNumbers)
-                         .data(Seaside::DataRole).value<QStringList>();
+                         .data(Seaside::SearchRole).value<QStringList>();
     if (result.isEmpty()) {
         result.clear();
         result << QString("");
@@ -95,7 +95,7 @@ void PeoplePage::startCompleting(const QString & prefix)
     QRegExp   exp = filter->filterRegExp();
     int filterCol = filter->filterKeyColumn();
     int   sortCol = filter->sortColumn();
-    int  sortRole = Seaside::DataRole;
+    int  sortRole = Seaside::SearchRole;
     SeasideProxyModel::FilterType seasideFilter = SeasideProxyModel::FilterAll;
     Qt::SortOrder order = Qt::AscendingOrder;
 

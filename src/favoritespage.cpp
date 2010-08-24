@@ -79,7 +79,7 @@ void FavoritesPage::matchSelected(const QModelIndex &index)
     TRACE
     int row = index.row();
     QStringList result = index.model()->index(row,Seaside::ColumnPhoneNumbers)
-                         .data(Seaside::DataRole).value<QStringList>();
+                         .data(Seaside::SearchRole).value<QStringList>();
     if (result.isEmpty()) {
         result.clear();
         result << QString("");
@@ -95,7 +95,7 @@ void FavoritesPage::startCompleting(const QString & prefix)
     QRegExp   exp;
     int filterCol = filter->filterKeyColumn();
     int   sortCol = Seaside::ColumnLastName;
-    int  sortRole = Seaside::DataRole;
+    int  sortRole = Seaside::SearchRole;
     SeasideProxyModel::FilterType seasideFilter = SeasideProxyModel::FilterFavorites;
     Qt::SortOrder order = Qt::AscendingOrder;
 
@@ -178,7 +178,7 @@ void FavoritesPage::createContent()
 
     cellCreator->setCellObjectName("matchListItem");
 
-    filter->setSortRole(Seaside::DataRole);
+    filter->setSortRole(Seaside::SearchRole);
     filter->setFilter(SeasideProxyModel::FilterFavorites);
     filter->sort(Seaside::ColumnLastName, Qt::AscendingOrder);
 
