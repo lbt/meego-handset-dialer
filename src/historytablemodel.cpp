@@ -108,7 +108,9 @@ bool HistoryTableModel::insertRows(int row, int count,
     int i = 0;
     QStringList newRow = QStringList();
     ManagerProxy *mp = ManagerProxy::instance();
-    QSettings *cache = mp->history()->cache();
+    HistoryProxy* historyProxy = mp->history();
+    if(!historyProxy) return false; //abort
+    QSettings *cache = historyProxy->cache();
 
     cache->beginGroup("CallHistory");
     QStringList events = cache->childGroups();
