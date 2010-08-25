@@ -61,10 +61,10 @@ private slots:
     void handleBkspRelease();
 };
 
-#include "peopleitem.h"
 #include <mabstractcellcreator.h>
+#include <seasidelistitem.h>
 
-class RecentItemCellCreator : public MAbstractCellCreator<PeopleItem>
+class RecentItemCellCreator : public MAbstractCellCreator<SeasideListItem>
 {
 public:
     RecentItemCellCreator();

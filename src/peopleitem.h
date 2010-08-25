@@ -94,8 +94,9 @@ private:
 };
 
 #include <mabstractcellcreator.h>
+#include <seasidelistitem.h>
 
-class PeopleItemCellCreator : public MAbstractCellCreator<PeopleItem>
+class PeopleItemCellCreator : public MAbstractCellCreator<SeasideListItem>
 {
 public:
     PeopleItemCellCreator();

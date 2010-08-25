@@ -266,17 +266,19 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
 
     Q_ASSERT(index.isValid());
 
-    PeopleItem *card = qobject_cast<PeopleItem *>(cell);
+    SeasideListItem *card = qobject_cast<SeasideListItem *>(cell);
 
     QString name("Unknown Caller");
     QString photo("default-contact-photo");
     QString lineid = index.model()->index(index.row(),HistoryTableModel::COLUMN_LINEID).data().value<QString>();
     Seaside::Presence presence = Seaside::PresenceUnknown;
-    QString favorite("0");
+    bool favorite = false;
+    QString uuid;
+    int commType = Seaside::CommNone;
 
     SeasideSyncModel *contacts = DA_SEASIDEMODEL;
     QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-    int role = Qt::DisplayRole;
+    int role = Seaside::SearchRole;
     int hits = -1;
     Qt::MatchFlags flags = (Qt::MatchContains|Qt::MatchWrap);
     QModelIndexList matches;
@@ -292,11 +294,16 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
             QModelIndex person = matches.at(0); //First match is all we look at
             SEASIDE_SHORTCUTS
             SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-            name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
-                                    .arg(SEASIDE_FIELD(FirstName, String));
+
+            // Contacts full, sortable name, defaults to "Lastname, Firstname"
+            //% "%1, %2"
+            name = qtTrId("xx_full_name").arg(SEASIDE_FIELD(LastName, String))
+                                         .arg(SEASIDE_FIELD(FirstName, String));
+            uuid = SEASIDE_FIELD(Uuid, String);
             photo = SEASIDE_FIELD(Avatar, String);
             presence = (Seaside::Presence)SEASIDE_FIELD(Presence,Int);
-            favorite = (SEASIDE_FIELD(Favorite,Bool))?"1":"0";
+            favorite = SEASIDE_FIELD(Favorite,Bool);
+            commType = SEASIDE_FIELD(CommType,Int);
         } else {
             qDebug() << QString("No match found for \"%1\" in libseaside").arg(lineid);
         }
@@ -304,27 +311,29 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
         lineid = "Unavailable";
     }
 
+    card->setUuid(uuid);
     card->setName(name);
-    card->setPhoto(photo);
+    card->setThumbnail(photo);
     card->setPresence(presence);
     card->setFavorite(favorite);
-    card->setPhone(lineid);
+    card->setDetails(QStringList(lineid));
+    card->setButton("icon-m-telephony-call");
 
     // The rest comes from the history event, not the contact data
     QDateTime startTime = qDateTimeFromString(index.model()->
               index(index.row(),HistoryTableModel::COLUMN_CALLSTART)
               .data().value<QString>());
-    card->setLastCommTime(startTime);
+    card->setStatus(startTime.toString());
 
     int dir = index.model()->index(index.row(),HistoryTableModel::COLUMN_DIRECTION).data().value<int>();
     if (dir == 0)
-        card->setLastCommType(PeopleItem::COMM_CALL_DIALED);
+        card->setCommFlags(Seaside::CommCallDialed);
     else if (dir == 1)
-        card->setLastCommType(PeopleItem::COMM_CALL_RECEIVED);
+        card->setCommFlags(Seaside::CommCallReceived);
     else if (dir == 2)
-        card->setLastCommType(PeopleItem::COMM_CALL_MISSED);
+        card->setCommFlags(Seaside::CommCallMissed);
     else
-        card->setLastCommType(PeopleItem::COMM_CALL_UNANSWERED);
+        card->setCommFlags(Seaside::CommCallMissed);
 }
 
 QDateTime RecentItemCellCreator::qDateTimeFromString(const QString &val) const

@@ -188,29 +188,20 @@ void PeopleItemCellCreator::updateCell(const QModelIndex& index,
     if (seed == 0)
         qsrand(QDateTime::currentDateTime().toTime_t());
  
-    PeopleItem *card = qobject_cast<PeopleItem *>(cell);
+    SeasideListItem *card = qobject_cast<SeasideListItem *>(cell);
 
     SEASIDE_SHORTCUTS
     SEASIDE_SET_MODEL_AND_ROW(index.model(),index.row());
 
-    card->setName(QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
-                                   .arg(SEASIDE_FIELD(FirstName, String)));
-    card->setPhoto(SEASIDE_FIELD(Avatar, String));
-    card->setLastCommTime(SEASIDE_FIELD(CommTimestamp,DateTime));
-    card->setPresence((Seaside::Presence)SEASIDE_FIELD(Presence,Int));
-    card->setFavorite((SEASIDE_FIELD(Favorite,Bool))?"1":"0");
-
-    // TODO: Figure out *which* phone number to show...
-    QStringList list = SEASIDE_FIELD(PhoneNumbers,StringList);
-    card->setPhone((list.isEmpty())?"":list.at(0));
-
-    // TODO: SeasideSyncModel does not contain last communication type, will
-    //        need to get this from CallHistory or Seaside model when/if it
-    //        materializes.
-#if 0
-    card->setLastCommType((PeopleItem::CommType)SEASIDE_FIELD(CommType,Int));
-#else
-    card->setLastCommType((PeopleItem::CommType)
-                          (qMax(1,qrand() % (PeopleItem::COMM_LAST-1))));
-#endif
+    // Contacts full, sortable name, defaults to "Lastname, Firstname"
+    //% "%1, %2"
+    card->setName(qtTrId("xx_full_name").arg(SEASIDE_FIELD(LastName, String))
+                                        .arg(SEASIDE_FIELD(FirstName, String)));
+    card->setUuid(SEASIDE_FIELD(Uuid, String));
+    card->setThumbnail(SEASIDE_FIELD(Avatar, String));
+    card->setCommFlags(SEASIDE_FIELD(CommType,Int));
+    card->setPresence(SEASIDE_FIELD(Presence,Int));
+    card->setFavorite(SEASIDE_FIELD(Favorite,Bool));
+    card->setDetails(SEASIDE_FIELD(PhoneNumbers, StringList));
+    card->setButton("icon-m-telephony-call");
 }
