@@ -107,6 +107,7 @@ void FavoritesPage::startCompleting(const QString & prefix)
     else
         exp = MATCH_ANY(prefix);
 
+    filter->setFilterRole(Seaside::SearchRole);
     filter->setSortRole(sortRole);
     filter->setFilter(seasideFilter);
     filter->setFilterRegExp(exp);
