@@ -1,3 +1,10 @@
+Changes in 0.1.14
+
+96e9... Fixed:   Bug 3244 - Contact card views and lists do not match
+ccf9... Fixed:   Bug 5793 - Contact filtering never matches
+a5fb... Revert "Fixed:   BMC#5724 - libseaside Seaside::DataRole deprecated"
+f406... Fixed:   BMC#5724 - libseaside Seaside::DataRole deprecated
+
 Changes in 0.1.13
 
 b514... Fixed:  Make build require QtContacts
