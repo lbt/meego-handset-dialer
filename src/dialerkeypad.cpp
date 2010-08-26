@@ -19,6 +19,9 @@
 #include <MWidgetView>
 #include <MSceneManager>
 #include <MAction>
+#include <bluedevice.h>
+#include <btprofiles.h>
+#include <headset.h>
 
 #include <MWidgetCreator>
 M_REGISTER_WIDGET(DialerKeyPad)
@@ -112,7 +115,7 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
                            MWidget *parent)
     : MOverlay(parent),
       m_type(keypadType),
-      m_box(new MStylableWidget()),
+      m_box(new MStylableWidget(this)),
       m_layout(new MLayout(m_box)),
       m_policyDefault(new MLinearLayoutPolicy(m_layout, Qt::Vertical)),
       m_policyShowKeypad(new MLinearLayoutPolicy(m_layout, Qt::Vertical)),
@@ -121,20 +124,22 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       m_keypadVisible(true),
       m_optionsVisible(true),
       m_incall(false),
+      m_headsetConnected(false),
       m_optionBox(new MStylableWidget()),
       //% "Mute"
-      m_mute(new MButton(qtTrId("xx_mute"))),
+      m_mute(new MButton(qtTrId("xx_mute"),this)),
       //% "Hold"
-      m_hold(new MButton(qtTrId("xx_hold"))),
+      m_hold(new MButton(qtTrId("xx_hold"),this)),
       //% "Speaker"
-      m_audiosink(new MButton(qtTrId("xx_speaker"))),
+      m_audiosink(new MButton(qtTrId("xx_speaker"),this)),
       //% "Merge Calls"
-      m_nway(new MButton(qtTrId("xx_merge"))),
+      m_nway(new MButton(qtTrId("xx_merge"),this)),
       m_buttonBox(new MStylableWidget()),
       m_controlBox(new MStylableWidget()),
-      m_add(new MButton()),
-      m_call(new MButton()),
-      m_hide(new MButton())
+      m_add(new MButton(this)),
+      m_call(new MButton(this)),
+      m_hide(new MButton(this)),
+      bluetoothDevices(new DeviceModel(this))
 {
     TRACE
     m_box->setParent(this);
@@ -194,12 +199,18 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
     }
 
     connect(this, SIGNAL(appeared()), SLOT(updateLayoutPolicy()));
+
+    foreach(QDBusObjectPath path, bluetoothDevices->devices()) {
+        bluetoothDeviceCreated(path);
+    }
+
+    connect(bluetoothDevices, SIGNAL(deviceCreated(QDBusObjectPath)), this, SLOT(bluetoothDeviceCreated(QDBusObjectPath)));
+    connect(bluetoothDevices, SIGNAL(deviceRemoved(QDBusObjectPath)), this, SLOT(bluetoothDeviceRemoved(QDBusObjectPath)));
 }
 
 DialerKeyPad::~DialerKeyPad()
 {
     TRACE
-    delete m_layout;
 }
 
 void DialerKeyPad::updateButtonStates()
@@ -258,6 +269,13 @@ void DialerKeyPad::updateButtonStates()
         else
             //% "Merge Calls"
             m_nway->setText(qtTrId("xx_merge"));
+    }
+
+    if (m_headsetConnected) {
+        m_audiosink->setText("Headset");
+    }
+    else {
+        m_audiosink->setText("Speaker");
     }
 }
 
@@ -509,6 +527,46 @@ void DialerKeyPad::setSpeedDial()
     TRACE
     qDebug() << "Set Speed Dial requested";
     SHOW_TBD
+}
+
+void DialerKeyPad::bluetoothDeviceCreated(QDBusObjectPath path)
+{
+    OrgBluezDeviceInterface device("org.bluez",path.path(),QDBusConnection::systemBus());
+    QVariantMap properties = device.GetProperties();
+
+    QStringList uuidlist = properties["UUIDs"].toStringList();
+
+    foreach(QString uuid, uuidlist) {
+        if(uuid.toLower() == BluetoothProfiles::hs || uuid.toLower() == BluetoothProfiles::hf) {
+            OrgBluezHeadsetInterface *headset = new OrgBluezHeadsetInterface("org.bluez",
+                                                                             path.path(),
+                                                                             QDBusConnection::systemBus(),
+                                                                             this);
+            if(headset->IsConnected()) {
+                headsetConnected();
+            }
+            connect(headset,SIGNAL(Connected()),this,SLOT(headsetConnected()));
+            connect(headset,SIGNAL(Disconnected()),this,SLOT(headsetDisconnected()));
+            break;
+        }
+    }
+}
+
+void DialerKeyPad::bluetoothDeviceRemoved(QDBusObjectPath)
+{
+
+}
+
+void DialerKeyPad::headsetConnected()
+{
+    m_headsetConnected=true;
+    updateButtonStates();
+}
+
+void DialerKeyPad::headsetDisconnected()
+{
+    m_headsetConnected=false;
+    updateButtonStates();
 }
 
 void DialerKeyPad::constructNumericKeypad(MGridLayoutPolicy *policy)

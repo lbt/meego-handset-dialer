@@ -20,6 +20,7 @@
 #include <MButton>
 #include <MContainer>
 #include <MStylableWidget>
+#include <devicelistwidget.h>
 
 typedef enum _DialerKeypadType {
     DialerKeypadNumeric,
@@ -60,6 +61,7 @@ private:
     bool                   m_keypadVisible;
     bool                   m_optionsVisible;
     bool                   m_incall;
+    bool                   m_headsetConnected;
 
     MStylableWidget     *m_optionBox;
     MButton             *m_mute, *m_hold, *m_audiosink, *m_nway;
@@ -67,6 +69,7 @@ private:
     QList<MButton*>      m_buttons;
     MStylableWidget     *m_controlBox;
     MButton             *m_add, *m_call, *m_hide;
+    DeviceModel* bluetoothDevices;
 
     void constructNumericKeypad(MGridLayoutPolicy*);
     void constructQwertyKeypad();
@@ -90,6 +93,10 @@ private Q_SLOTS:
     void callsChanged();
     void callSpeedDial();
     void setSpeedDial();
+    void bluetoothDeviceCreated(QDBusObjectPath);
+    void bluetoothDeviceRemoved(QDBusObjectPath);
+    void headsetConnected();
+    void headsetDisconnected();
 };
 
 #endif // DIALERKEYPAD_H
