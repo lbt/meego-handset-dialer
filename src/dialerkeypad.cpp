@@ -127,7 +127,7 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       //% "Hold"
       m_hold(new MButton(qtTrId("xx_hold"))),
       //% "Speaker"
-      m_spkr(new MButton(qtTrId("xx_speaker"))),
+      m_audiosink(new MButton(qtTrId("xx_speaker"))),
       //% "Merge Calls"
       m_nway(new MButton(qtTrId("xx_merge"))),
       m_buttonBox(new MStylableWidget()),
@@ -354,13 +354,13 @@ void DialerKeyPad::createOptionBox()
     m_hold->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
-    m_spkr->setObjectName("speakerButton");
-    m_spkr->setViewType(MButton::toggleType);
-    m_spkr->setCheckable(true);
+    m_audiosink->setObjectName("speakerButton");
+    m_audiosink->setViewType(MButton::toggleType);
+    m_audiosink->setCheckable(true);
 //    m_spkr->setIconID("icon-dialer-speaker");
 //    m_spkr->setToggledIconID("icon-dialer-speaker-on");
-    m_spkr->setEnabled(false);
-    m_spkr->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
+    m_audiosink->setEnabled(false);
+    m_audiosink->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
     m_nway->setObjectName("multiButton");
@@ -373,12 +373,12 @@ void DialerKeyPad::createOptionBox()
 
     policy->insertItem(0, m_hold, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(1, m_mute, Qt::AlignHCenter|Qt::AlignBottom);
-    policy->insertItem(2, m_spkr, Qt::AlignHCenter|Qt::AlignBottom);
+    policy->insertItem(2, m_audiosink, Qt::AlignHCenter|Qt::AlignBottom);
     policy->insertItem(3, m_nway, Qt::AlignHCenter|Qt::AlignBottom);
 
     connect(m_mute,  SIGNAL(clicked(bool)), SLOT(mutePressed(bool)));
     connect(m_hold,  SIGNAL(clicked(bool)), SLOT(holdPressed(bool)));
-    connect(m_spkr,  SIGNAL(clicked(bool)), SLOT(spkrPressed(bool)));
+    connect(m_audiosink,  SIGNAL(clicked(bool)), SLOT(audiosinkPressed(bool)));
     connect(m_nway,  SIGNAL(clicked(bool)), SLOT(nwayPressed(bool)));
 }
 
@@ -655,7 +655,7 @@ void DialerKeyPad::holdPressed(bool checked)
     updateButtonStates();
 }
 
-void DialerKeyPad::spkrPressed(bool checked)
+void DialerKeyPad::audiosinkPressed(bool checked)
 {
     TRACE
     if (checked)

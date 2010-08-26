@@ -62,7 +62,7 @@ private:
     bool                   m_incall;
 
     MStylableWidget     *m_optionBox;
-    MButton             *m_mute, *m_hold, *m_spkr, *m_nway;
+    MButton             *m_mute, *m_hold, *m_audiosink, *m_nway;
     MStylableWidget     *m_buttonBox;
     QList<MButton*>      m_buttons;
     MStylableWidget     *m_controlBox;
@@ -85,7 +85,7 @@ private Q_SLOTS:
     void addPressed();
     void mutePressed(bool);
     void holdPressed(bool);
-    void spkrPressed(bool);
+    void audiosinkPressed(bool);
     void nwayPressed(bool);
     void callsChanged();
     void callSpeedDial();
