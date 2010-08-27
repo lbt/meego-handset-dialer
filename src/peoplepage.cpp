@@ -49,8 +49,10 @@ PeoplePage::PeoplePage() :
     filter(0), completer(new MCompleter()),
     people(0),
     cellCreator(new PeopleItemCellCreator()),
-    bksp(new MButton("icon-m-common-backspace","<[x]")),
-    dial(new MButton("icon-m-telephony-call","Call")),
+    //% "<-"
+    bksp(new MButton("icon-m-common-backspace",qtTrId("xx_backspace"))),
+    //% "Call"
+    dial(new MButton("icon-m-telephony-call",qtTrId("xx_call"))),
     pressed(false),
     tapnhold(this)
 {
@@ -147,7 +149,8 @@ void PeoplePage::createContent()
     entry->setObjectName("phoneNumber");
     //entry->setPrompt("Enter a number");
     //entry->setContentType(M::PhoneNumberContentType);
-    entry->setPrompt("Type name to filter");
+    //% "Type name to filter"
+    entry->setPrompt(qtTrId("xx_filter_prompt"));
     entry->setContentType(M::FreeTextContentType);
     /* FIXME:
        This hack is to prevent the nav bar from hiding on focus.  The default

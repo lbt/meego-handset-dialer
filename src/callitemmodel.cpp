@@ -26,6 +26,36 @@ const QString CallItemModel::state() const
         return QString();
 }
 
+const QString CallItemModel::stateTr() const
+{
+    QString l_stateTr;
+    if (state() == "active")
+        //% "active"
+        l_stateTr = qtTrId("xx_state_active");
+    else if (state() == "held")
+        //% "held"
+        l_stateTr = qtTrId("xx_state_held");
+    else if (state() == "dialing")
+        //% "dialing"
+        l_stateTr = qtTrId("xx_state_dialing");
+    else if (state() == "alerting")
+        //% "alerting"
+        l_stateTr = qtTrId("xx_state_alerting");
+    else if (state() == "incoming")
+        //% "incoming"
+        l_stateTr = qtTrId("xx_state_incoming");
+    else if (state() == "waiting")
+        //% "waiting"
+        l_stateTr = qtTrId("xx_state_waiting");
+    else if (state() == "disconnected")
+        //% "disconnected"
+        l_stateTr = qtTrId("xx_state_disconnected");
+    else
+        //% "invalid"
+        l_stateTr = qtTrId("xx_state_invalid");
+    return l_stateTr;
+}
+
 CallItemModel::CallState CallItemModel::stateType() const
 {
     CallState l_state = STATE_NONE;

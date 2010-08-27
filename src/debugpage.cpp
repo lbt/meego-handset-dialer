@@ -51,8 +51,10 @@ void DebugPage::refreshContent()
             mInfo->setText(QString(mp->modem()->dumpProperties().join("")));
             mBox->setText(mp->modem()->path());
         } else {
-            mInfo->setText("No modem available");
-            mBox->setText("None");
+            //% "No modem available"
+            mInfo->setText(qtTrId("xx_no_modem"));
+            //% "None"
+            mBox->setText(qtTrId("xx_none"));
         }
 
         // Voicemail
@@ -61,8 +63,10 @@ void DebugPage::refreshContent()
             vmInfo->setText(QString(mp->voicemail()->dumpProperties().join("")));
             vmBox->setText(mp->voicemail()->path());
         } else {
-            vmInfo->setText("No MessageWaiting service available");
-            vmBox->setText("None");
+            //% "No MessageWaiting service available"
+            vmInfo->setText(qtTrId("xx_no_messages_waiting"));
+            //% "None"
+            vmBox->setText(qtTrId("xx_none"));
         }
 
         // Network
@@ -71,8 +75,10 @@ void DebugPage::refreshContent()
             nInfo->setText(mp->network()->dumpProperties().join(""));
             nBox->setText(mp->network()->name());
         } else {
-            nInfo->setText("Not registered with any network!");
-            nBox->setText("None");
+            //% "Not registered with any network!"
+            nInfo->setText(qtTrId("xx_not_registered"));
+            //% "None"
+            nBox->setText(qtTrId("xx_none"));
         }
 
         // Calls
@@ -80,16 +86,24 @@ void DebugPage::refreshContent()
             qDebug("refreshing call info");
             cInfo->setText(mp->callManager()->dumpProperties().join(""));
         } else {
-            cInfo->setText("Not registered with any network!");
+            //% "Not registered with any network!"
+            cInfo->setText(qtTrId("xx_not_registered"));
         }
     } else {
-        mInfo->setText("No modem available");
-        mBox->setText("None");
-        mInfo->setText("No MessageWaiting service available");
-        mBox->setText("None");
-        nInfo->setText("No network available");
-        nBox->setText("None");
-        cInfo->setText("No calls in progress");
+        //% "No modem available"
+        mInfo->setText(qtTrId("xx_no_modem"));
+        //% "None"
+        mBox->setText(qtTrId("xx_none"));
+        //% "No MessageWaiting service available"
+        vmInfo->setText(qtTrId("xx_no_messages"));
+        //% "None"
+        vmBox->setText(qtTrId("xx_none"));
+        //% "No network available"
+        nInfo->setText(qtTrId("xx_no_network"));
+        //% "None"
+        nBox->setText(qtTrId("xx_none"));
+        //% "No calls in progress"
+        cInfo->setText(qtTrId("xx_no_calls"));
     }
 }
 
@@ -98,11 +112,14 @@ void DebugPage::createContent()
     GenericPage::createContent();
 
     // Modem
-    mBox->setTitle("Modem:");
-    mBox->setText("None");
+    //% "Modem:"
+    mBox->setTitle(qtTrId("xx_modem"));
+    //% "None"
+    mBox->setText(qtTrId("xx_none"));
     mBox->setObjectName("debugModem");
     mBox->setIconID("small-mobile");
-    mInfo->setText("No modem available");
+    //% "No modem available"
+    mInfo->setText(qtTrId("xx_no_modem"));
     mInfo->setObjectName("debugLabel");
     mInfo->setAlignment(Qt::AlignTop);
     mInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
@@ -110,11 +127,14 @@ void DebugPage::createContent()
     mBox->setCentralWidget(mInfo);
 
     // MessageWaiting
-    vmBox->setTitle("MessageWaiting:");
-    vmBox->setText("None");
+    //% "MessageWaiting:"
+    vmBox->setTitle(qtTrId("xx_message_waiting"));
+    //% "None"
+    vmBox->setText(qtTrId("xx_none"));
     vmBox->setObjectName("debugModem");
     vmBox->setIconID("small-mobile");
-    vmInfo->setText("No MessageWaiting service available");
+    //% "No MessageWaiting service available"
+    vmInfo->setText(qtTrId("xx_no_messages"));
     vmInfo->setObjectName("debugLabel");
     vmInfo->setAlignment(Qt::AlignTop);
     vmInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
@@ -122,11 +142,14 @@ void DebugPage::createContent()
     vmBox->setCentralWidget(vmInfo);
 
     // Network
-    nBox->setTitle("Network:");
-    nBox->setText("None");
+    //% "Network:"
+    nBox->setTitle(qtTrId("xx_network"));
+    //% "None"
+    nBox->setText(qtTrId("xx_none"));
     nBox->setObjectName("debugNetwork");
     nBox->setIconID("small-home");
-    nInfo->setText("No network available");
+    //% "No network available"
+    nInfo->setText(qtTrId("xx_no_network"));
     nInfo->setObjectName("debugLabel");
     nInfo->setAlignment(Qt::AlignTop);
     nInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
@@ -134,10 +157,12 @@ void DebugPage::createContent()
     nBox->setCentralWidget(nInfo);
 
     // Calls
-    cBox->setTitle("Calls:");
+    //% "Calls:"
+    cBox->setTitle(qtTrId("xx_calls"));
     cBox->setObjectName("debugNetwork");
     cBox->setIconID("icon-m-telephony-call");
-    cInfo->setText("No calls in progress");
+    //% "No calls in progress"
+    cInfo->setText(qtTrId("xx_no_calls"));
     cInfo->setObjectName("debugLabel");
     cInfo->setAlignment(Qt::AlignTop);
     cInfo->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,

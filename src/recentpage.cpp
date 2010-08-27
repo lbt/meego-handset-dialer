@@ -49,8 +49,10 @@ RecentPage::RecentPage() :
     people(0),
     completer(new MCompleter()),
     cellCreator(new RecentItemCellCreator()),
-    bksp(new MButton("icon-m-common-backspace","<[x]")),
-    dial(new MButton("icon-m-telephony-call","Call")),
+    //% "<-"
+    bksp(new MButton("icon-m-common-backspace",qtTrId("xx_backspace"))),
+    //% "Call"
+    dial(new MButton("icon-m-telephony-call",qtTrId("xx_call"))),
     pressed(false),
     tapnhold(this)
 {
@@ -139,7 +141,8 @@ void RecentPage::createContent()
     bksp->setObjectName("bkspButton");
     dial->setObjectName("dialButton");
     entry->setObjectName("phoneNumber");
-    entry->setPrompt("Enter a number");
+    //% "Enter a number"
+    entry->setPrompt(qtTrId("xx_number_prompt"));
     entry->setContentType(M::PhoneNumberContentType);
     /* FIXME:
        This hack is to prevent the nav bar from hiding on focus.  The default
@@ -268,7 +271,8 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
 
     SeasideListItem *card = qobject_cast<SeasideListItem *>(cell);
 
-    QString name("Unknown Caller");
+    //% "Unknown Caller"
+    QString name(qtTrId("xx_unknown"));
     QString photo("default-contact-photo");
     QString lineid = index.model()->index(index.row(),HistoryTableModel::COLUMN_LINEID).data().value<QString>();
     Seaside::Presence presence = Seaside::PresenceUnknown;
@@ -308,7 +312,8 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
             qDebug() << QString("No match found for \"%1\" in libseaside").arg(lineid);
         }
     } else {
-        lineid = "Unavailable";
+        //% "Unavailable"
+        lineid = qtTrId("xx_unavailable");
     }
 
     card->setUuid(uuid);

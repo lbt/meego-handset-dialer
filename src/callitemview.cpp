@@ -23,8 +23,10 @@
 
 CallItemView::CallItemView(CallItem *controller)
     : MWidgetView(controller),
-      m_duration(new MLabel("00:00:00", controller)),
-      m_status(new MLabel("...", controller)),
+      //% "00:00:00"
+      m_duration(new MLabel(qtTrId("xx_default_duration"), controller)),
+      //% "..."
+      m_status(new MLabel(qtTrId("xx_default_status"), controller)),
       m_picturePath(QString()),
       m_picture(QPixmap()),
       m_updateTimer(this)
@@ -147,7 +149,7 @@ void CallItemView::updateStatusLabel()
 {
     TRACE
     if (!model()->state().isEmpty())
-        statusLabel()->setText(model()->state());
+        statusLabel()->setText(model()->stateTr());
 
     if (peopleItem())
         peopleItem()->setSelected(false);

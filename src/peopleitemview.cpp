@@ -121,7 +121,8 @@ void PeopleItemView::setName(const QString &text)
 {
     TRACE
     if (text.isEmpty() || text.isNull())
-        name()->setText("Unknown");
+        //% "Unknown"
+        name()->setText(qtTrId("xx_unknown"));
     else
         name()->setText(text);
 }
@@ -386,11 +387,11 @@ QString PeopleItemView::dateToFriendlyString(const QDate &date)
     if (!date.isValid())
         return QString();
     if (date == QDate::currentDate())
-        // FIXME: Needs translation
-        return QString("Today");
+        //% "Today"
+        return QString(qtTrId("xx_today"));
     else if (date == QDate::currentDate().addDays(-1))
-        // FIXME: Needs translation
-        return QString("Yesterday");
+        //% "Yesterday"
+        return QString(qtTrId("xx_yesterday"));
     else if (date >= QDate::currentDate().addDays(-5))
         return date.longDayName(date.dayOfWeek());
     else

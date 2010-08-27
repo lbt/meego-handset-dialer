@@ -17,13 +17,16 @@
 M_REGISTER_WIDGET(AlertDialog)
 
 AlertDialog::AlertDialog()
-    : MDialog("Incoming Call from:", M::NoStandardButton),
+      //% "Incoming call from:"
+    : MDialog(qtTrId("xx_incoming_call_title"), M::NoStandardButton),
       m_panel(new MStylableWidget()),
       m_layout(new MLayout(m_panel)),
       m_land(new MGridLayoutPolicy(m_layout)),
       m_port(new MGridLayoutPolicy(m_layout)),
-      m_accept(new MButton("Accept")),
-      m_decline(new MButton("Decline")),
+      //% "Accept"
+      m_accept(new MButton(qtTrId("xx_accept"))),
+      //% "Decline"
+      m_decline(new MButton(qtTrId("xx_decline"))),
       m_photo(new MImageWidget()),
       m_name(new MLabel()),
       m_number(new MLabel())
@@ -143,26 +146,32 @@ void AlertDialog::updateInfo()
 {
     TRACE
 
-    QString name   = "Unknown Caller";
+    //% "Unknown Caller"
+    QString name   = qtTrId("xx_unknown_caller");
     QString photo  = "icon-m-content-avatar-placeholder";
-    QString lineid = "Private";
+    //% "Private"
+    QString lineid = qtTrId("xx_private");
 
     if (m_call && m_call->isValid() && !m_call->lineID().isEmpty()) {
         lineid = stripLineID(m_call->lineID());
         SeasideSyncModel *contacts = DA_SEASIDEMODEL;
         QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-        QModelIndexList matches = contacts->match(first, Qt::DisplayRole,
+        QModelIndexList matches = contacts->match(first, Seaside::SearchRole,
                                                   QVariant(lineid),1);
         if (!matches.isEmpty()) {
             QModelIndex person = matches.at(0); //First match is all we look at
             SEASIDE_SHORTCUTS
             SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-            name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
-                                    .arg(SEASIDE_FIELD(FirstName, String));
+
+            // Contacts full, sortable name, defaults to "Lastname, Firstname"
+            //% "%1, %2"
+            name = qtTrId("xx_full_name").arg(SEASIDE_FIELD(LastName, String))
+                                         .arg(SEASIDE_FIELD(FirstName, String));
             photo = SEASIDE_FIELD(Avatar, String);
         }
     } else {
-        lineid = "Unavailable";
+        //% "Unavailable"
+        lineid = qtTrId("xx_unavailable");
     }
 
     m_name->setText(name);

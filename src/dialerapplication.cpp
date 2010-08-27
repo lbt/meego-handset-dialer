@@ -121,7 +121,8 @@ void DialerApplication::init()
 
     m_manager = ManagerProxy::instance();
     if (!m_manager || !m_manager->isValid())
-        setError("Failed to connect to org.ofono.Manager: is ofonod running?");
+        //% "Failed to connect to org.ofono.Manager: is ofonod running?"
+        setError(qtTrId("xx_no_ofono_error"));
     else
         m_connected = true;
 
@@ -198,7 +199,8 @@ int DialerApplication::showErrorDialog()
         msg->setWordWrap(true);
     }
     if (!dialog) {
-        dialog = new MDialog("Error",M::IgnoreButton|M::AbortButton);
+        //% "Error"
+        dialog = new MDialog(qtTrId("xx_error"),M::IgnoreButton|M::AbortButton);
         dialog->setObjectName("errorDialog");
         dialog->setCloseButtonVisible(false);
         dialog->setCentralWidget(msg);

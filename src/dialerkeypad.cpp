@@ -122,10 +122,14 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       m_optionsVisible(true),
       m_incall(false),
       m_optionBox(new MStylableWidget()),
-      m_mute(new MButton("Mute")),
-      m_hold(new MButton("Hold")),
-      m_spkr(new MButton("Speaker")),
-      m_nway(new MButton("Merge Calls")),
+      //% "Mute"
+      m_mute(new MButton(qtTrId("xx_mute"))),
+      //% "Hold"
+      m_hold(new MButton(qtTrId("xx_hold"))),
+      //% "Speaker"
+      m_spkr(new MButton(qtTrId("xx_speaker"))),
+      //% "Merge Calls"
+      m_nway(new MButton(qtTrId("xx_merge"))),
       m_buttonBox(new MStylableWidget()),
       m_controlBox(new MStylableWidget()),
       m_add(new MButton()),
@@ -216,20 +220,28 @@ void DialerKeyPad::updateButtonStates()
     // Sync up the mute button state
     if (vm && vm->isValid()) {
         m_mute->setChecked(vm->muted());
-        m_mute->setText((vm->muted())?"Un-mute":"Mute");
+        if (vm->muted())
+            //% "Un-mute"
+            m_mute->setText(qtTrId("xx_un_mute"));
+        else
+            //% "Mute"
+            m_mute->setText(qtTrId("xx_mute"));
     }
 
     // Sync up the hold button state
     if (cm && cm->isValid()) {
         m_hold->setEnabled(true); // Start by re-enabling the button
         if (cm->activeCall() && cm->heldCall())
-            m_hold->setText("Swap");
+            //% "Swap"
+            m_hold->setText(qtTrId("xx_swap"));
         else if (cm->activeCall()) {
-            m_hold->setText("Hold");
+            //% "Hold"
+            m_hold->setText(qtTrId("xx_hold"));
             m_hold->setChecked(false);
         }
         else if (cm->heldCall()) {
-            m_hold->setText("Un-Hold");
+            //% "Un-Hold"
+            m_hold->setText(qtTrId("xx_un_hold"));
             m_hold->setChecked(true);
         }
         else {
@@ -241,9 +253,11 @@ void DialerKeyPad::updateButtonStates()
     // Sync up the merge button state
     if (cm && cm->isValid()) {
         if (cm->multipartyCalls().length() > 0)
-            m_nway->setText("Add");
+            //% "Add"
+            m_nway->setText(qtTrId("xx_add"));
         else
-            m_nway->setText("Merge Calls");
+            //% "Merge Calls"
+            m_nway->setText(qtTrId("xx_merge"));
     }
 }
 
@@ -405,7 +419,8 @@ void DialerKeyPad::createControlBox()
 
     m_call->setObjectName("callButton");
     m_call->setViewType(MButton::toggleType);
-    m_call->setText("Call");
+    //% "Call"
+    m_call->setText(qtTrId("xx_call"));
     m_call->setCheckable(true);
     m_call->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
@@ -512,16 +527,19 @@ void DialerKeyPad::constructNumericKeypad(MGridLayoutPolicy *policy)
 
             QString label;
 	    if (k == 0) // 0 index == "1" key == voicemail
-                label = "Call Voicemail";
+                //% "Call Voicemail"
+                label = qtTrId("xx_call_voicemail");
             else
-                label = "Call Speed Dial";
+                //% "Call Speed Dial"
+                label = qtTrId("xx_call_speeddial");
             MAction *callSD = new MAction(label, button);
             callSD->setLocation(MAction::ObjectMenuLocation);
             callSD->setData(k);
             connect(callSD,SIGNAL(triggered()),SLOT(callSpeedDial()));
             button->addAction(callSD);
             if (k != 0) {  // 0 index == "1" key, which is always voicemail
-                MAction *setSD = new MAction("Set Speed Dial", button);
+                //% "Set Speed Dial"
+                MAction *setSD = new MAction(qtTrId("xx_set_speeddial"),button);
                 setSD->setLocation(MAction::ObjectMenuLocation);
                 connect(setSD,SIGNAL(triggered()),SLOT(setSpeedDial()));
                 button->addAction(setSD);
@@ -540,7 +558,12 @@ void DialerKeyPad::constructQwertyKeypad()
 void DialerKeyPad::callToggled(bool checked)
 {
     TRACE
-    m_call->setText((checked?"End Call":"Call"));
+    if (checked)
+        //% "End Call"
+        m_call->setText(qtTrId("xx_end_call"));
+    else
+        //% "Call"
+        m_call->setText(qtTrId("xx_call"));
 }
 
 void DialerKeyPad::callPressed(bool checked)

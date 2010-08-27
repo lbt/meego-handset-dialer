@@ -201,8 +201,10 @@ void HistoryProxy::sendMissedCallNotification(QList<CallHistoryEvent> missed)
     foreach (CallHistoryEvent e, missed) {
         QString name;
         QString photo  = DEFAULT_AVATAR_ICON;
-        QString lineid = "Private";
-        QString summary("Missed call");
+        //% "Private"
+        QString lineid = qtTrId("xx_private");
+        //% "Missed call"
+        QString summary(qtTrId("xx_missed_call"));
         QString body;
         MNotification notice(NOTIFICATION_CALL_EVENT);
 
@@ -216,15 +218,21 @@ void HistoryProxy::sendMissedCallNotification(QList<CallHistoryEvent> missed)
                 QModelIndex person = matches.at(0); //First match wins
                 SEASIDE_SHORTCUTS
                 SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-                name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                // Contacts full, sortable name,
+                // defaults to "Lastname, Firstname"
+                //% "%1, %2"
+                name = QString(qtTrId("xx_full_name"))
+                                        .arg(SEASIDE_FIELD(LastName, String))
                                         .arg(SEASIDE_FIELD(FirstName, String));
                 photo = SEASIDE_FIELD(Avatar, String);
             }
         } else {
-            lineid = "Unavailable";
+            //% "Unavailable"
+            lineid = qtTrId("xx_unavailable");
         }
 
-        body = QString("You missed a call from %1")
+        //% "You missed a call from %1"
+        body = QString(qtTrId("xx_missing_body"))
                               .arg(name.isEmpty()?lineid:name);
 
         notice.setSummary(summary);

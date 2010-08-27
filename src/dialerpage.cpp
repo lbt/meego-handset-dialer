@@ -55,7 +55,8 @@ DialerPage::DialerPage() :
     m_incall(false),
     m_layout(0),
     m_policy(0),
-    m_bksp(new MButton("icon-m-common-backspace","<[x]")),
+    //% "<-"
+    m_bksp(new MButton("icon-m-common-backspace",qtTrId("xx_backspace"))),
     m_pressed(false),
     m_tapnhold(this)
 {
@@ -84,7 +85,8 @@ void DialerPage::createContent()
 
     // Widget properties
     m_entry->setObjectName("dialerEntryLabel");
-    m_entry->setPrompt("Enter Number");
+    //% "Enter Number"
+    m_entry->setPrompt(qtTrId("xx_number_prompt"));
     m_entry->setFocusPolicy(Qt::NoFocus);
     m_entry->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                        QSizePolicy::Expanding));
@@ -138,17 +140,22 @@ void DialerPage::updateCall(CallItem *call)
         return;
 
     QString lineid = call->lineID();
-    QString name = "Unknown Caller";
+    //% "Unknown Caller"
+    QString name = qtTrId("xx_unknown");
     QString photo  = DEFAULT_AVATAR_ICON;
     SeasideSyncModel *contacts = DA_SEASIDEMODEL;
     QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-    QModelIndexList matches = contacts->match(first, Qt::DisplayRole,
+    QModelIndexList matches = contacts->match(first, Seaside::SearchRole,
                                               QVariant(lineid),1);
     if (!matches.isEmpty()) {
         QModelIndex match = matches.at(0); //First match wins
         SEASIDE_SHORTCUTS
         SEASIDE_SET_MODEL_AND_ROW(match.model(), match.row());
-        name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+
+        // Contacts full, sortable name, defaults to "Lastname, Firstname"
+        //% "%1, %2"
+        name = QString(qtTrId("xx_full_name"))
+                                .arg(SEASIDE_FIELD(LastName, String))
                                 .arg(SEASIDE_FIELD(FirstName, String));
         photo = SEASIDE_FIELD(Avatar, String);
     }

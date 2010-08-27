@@ -79,8 +79,10 @@ void MainWindow::handleIncomingCall(CallItem *call)
     } else {
         QString name;
         QString photo  = DEFAULT_AVATAR_ICON;
-        QString lineid = "Private";
-        QString summary("Incoming call");
+        //% "Private"
+        QString lineid = qtTrId("xx_private");
+        //% "Incoming call"
+        QString summary(qtTrId("xx_incoming_call"));
         QString body;
         MNotification notice(NOTIFICATION_CALL_EVENT);
 
@@ -94,7 +96,11 @@ void MainWindow::handleIncomingCall(CallItem *call)
                 QModelIndex person = matches.at(0); //First match wins
                 SEASIDE_SHORTCUTS
                 SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-                name = QString("%1, %2").arg(SEASIDE_FIELD(LastName, String))
+                // Contacts full, sortable name,
+                // defaults to "Lastname, Firstname"
+                //% "%1, %2"
+                name = QString(qtTrId("xx_full_name"))
+                                        .arg(SEASIDE_FIELD(LastName, String))
                                         .arg(SEASIDE_FIELD(FirstName, String));
                 photo = SEASIDE_FIELD(Avatar, String);
             }
@@ -103,10 +109,12 @@ void MainWindow::handleIncomingCall(CallItem *call)
             m_incomingCall = call;
             connect(m_incomingCall,SIGNAL(stateChanged()),SLOT(callStateChanged()));
         } else {
-            lineid = "Unavailable";
+            //% "Unavailable"
+            lineid = qtTrId("xx_unavailable");
         }
 
-        body = QString("You have an incoming call from %1")
+        //% "You have an incoming call from %1"
+        body = QString(qtTrId("xx_incoming_body"))
                               .arg(name.isEmpty()?lineid:name);
 
         notice.setSummary(summary);
@@ -179,7 +187,8 @@ void MainWindow::showTBD()
     TRACE
 
     if (!m_tbd)
-        m_tbd = new MMessageBox("This feature is not yet implemented");
+        //% "This feature is not yet implemented"
+        m_tbd = new MMessageBox(qtTrId("xx_not_yet_implemented"));
     m_tbd->exec(this);
 }
 
