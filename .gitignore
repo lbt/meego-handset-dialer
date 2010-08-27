@@ -16,3 +16,7 @@ gen_*
 .moc
 .obj
 *.tar.bz2
+.qm
+.ts
+dialer.qm
+dialer.ts

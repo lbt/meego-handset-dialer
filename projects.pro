@@ -1,7 +1,7 @@
 include (common.pri)
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = src themes
+SUBDIRS = src themes translations
 
 OTHER_FILES += dialer.service
 
