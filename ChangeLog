@@ -1,3 +1,8 @@
+Changes in 0.1.15
+
+7735... Fixed:   BMC#3978 - [L10N] Dialer needs to be translatable
+9bb8... Added:   Project infrastructure for translations
+
 Changes in 0.1.14
 
 96e9... Fixed:   Bug 3244 - Contact card views and lists do not match
