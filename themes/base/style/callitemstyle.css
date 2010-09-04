@@ -12,7 +12,6 @@
  * CallItem properties
  * ***********************************************/
 CallItemStyle {
-    photo-image: "images/backgrounds/call-bg1.png";
     peopleItemObjectName: "callItemPeopleItem";
     statusObjectName:     "callItemStatusName";
     durationObjectName:   "callItemDurationName";
@@ -27,7 +26,7 @@ CallItemStyle {
     padding-left:   4px;
     padding-right:  4px;
     padding-bottom: 4px;
-    background-image: ;
+    background-image: "dialer-gradient-background-01";
     background-color: #A7D2DB;
     background-opacity: 1.0;
 }
@@ -87,27 +86,34 @@ CallItemStyle {
 
 CallItemStyle:active {
     peopleItemObjectName: "Active-callItemPeopleItem";
+    background-image: "dialer-gradient-background-02";
 }
 CallItemStyle:dialing {
     peopleItemObjectName: "Dialing-callItemPeopleItem";
+    background-image: "dialer-gradient-background-02";
 }
 CallItemStyle:alerting {
     peopleItemObjectName: "Alerting-callItemPeopleItem";
+    background-image: "dialer-gradient-background-02";
 }
 CallItemStyle:incoming {
     peopleItemObjectName: "Incoming-callItemPeopleItem";
+    background-image: "dialer-gradient-background-02";
 }
 CallItemStyle:held {
     background-color:     #525252;
     peopleItemObjectName: "Held-callItemPeopleItem";
+    background-image: "dialer-gradient-background-01";
 }
 CallItemStyle:waiting {
     background-color:     #525252;
     peopleItemObjectName: "Waiting-callItemPeopleItem";
+    background-image: "dialer-gradient-background-01";
 }
 CallItemStyle:disconnected {
     background-color:     #525252;
     peopleItemObjectName: "Disconnected-callItemPeopleItem";
+    background-image: "dialer-gradient-background-01";
 }
 
 #Active-callItemPeopleItem {

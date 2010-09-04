@@ -13,6 +13,7 @@
 #include "callitemview.h"
 #include <MLabel>
 #include <MImageWidget>
+#include <MScalableImage>
 #include <MButton>
 #include <QGraphicsGridLayout>
 #include <QGraphicsSceneEvent>
@@ -27,8 +28,6 @@ CallItemView::CallItemView(CallItem *controller)
       m_duration(new MLabel(qtTrId("xx_default_duration"), controller)),
       //% "..."
       m_status(new MLabel(qtTrId("xx_default_status"), controller)),
-      m_picturePath(QString()),
-      m_picture(QPixmap()),
       m_updateTimer(this)
 {
     TRACE
@@ -127,14 +126,6 @@ void CallItemView::initLayout()
     layout()->addItem(statusLabel(),   1, 1, 1, 1, Qt::AlignRight);
     layout()->addItem(durationLabel(), 1, 2, 1, 1, Qt::AlignRight);
 
-    QString thumb = "";
-    if (!thumb.isEmpty()) {
-        m_picturePath = QString("%1/%2/%3/%4").arg(THEMEDIR)
-                                              .arg(M_APPLICATION_NAME)
-                                              .arg("images/people/fullsize")
-                                              .arg(thumb);
-    }
-
     m_updateTimer.start(1000);
     connect(&m_updateTimer, SIGNAL(timeout()), SLOT(updateDurationLabel()));
 }
@@ -203,10 +194,6 @@ void CallItemView::applyStyle()
         peopleItem()->setObjectName(style()->peopleItemObjectName());
     durationLabel()->setObjectName(style()->durationObjectName());
     statusLabel()->setObjectName(style()->statusObjectName());
-    if (!m_picturePath.isEmpty()) {
-        QRect s = QRect(QPoint(0,0),sizeHint(Qt::PreferredSize).toSize());
-        m_picture = QPixmap(m_picturePath).scaledToWidth(s.width()).copy(s);
-    }
 
     update();
 }
@@ -215,11 +202,18 @@ void CallItemView::drawBackground(QPainter* painter,
                                   const QStyleOptionGraphicsItem* option) const
 {
     Q_UNUSED(option);
-    if (m_picture.isNull())
+    qreal previousOpacity(painter->opacity());
+    painter->setOpacity(style()->backgroundOpacity()*effectiveOpacity());
+
+    // Draw backgroundImage if it exists, otherwise backgroundColor
+    if (style()->backgroundImage())
+        style()->backgroundImage()->draw(0, 0, size().width(), size().height(),
+                                         painter);
+    else if (style()->backgroundColor().isValid())
         painter->fillRect(QRectF(QPointF(0, 0), size()),
                           style()->backgroundColor());
-    else
-        painter->drawPixmap(0,0,m_picture);
+
+    painter->setOpacity(previousOpacity);
 }
 
 void CallItemView::updateData(const QList<const char *> &modifications)

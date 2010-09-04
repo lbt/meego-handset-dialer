@@ -64,8 +64,6 @@ private:
     MLabel              *m_status;
     QGraphicsGridLayout *m_layout;
     bool                 m_pressed;
-    QString              m_picturePath;
-    QPixmap              m_picture;
     QTimer               m_updateTimer;
 
     Q_DISABLE_COPY(CallItemView)
