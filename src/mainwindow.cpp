@@ -29,7 +29,6 @@ MainWindow::MainWindow() :
     MApplicationWindow(),
     m_lastPage(0),
     m_alert(new AlertDialog()),
-    m_search(new SearchBar()),
     m_keypad(0),
     m_acceptAction(DBUS_SERVICE, DBUS_SERVICE_PATH, DBUS_SERVICE, "accept"),
     m_incomingCall(0),
@@ -51,8 +50,6 @@ MainWindow::MainWindow() :
     setOrientationLocked(true);
     setToolbarViewType(MToolBar::tabType);
     m_pages.clear();
-    m_search->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                        QSizePolicy::MinimumExpanding));
 }
 
 void MainWindow::showDebugPage()
@@ -218,12 +215,6 @@ bool MainWindow::event(QEvent *event)
         }
     }
     return MApplicationWindow::event(event);
-}
-
-SearchBar *MainWindow::searchBar()
-{
-    TRACE
-    return m_search;
 }
 
 DialerKeyPad *MainWindow::keypad()

@@ -20,7 +20,6 @@ MODEL_HEADERS += peopleitemmodel.h \
 SOURCES += main.cpp \
     dialerapplication.cpp \
     mainwindow.cpp \
-    dialerwidget.cpp \
     dialerkeypad.cpp \
     genericpage.cpp \
     dialerpage.cpp \
@@ -40,13 +39,11 @@ SOURCES += main.cpp \
     favoritespage.cpp \
     debugpage.cpp \
     historytablemodel.cpp \
-    searchbar.cpp \
     dbustypes.cpp \
 
 HEADERS += \
     common.h \
     dialerapplication.h \
-    dialerwidget.h \
     mainwindow.h \
     dialerkeypad.h \
     genericpage.h \
@@ -66,7 +63,6 @@ HEADERS += \
     favoritespage.h \
     debugpage.h \
     historytablemodel.h \
-    searchbar.h \
     dbustypes.h \
     $$MODEL_HEADERS \
     $$STYLE_HEADERS \

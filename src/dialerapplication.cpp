@@ -10,7 +10,6 @@
 
 #include "common.h"
 #include "dialerapplication.h"
-#include "dialerwidget.h"
 #include "dialerpage.h"
 #include "peoplepage.h"
 #include "recentpage.h"

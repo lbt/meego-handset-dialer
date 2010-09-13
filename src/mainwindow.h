@@ -15,7 +15,6 @@
 #include "callitem.h"
 #include "alertdialog.h"
 #include "dialerkeypad.h"
-#include "searchbar.h"
 #include <QDebug>
 #include <MApplicationWindow>
 #include <MApplicationPage>
@@ -31,7 +30,6 @@ public:
     void showDebugPage();
     void simulateIncomingCall();
     bool event(QEvent *event);
-    SearchBar *searchBar();
     DialerKeyPad *keypad();
 
     QList<GenericPage *> m_pages;
@@ -48,7 +46,6 @@ private Q_SLOTS:
 private:
     MApplicationPage *m_lastPage;
     AlertDialog        *m_alert;
-    SearchBar          *m_search;
     DialerKeyPad       *m_keypad;
     MRemoteAction       m_acceptAction;
     CallItem           *m_incomingCall;
