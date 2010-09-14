@@ -124,7 +124,8 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
       m_keypadVisible(true),
       m_optionsVisible(true),
       m_incall(false),
-      m_headsetConnected(false),
+      m_wirelessConnected(false),
+      m_wiredConnected(false),
       m_optionBox(new MStylableWidget()),
       //% "Mute"
       m_mute(new MButton(qtTrId("xx_mute"),this)),
@@ -271,11 +272,87 @@ void DialerKeyPad::updateButtonStates()
             m_nway->setText(qtTrId("xx_merge"));
     }
 
-    if (m_headsetConnected) {
-        m_audiosink->setText("Headset");
+    /*
+       When audiosink button is checked, we must set the PA sink to use
+       the "alternate" output device, while setting the button label
+       to indicate the name of the "default" device.
+
+       When audiosink button is unchecked, we must set the PA sink to use
+       the "default" output device, while setting the button label
+       to indicate the name of the "alternate" device.
+
+       All of this depends on what output devices are actually connected...
+
+       IOW: The button label should always indicate what *will* be set as
+            the output device sink if the button is pressed, NOT what *is*
+            the current output device sink
+
+       Audio output path order of precedence:
+       1. Wired
+       2. Wireless (BT HSP)
+       3. Handset
+       4. Speaker
+
+       So when the audiosink button is pressed, the alternate output
+       depends on what is connected at the time
+
+       if (audiosink checked)
+           if (Wired connected)
+               if (Wireless connected)
+                   Set output path to Wireless
+               else
+                   Set output path to Handset
+           else if (Wireless connected)
+               Set output path to Handset
+           else
+               Set output path to Speaker
+       else
+           if (Wired connected)
+               Set output path to Wired
+           else if (Wireless connected)
+               Set output path to Wireless
+           else
+               Set output path to Handset
+     */
+    if (m_audiosink->isChecked()) {
+        if (m_wiredConnected) {
+            if (m_wirelessConnected) {
+                //% "Bluetooh Headset"
+                m_audiosink->setText(qtTrId("xx_bluetooth_headset"));
+            }
+            else {
+                //% "Handset"
+                m_audiosink->setText(qtTrId("xx_handset"));
+            }
+            // TODO: Tell PA to set sink to Wired Headset sink device
+        }
+        else if (m_wirelessConnected) {
+            //% "Handset"
+            m_audiosink->setText(qtTrId("xx_handset"));
+            // TODO: Tell PA to set sink to Wireless Headset sink device
+        }
+        else {
+            //% "Handset"
+            m_audiosink->setText(qtTrId("xx_handset"));
+            // TODO: Tell PA to set sink to Speaker sink device
+        }
     }
-    else {
-        m_audiosink->setText("Speaker");
+    else { // unchecked
+        if (m_wiredConnected) {
+            //% "Wired Headset"
+            m_audiosink->setText(qtTrId("xx_wired_headset"));
+            // TODO: Tell PA to set sink to Handset sink device
+        }
+        else if (m_wirelessConnected) {
+            //% "Bluetooh Headset"
+            m_audiosink->setText(qtTrId("xx_bluetooth_headset"));
+            // TODO: Tell PA to set sink to Handset sink device
+        }
+        else {
+            //% "Speaker"
+            m_audiosink->setText(qtTrId("xx_speaker"));
+            // TODO: Tell PA to set sink to Handset sink device
+        }
     }
 }
 
@@ -377,7 +454,6 @@ void DialerKeyPad::createOptionBox()
     m_audiosink->setCheckable(true);
 //    m_spkr->setIconID("icon-dialer-speaker");
 //    m_spkr->setToggledIconID("icon-dialer-speaker-on");
-    m_audiosink->setEnabled(false);
     m_audiosink->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::MinimumExpanding));
 
@@ -559,13 +635,13 @@ void DialerKeyPad::bluetoothDeviceRemoved(QDBusObjectPath)
 
 void DialerKeyPad::headsetConnected()
 {
-    m_headsetConnected=true;
+    m_wirelessConnected=true;
     updateButtonStates();
 }
 
 void DialerKeyPad::headsetDisconnected()
 {
-    m_headsetConnected=false;
+    m_wirelessConnected=false;
     updateButtonStates();
 }
 
@@ -716,10 +792,7 @@ void DialerKeyPad::holdPressed(bool checked)
 void DialerKeyPad::audiosinkPressed(bool checked)
 {
     TRACE
-    if (checked)
-        qDebug() << "spkr option enabled";
-    else
-        qDebug() << "spkr option disabled";
+    qDebug() << QString("audiosink option %1").arg((checked)?"set":"unset");
 
     // Sync up the button states
     updateButtonStates();

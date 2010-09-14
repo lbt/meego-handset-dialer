@@ -61,7 +61,8 @@ private:
     bool                   m_keypadVisible;
     bool                   m_optionsVisible;
     bool                   m_incall;
-    bool                   m_headsetConnected;
+    bool                   m_wirelessConnected;
+    bool                   m_wiredConnected;
 
     MStylableWidget     *m_optionBox;
     MButton             *m_mute, *m_hold, *m_audiosink, *m_nway;
