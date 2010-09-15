@@ -317,7 +317,7 @@ void DialerKeyPad::updateButtonStates()
     if (m_audiosink->isChecked()) {
         if (m_wiredConnected) {
             if (m_wirelessConnected) {
-                //% "Bluetooh Headset"
+                //% "Bluetooth Headset"
                 m_audiosink->setText(qtTrId("xx_bluetooth_headset"));
             }
             else {
@@ -344,7 +344,7 @@ void DialerKeyPad::updateButtonStates()
             // TODO: Tell PA to set sink to Handset sink device
         }
         else if (m_wirelessConnected) {
-            //% "Bluetooh Headset"
+            //% "Bluetooth Headset"
             m_audiosink->setText(qtTrId("xx_bluetooth_headset"));
             // TODO: Tell PA to set sink to Handset sink device
         }
