@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QSortFilterProxyModel>
 #include <seaside.h>
+#include <seasidesyncmodel.h>
 
 #include <MWidgetCreator>
 M_REGISTER_WIDGET(PeopleItem)
@@ -193,15 +194,29 @@ void PeopleItemCellCreator::updateCell(const QModelIndex& index,
     SEASIDE_SHORTCUTS
     SEASIDE_SET_MODEL_AND_ROW(index.model(),index.row());
 
-    // Contacts full, sortable name, defaults to "Lastname, Firstname"
-    //% "%1, %2"
-    card->setName(qtTrId("xx_full_name").arg(SEASIDE_FIELD(LastName, String))
-                                        .arg(SEASIDE_FIELD(FirstName, String)));
+    // Treat the "Me" card as a special case, since it has no default LastName
+    if (SEASIDE_FIELD(Uuid, String) ==
+        SeasideSyncModel::instance()->getLocalSelfId())
+        // Contacts first (common) name
+        //% "%1"
+        card->setName(qtTrId("xx_first_name")
+                      .arg(SEASIDE_FIELD(FirstName, String)));
+    else
+        // Contacts full, sortable name, defaults to "Lastname, Firstname"
+        //% "%1, %2"
+        card->setName(qtTrId("xx_full_name")
+                      .arg(SEASIDE_FIELD(LastName,String))
+                      .arg(SEASIDE_FIELD(FirstName,String)));
     card->setUuid(SEASIDE_FIELD(Uuid, String));
     card->setThumbnail(SEASIDE_FIELD(Avatar, String));
     card->setCommFlags(SEASIDE_FIELD(CommType,Int));
     card->setPresence(SEASIDE_FIELD(Presence,Int));
     card->setFavorite(SEASIDE_FIELD(Favorite,Bool));
-    card->setDetails(SEASIDE_FIELD(PhoneNumbers, StringList));
+    QStringList details = SEASIDE_FIELD(PhoneNumbers, StringList);
+    // make sure that if the PhoneNumbers list is empty, we set Details field
+    // to something that has actual empty ("") strings, otherwise we get other
+    // phone numbers as artifacts of the widget recyler
+    if (details.length() <= 0) details << QString("");
+    card->setDetails(details);
     card->setButton("icon-m-telephony-call");
 }
