@@ -490,17 +490,34 @@ MContainerStyle#listBox {
     icon-align: center;
 }
 
+#hashButton {
+    font:           "Droid Sans Bold" 3mm;
+    text-color:     $COLOR_INVERTED_FOREGROUND;
+    padding-bottom: 0.5mm;
+    icon-align:     bottom;
+    icon-size:      41 14;
+    preferred-size: 33.5% $SIZE_BUTTON;
+    minimum-size:   33%   $SIZE_BUTTON;
+    maximum-size:   34%   $SIZE_BUTTON;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+}
+
+#starButton {
+    font:           "Droid Sans Bold" 3mm;
+    text-color:     $COLOR_INVERTED_FOREGROUND;
+    padding-bottom: 0.5mm;
+    icon-align:     bottom;
+    icon-size:      41 14;
+    preferred-size: 33.5% $SIZE_BUTTON;
+    minimum-size:   33%   $SIZE_BUTTON;
+    maximum-size:   34%   $SIZE_BUTTON;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+}
+
 #numericButton {
     font:           "Droid Sans Bold" 3mm;
-    text-color:     #FCC536;
-    padding-top:    0;
-    padding-left:   0;
-    padding-right:  0;
+    text-color:     $COLOR_BLUE;
     padding-bottom: 0.5mm;
-    margin-top:     0;
-    margin-left:    0;
-    margin-right:   0;
-    margin-bottom:  0;
     icon-align:     bottom;
     icon-size:      41 14;
     preferred-size: 33.5% $SIZE_BUTTON;
