@@ -281,7 +281,7 @@ MContainerStyle#listBox {
     preferred-size: 50% 90%;
     minimum-size:   50% 90%;
     maximum-size:   60% 90%;
-    offset: 0 $HEIGHT_NAVIGATIONBAR;
+    offset: 0 $SIZE_BUTTON;
 }
 
 #keypadOverlay.Portrait {
@@ -388,11 +388,13 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+    text-color: $COLOR_INVERTED_FOREGROUND;
 }
 
 #holdButton {
@@ -400,11 +402,13 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+    text-color: $COLOR_INVERTED_FOREGROUND;
 }
 
 #speakerButton {
@@ -412,11 +416,13 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+    text-color: $COLOR_INVERTED_FOREGROUND;
 }
 
 #multiButton {
@@ -424,11 +430,13 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
+    background-image: keypad-section-background 2px 2px 2px 2px;
+    text-color: $COLOR_INVERTED_FOREGROUND;
 }
 
 #addButton {
@@ -436,11 +444,12 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
+    background-image: keypad-section-background 2px 2px 2px 2px;
 }
 
 #callButton {
@@ -449,9 +458,9 @@ MContainerStyle#listBox {
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 50% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   50% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   50% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 50% $SIZE_BUTTON;
+    minimum-size:   50% $SIZE_BUTTON;
+    maximum-size:   50% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
 }
@@ -469,28 +478,16 @@ MContainerStyle#listBox {
 }
 
 #hideButton {
-    background-image: "meegotouch-button-background" 10px 10px 10px 10px;
+    background-image: keypad-section-background 2px 2px 2px 2px;
     margin-top:     0;
     margin-left:    0;
     margin-right:   0;
     margin-bottom:  0;
-    preferred-size: 25% $HEIGHT_NAVIGATIONBAR;
-    minimum-size:   25% $HEIGHT_NAVIGATIONBAR;
-    maximum-size:   25% $HEIGHT_NAVIGATIONBAR;
+    preferred-size: 25% $SIZE_BUTTON;
+    minimum-size:   25% $SIZE_BUTTON;
+    maximum-size:   25% $SIZE_BUTTON;
     icon-size: $SIZE_ICON_DEFAULT $SIZE_ICON_DEFAULT;
     icon-align: center;
-}
-
-#hideButton:pressed {
-    background-image: "meegotouch-button-background-pressed" 10px 10px 10px 10px;
-}
-
-#hideButton:selected {
-    background-image: "meegotouch-button-background" 10px 10px 10px 10px;
-}
-
-#hideButton:pressed-selected {
-    background-image: "meegotouch-button-background-pressed" 10px 10px 10px 10px;
 }
 
 #numericButton {
@@ -506,9 +503,10 @@ MContainerStyle#listBox {
     margin-bottom:  0;
     icon-align:     bottom;
     icon-size:      41 14;
-    preferred-size: 33.5% $HEIGHT_TOPBARS;
-    minimum-size:   33%   $HEIGHT_TOPBARS;
-    maximum-size:   34%   $HEIGHT_TOPBARS;
+    preferred-size: 33.5% $SIZE_BUTTON;
+    minimum-size:   33%   $SIZE_BUTTON;
+    maximum-size:   34%   $SIZE_BUTTON;
+    background-image: keypad-section-background 2px 2px 2px 2px;
 }
 
 /* ***********************************************
