@@ -654,29 +654,45 @@ void DialerKeyPad::constructNumericKeypad(MGridLayoutPolicy *policy)
         for (int j = 0; j < 3; j++) {
             button = new MButton(NumericButtonIcon[k], NumericButtonLabel[k]);
             policy->addItem(button,i,j);
-            button->setObjectName("numericButton");
             button->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                               QSizePolicy::MinimumExpanding));
             connect(button, SIGNAL(clicked(bool)), SLOT(handleButtonClicked()));
 
-            QString label;
-	    if (k == 0) // 0 index == "1" key == voicemail
-                //% "Call Voicemail"
-                label = qtTrId("xx_call_voicemail");
-            else
+            switch (k) {
+            case _NumericButton_star:
+                button->setObjectName("starButton");
+                break;
+            case _NumericButton_hash:
+                button->setObjectName("hashButton");
+                break;
+            default:
+                button->setObjectName("numericButton");
+                if (k == _NumericButton_0)  // "0" button never calls speed dial
+                    break;
+
+                // Add the "call speed dial" action
                 //% "Call Speed Dial"
-                label = qtTrId("xx_call_speeddial");
-            MAction *callSD = new MAction(label, button);
-            callSD->setLocation(MAction::ObjectMenuLocation);
-            callSD->setData(k);
-            connect(callSD,SIGNAL(triggered()),SLOT(callSpeedDial()));
-            button->addAction(callSD);
-            if (k != 0) {  // 0 index == "1" key, which is always voicemail
-                //% "Set Speed Dial"
-                MAction *setSD = new MAction(qtTrId("xx_set_speeddial"),button);
-                setSD->setLocation(MAction::ObjectMenuLocation);
-                connect(setSD,SIGNAL(triggered()),SLOT(setSpeedDial()));
-                button->addAction(setSD);
+                QString label = qtTrId("xx_call_speeddial");
+                if (k == _NumericButton_1)
+                    //% "Call Voicemail"
+                    label = qtTrId("xx_call_voicemail");
+
+                MAction *callSD = new MAction(label, button);
+                callSD->setLocation(MAction::ObjectMenuLocation);
+                callSD->setData(k);
+                connect(callSD,SIGNAL(triggered()),SLOT(callSpeedDial()));
+                button->addAction(callSD);
+
+                // Add the "set speed dial" action, except for "1" key
+                if (k != _NumericButton_1) {
+                    //% "Set Speed Dial"
+                    QString label = qtTrId("xx_set_speeddial");
+                    MAction *setSD = new MAction(label,button);
+                    setSD->setLocation(MAction::ObjectMenuLocation);
+                    connect(setSD,SIGNAL(triggered()),SLOT(setSpeedDial()));
+                    button->addAction(setSD);
+                }
+                break;
             }
             k++;
             m_buttons << button;
