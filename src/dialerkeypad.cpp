@@ -174,8 +174,8 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
     m_policyShowOptions->insertItem (1, m_controlBox, Qt::AlignCenter);
 
     // ShowBoth policy shows call options, keypad and call controls
-    m_policyShowBoth->insertItem    (0, m_optionBox,  Qt::AlignCenter);
-    m_policyShowBoth->insertItem    (1, m_buttonBox,  Qt::AlignCenter);
+    m_policyShowBoth->insertItem    (0, m_buttonBox,  Qt::AlignCenter);
+    m_policyShowBoth->insertItem    (1, m_optionBox,  Qt::AlignCenter);
     m_policyShowBoth->insertItem    (2, m_controlBox, Qt::AlignCenter);
 
     setObjectName("keypadOverlay");
