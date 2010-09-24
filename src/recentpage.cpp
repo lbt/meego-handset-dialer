@@ -85,9 +85,13 @@ void RecentPage::matchSelected(const QModelIndex &index)
         result.clear();
         result=QString("");
     }
-    entry->setText(result);
-    qDebug() << QString("Selected contact number = ") << result;
-    startCompleting(entry->text());
+
+    // When an item is selected, invoke the "call"
+    if (!result.isEmpty()) {
+        qDebug() << QString("Calling selected contact number = ") << result;
+        dynamic_cast<MainWindow *>(applicationWindow())->call(result);
+    }
+    entry->clear();
 }
 
 void RecentPage::startCompleting(const QString & prefix)

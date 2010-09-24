@@ -86,9 +86,13 @@ void PeoplePage::matchSelected(const QModelIndex &index)
         result.clear();
         result << QString("");
     }
-    entry->setText(result.at(0));
-    qDebug() << QString("Selected contact number = ") << result.at(0);
-    startCompleting(entry->text());
+
+    // When an item is selected, invoke the "call"
+    if (!result.at(0).isEmpty()) {
+        qDebug() << QString("Calling selected contact number = ") << result.at(0);
+        dynamic_cast<MainWindow *>(applicationWindow())->call(result.at(0));
+    }
+    entry->clear();
 }
 
 void PeoplePage::startCompleting(const QString & prefix)
