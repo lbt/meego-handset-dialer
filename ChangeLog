@@ -1,3 +1,20 @@
+Changes in 0.1.16
+
+2104 Fixed:   Can't make 2nd outgoing call, partial fix for BMC#3581
+82c0 Fixes BMC#3240 - Wrong text color on all keypad buttons
+98e6 Fixes: BMC#6807 - + and * keys should not trigger a speed call dialog
+aee8 Fixed: Keypad size and background (BMC#'s 5586, 6395)
+d66b Fixed: BMC#7183 - Call option button group is in wrong position
+4e9f Fixed:   Contact artifacts from recylcer in Me card
+8a1f Fixed:   m_audiosink button text spelling error
+bef3 Removed: Obsolete and unused code
+d21b Fixed:   Audio sink button state handling (BMC#'s 6737, 6738)
+9f0c added project dependencies to build against meegobluetooth
+ce82 added bluetooth headset/handsfree device detection and update the audiosink button appropriately
+e7da renamed spkr button to audiosink button
+8a01 fixed seg fault when ofono isn't running
+2701 Fixed:   BMC#6291 - Updated visual assets not being used
+
 Changes in 0.1.15
 
 7735... Fixed:   BMC#3978 - [L10N] Dialer needs to be translatable

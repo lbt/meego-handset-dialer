@@ -1,5 +1,5 @@
 load(meegotouch_defines)
-VERSION = 0.1.15
+VERSION = 0.1.16
 TARGET = dialer
 CONFIG += link_pkgconfig meegotouch debug
 PKGCONFIG += meegotouch
