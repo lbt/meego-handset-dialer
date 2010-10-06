@@ -173,6 +173,7 @@ void DialerPage::updateCall(CallItem *call)
     person->setPhone(lineid);
 
     call->setPeopleItem(person);
+    doClear();
 }
 
 void DialerPage::updateCalls()
