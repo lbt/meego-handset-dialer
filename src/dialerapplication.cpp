@@ -30,6 +30,7 @@
 #include <MToolBar>
 #include <MButtonGroup>
 #include <MDialog>
+#include <MNotification>
 
 DialerApplication::DialerApplication(int &argc, char **argv)
     : MApplication(argc, argv)
@@ -139,6 +140,8 @@ void DialerApplication::init()
                                       SLOT(callManagerConnected()));
     connect(m_manager->callManager(), SIGNAL(disconnected()),
                                       SLOT(callManagerDisconnected()));
+    connect(m_manager->voicemail(), SIGNAL(messagesWaitingChanged()),
+                                      SLOT(messagesWaitingChanged()));
 }
 
 void DialerApplication::modemConnected()
@@ -178,6 +181,27 @@ void DialerApplication::callManagerConnected()
 void DialerApplication::callManagerDisconnected()
 {
     TRACE
+}
+
+void DialerApplication::messagesWaitingChanged()
+{
+    TRACE
+    static MNotification *vmail = NULL;
+    if (m_manager->voicemail() && m_manager->voicemail()->isValid()) {
+        int count = m_manager->voicemail()->count();
+        if (!vmail)
+            vmail = new MNotification(MNotification::MessageArrivedEvent);
+        //% "You have %1 voice messages"
+        vmail->setSummary(qtTrId("xx_messages_waiting").arg(count));
+        vmail->setImage("icon-m-telephony-voicemail");
+        vmail->setCount(count);
+
+        // Only notify if there are 1 or more messages not yet heard
+        if (count && m_manager->voicemail()->waiting())
+            vmail->publish();
+        else
+            vmail->remove();
+    }
 }
 
 int DialerApplication::showErrorDialog()

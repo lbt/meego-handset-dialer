@@ -53,6 +53,7 @@ private Q_SLOTS:
     void modemDisconnected();
     void networkDisconnected();
     void callManagerDisconnected();
+    void messagesWaitingChanged();
     void createMainWindow();
     QStringList dumpDisplayInfo();
     void setError(const QString msg);
