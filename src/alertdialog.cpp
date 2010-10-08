@@ -52,6 +52,7 @@ void AlertDialog::setCallItem(CallItem *call)
     m_call = call;
     updateInfo();
     connect(m_call, SIGNAL(stateChanged()), SLOT(callStateChanged()));
+    connect(this, SIGNAL(disappearing()), this, SLOT(cleanupOnDismiss()));
 }
 
 void AlertDialog::init()
@@ -85,6 +86,7 @@ void AlertDialog::init()
 void AlertDialog::acceptCall()
 {
     TRACE
+    disconnect(this, SIGNAL(disappearing()), this, SLOT(cleanupOnDismiss()));
     if (!m_call || !m_call->isValid())
         return;
     disconnect(m_call, SIGNAL(stateChanged()));
@@ -108,6 +110,16 @@ void AlertDialog::acceptCall()
 }
 
 void AlertDialog::declineCall()
+{
+    TRACE
+    disconnect(this, SIGNAL(disappearing()), this, SLOT(cleanupOnDismiss()));
+    if (!m_call || !m_call->isValid())
+        return;
+    disconnect(m_call, SIGNAL(stateChanged()));
+    m_call->callProxy()->hangup();
+}
+
+void AlertDialog::cleanupOnDismiss()
 {
     TRACE
     if (!m_call || !m_call->isValid())

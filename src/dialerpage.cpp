@@ -173,6 +173,9 @@ void DialerPage::updateCalls()
     CallManager *cm = dynamic_cast<CallManager *>(sender());
     CallItem *activeCall = cm->activeCall();
     CallItem *heldCall = cm->heldCall();
+    CallItem *incomingCall = cm->incomingCall();
+    CallItem *waitingCall = cm->waitingCall();
+    CallItem *dialingCall = cm->dialingCall();
 
     if (activeCall && !activeCall->peopleItem())
         updateCall(activeCall);
@@ -180,9 +183,24 @@ void DialerPage::updateCalls()
     if (heldCall && !heldCall->peopleItem())
         updateCall(heldCall);
 
+    if (incomingCall && !incomingCall->peopleItem())
+        updateCall(incomingCall);
+
+    if (waitingCall && !waitingCall->peopleItem())
+        updateCall(waitingCall);
+
+    if (dialingCall && !dialingCall->peopleItem())
+        updateCall(dialingCall);
+
     // Make sure active call is on top of the list
     if (activeCall && (m_policy->indexOf(activeCall) < 0)) {
         m_policy->insertItem(0, activeCall, Qt::AlignCenter);
+    } else if (dialingCall && (m_policy->indexOf(dialingCall) < 0)) {
+        m_policy->insertItem(0, dialingCall, Qt::AlignCenter);
+    } else if (incomingCall && (m_policy->indexOf(incomingCall) < 0)) {
+        m_policy->insertItem(0, incomingCall, Qt::AlignCenter);
+    } else if (waitingCall && (m_policy->indexOf(waitingCall) < 0)) {
+        m_policy->insertItem(0, waitingCall, Qt::AlignCenter);
     }
 }
 

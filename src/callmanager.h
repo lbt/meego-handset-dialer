@@ -40,6 +40,8 @@ public:
     CallItem *activeCall() const;
     CallItem *heldCall() const;
     CallItem *dialingCall() const;
+    CallItem *incomingCall() const;
+    CallItem *waitingCall() const;
 
     QStringList dumpProperties();
 

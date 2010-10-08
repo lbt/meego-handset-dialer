@@ -104,6 +104,26 @@ CallItem *CallManager::dialingCall() const
     return NULL;
 }
 
+CallItem *CallManager::incomingCall() const
+{
+    TRACE
+    if (m_callItems.size())
+    foreach (CallItem *c, m_callItems)
+        if (c->state() == CallItemModel::STATE_INCOMING)
+            return c;
+    return NULL;
+}
+
+CallItem *CallManager::waitingCall() const
+{
+    TRACE
+    if (m_callItems.size())
+    foreach (CallItem *c, m_callItems)
+        if (c->state() == CallItemModel::STATE_WAITING)
+            return c;
+    return NULL;
+}
+
 void CallManager::setActiveCall(const CallItem &call)
 {
     TRACE

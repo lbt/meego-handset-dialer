@@ -37,6 +37,7 @@ public:
 private Q_SLOTS:
     void acceptCall();
     void declineCall();
+    void cleanupOnDismiss();
     void callStateChanged();
     void hideKeypad();
     void showKeypad();
