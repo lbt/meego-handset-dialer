@@ -124,6 +124,16 @@ CallItem *CallManager::waitingCall() const
     return NULL;
 }
 
+CallItem *CallManager::alertingCall() const
+{
+    TRACE
+    if (m_callItems.size())
+    foreach (CallItem *c, m_callItems)
+        if (c->state() == CallItemModel::STATE_ALERTING)
+            return c;
+    return NULL;
+}
+
 void CallManager::setActiveCall(const CallItem &call)
 {
     TRACE

@@ -747,6 +747,8 @@ void DialerKeyPad::callPressed(bool checked)
             c = cm->incomingCall();
         else if (cm->waitingCall()) // Fixes BMC#7536
             c = cm->waitingCall();
+        else if (cm->alertingCall()) // Fixes BMC#8322
+            c = cm->alertingCall();
 
         if (c) {
             if (cm->multipartyCalls().length() &&
