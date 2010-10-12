@@ -14,16 +14,31 @@
 #include <QGraphicsItem>
 #include <QGraphicsWidget>
 #include <QDebug>
+#include <MTheme>
 
 #include <MWidgetCreator>
+
+#define DEFAULT_RINGTONE "ring-1.wav"
+
 M_REGISTER_WIDGET(CallItem)
 
 CallItem::CallItem(const QString path, MWidget *parent)
     : MWidgetController(new CallItemModel, parent),
       m_path(path),
-      m_peopleItem(NULL)
+      m_peopleItem(NULL),
+      m_ringtone(new QMediaPlayer()),
+      m_rtKey(new MGConfItem("/apps/dialer/defaultRingtone"))
 {
     TRACE
+
+    QString defaultRingtone = QString("%1/%2/stereo/%3")
+                                     .arg(SOUNDS_DIR)
+                                     .arg(MTheme::instance()->currentTheme())
+                                     .arg(DEFAULT_RINGTONE);
+    m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(
+                m_rtKey->value(QVariant(defaultRingtone)).toString())));
+    m_ringtone->setVolume(100);
+
     if (isValid())
         init();
 }
@@ -31,6 +46,16 @@ CallItem::CallItem(const QString path, MWidget *parent)
 CallItem::~CallItem()
 {
     TRACE
+    if (m_ringtone) {
+        disconnect(m_ringtone, SIGNAL(positionChanged(qint64)));
+        m_ringtone->stop();
+        delete m_ringtone;
+        m_ringtone = 0;
+    }
+
+    if (m_rtKey)
+        delete m_rtKey;
+    m_rtKey = 0;
 }
 
 void CallItem::init()
@@ -46,6 +71,17 @@ void CallItem::init()
             qCritical("Invalid CallProxy instance!");
     } else
         qCritical("Empty call path.  Can not create CallProxy!");
+
+    if (state() == CallItemModel::STATE_INCOMING ||
+        state() == CallItemModel::STATE_WAITING)
+    {
+        // Start ringing
+        if (m_ringtone && (m_ringtone->state() != QMediaPlayer::PlayingState)) {
+            connect(m_ringtone, SIGNAL(positionChanged(qint64)),
+                                  SLOT(ringtoneRepeatCheck(qint64)));
+            m_ringtone->play();
+        }
+    }
 }
 
 bool CallItem::isValid()
@@ -156,6 +192,22 @@ void CallItem::click()
 void CallItem::callStateChanged()
 {
     TRACE
+    if (state() == CallItemModel::STATE_INCOMING ||
+        state() == CallItemModel::STATE_WAITING)
+    {
+        // Start ringing
+        if (m_ringtone && (m_ringtone->state() != QMediaPlayer::PlayingState)) {
+            connect(m_ringtone, SIGNAL(positionChanged(qint64)),
+                                  SLOT(ringtoneRepeatCheck(qint64)));
+            m_ringtone->play();
+        }
+    } else {
+        // Stop ringing
+        if (m_ringtone) {
+            disconnect(m_ringtone, SIGNAL(positionChanged(qint64)));
+            m_ringtone->stop();
+        }
+    }
     emit stateChanged();
 }
 
@@ -172,4 +224,16 @@ QVariant CallItem::itemChange(GraphicsItemChange change, const QVariant &val)
         model()->setSelected(val.toBool());
 
     return QGraphicsItem::itemChange(change, val);
+}
+
+void CallItem::ringtoneRepeatCheck(qint64 position)
+{
+    TRACE
+    if (m_ringtone && !position) {
+        if (state() == CallItemModel::STATE_INCOMING ||
+            state() == CallItemModel::STATE_WAITING) {
+            // Continue playing until call state is not incomining or waiting
+            m_ringtone->play();
+        }
+    }
 }

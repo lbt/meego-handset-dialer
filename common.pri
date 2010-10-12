@@ -14,6 +14,9 @@ PKGCONFIG += meegotouch
 DEFINES += DBUS_SERVICE_PATH=\\\"/com/meego/${QMAKE_TARGET}\\\"
 DEFINES += DBUS_SERVICE=\\\"com.meego.${QMAKE_TARGET}\\\"
 
+# Sound theme base dir
+DEFINES += SOUNDS_DIR=\\\"\"$$M_INSTALL_DATA/sounds\"\\\"
+
 # FIXME: This should be defined in meegotouch_defines.prf, but is ending up
 #        as a NULL or empty value in MeeGo OBS
 M_DBUS_SERVICES_DIR = $$M_INSTALL_DATA/dbus-1/services

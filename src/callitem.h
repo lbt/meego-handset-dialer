@@ -16,6 +16,8 @@
 #include <QString>
 #include <QDateTime>
 #include <QtDBus>
+#include <QMediaPlayer>
+#include <MGConfItem>
 #include <MWidgetController>
 
 class CallItem: public MWidgetController
@@ -65,12 +67,15 @@ Q_SIGNALS:
 private Q_SLOTS:
     void callStateChanged();
     void callDisconnected(const QString &reason);
+    void ringtoneRepeatCheck(qint64 position);
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);
 
     QString               m_path;
     PeopleItem           *m_peopleItem;
+    QMediaPlayer         *m_ringtone;
+    MGConfItem           *m_rtKey;
 
     Q_DISABLE_COPY(CallItem)
 };
