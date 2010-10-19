@@ -158,6 +158,11 @@ void AlertDialog::updateInfo()
 {
     TRACE
 
+    QModelIndexList matches;
+    matches.clear();
+    int role = Seaside::SearchRole;
+    int hits = -1;
+
     //% "Unknown Caller"
     QString name   = qtTrId("xx_unknown_caller");
     QString photo  = "icon-m-content-avatar-placeholder";
@@ -168,9 +173,8 @@ void AlertDialog::updateInfo()
         lineid = stripLineID(m_call->lineID());
         SeasideSyncModel *contacts = DA_SEASIDEMODEL;
         QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-        QModelIndexList matches = contacts->match(first, Seaside::SearchRole,
-                                                  QVariant(lineid),1);
-        if (!matches.isEmpty()) {
+        matches = contacts->match(first, role, QVariant(lineid), hits);
+        if (matches.count()) {
             QModelIndex person = matches.at(0); //First match is all we look at
             SEASIDE_SHORTCUTS
             SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
