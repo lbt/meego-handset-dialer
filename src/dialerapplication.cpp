@@ -187,21 +187,81 @@ void DialerApplication::messagesWaitingChanged()
 {
     TRACE
     static MNotification *vmail = NULL;
-    if (m_manager->voicemail() && m_manager->voicemail()->isValid()) {
-        int count = m_manager->voicemail()->count();
-        if (!vmail)
-            vmail = new MNotification(MNotification::MessageArrivedEvent);
-        //% "You have %1 voice messages"
-        vmail->setSummary(qtTrId("xx_messages_waiting").arg(count));
-        vmail->setImage("icon-m-telephony-voicemail");
-        vmail->setCount(count);
 
-        // Only notify if there are 1 or more messages not yet heard
-        if (count && m_manager->voicemail()->waiting())
-            vmail->publish();
-        else
-            vmail->remove();
+    if (!m_manager->voicemail() || !m_manager->voicemail()->isValid()) {
+        qDebug() << QString("Voicemail proxy is invalid, ignoring");
+        return;
     }
+
+
+    if (!vmail) {
+        bool found = false;
+        foreach (MNotification *notice, MNotification::notifications()) {
+            if (notice->eventType() == MNotification::MessageArrivedEvent) {
+                // If we've already found a MessageArrived notification,
+                // we must delete others since we only want one
+                if (found) {
+                    qDebug() << QString("Removing duplicate voicemail notice");
+                    notice->remove();
+                    delete notice;
+                }
+                else {
+                    vmail = notice;
+                    found = true;
+                }
+            }
+            else {
+                // We're only interested in MessageArrived events, all others
+                // can need to be deleted here since they are copies
+                delete notice;
+            }
+        }
+
+        if (!found) {
+            if (!m_manager->voicemail()->waiting()) {
+                qDebug() << QString("No waiting Voicemail messages");
+                return;
+            }
+            else {
+                // This is the first instance of a MessageArrived event
+                qDebug() << QString("Creating new voicemail notice instance");
+                vmail = new MNotification(MNotification::MessageArrivedEvent);
+                vmail->setCount(0);
+            }
+        }
+        else {
+            if (!m_manager->voicemail()->waiting()) {
+                qDebug() << QString("No waiting Voicemail messages");
+                vmail->remove();
+                return;
+            }
+        }
+    }
+
+    // We've got a valid notification and we have messages waiting...
+    int vCount = m_manager->voicemail()->count();
+    int nCount = vmail->count();
+
+    if (vCount < 0) vCount = 0;
+    if (nCount < 0) nCount = 0;
+
+    qDebug() << QString("Voicemails: %1").arg(QString::number(vCount));
+    qDebug() << QString("Notices:    %1").arg(QString::number(nCount));
+
+    // No more Voicemail messages waiting, remove notification
+    if (vCount <= 0) {
+        qDebug() << QString("No Voicemails waiting, removing notification");
+        vmail->remove();
+        return;
+    }
+
+    // The waiting voicemail count has changed, update and [re]publish it
+    //% "You have %1 voice messages"
+    vmail->setSummary(qtTrId("xx_messages_waiting").arg(vCount));
+    vmail->setImage("icon-m-telephony-voicemail");
+    vmail->setCount(vCount);
+    qDebug() << QString("Voicemail count changed, publishing notification");
+    vmail->publish();
 }
 
 int DialerApplication::showErrorDialog()
