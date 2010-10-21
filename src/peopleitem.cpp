@@ -193,20 +193,17 @@ void PeopleItemCellCreator::updateCell(const QModelIndex& index,
 
     SEASIDE_SHORTCUTS
     SEASIDE_SET_MODEL_AND_ROW(index.model(),index.row());
+    QString firstName = SEASIDE_FIELD(FirstName, String);
+    QString lastName = SEASIDE_FIELD(LastName, String);
 
-    // Treat the "Me" card as a special case, since it has no default LastName
-    if (SEASIDE_FIELD(Uuid, String) ==
-        SeasideSyncModel::instance()->getLocalSelfId())
+    if (lastName.isEmpty())
         // Contacts first (common) name
         //% "%1"
-        card->setName(qtTrId("xx_first_name")
-                      .arg(SEASIDE_FIELD(FirstName, String)));
+        card->setName(qtTrId("xx_first_name").arg(firstName));
     else
         // Contacts full, sortable name, defaults to "Lastname, Firstname"
         //% "%1, %2"
-        card->setName(qtTrId("xx_full_name")
-                      .arg(SEASIDE_FIELD(LastName,String))
-                      .arg(SEASIDE_FIELD(FirstName,String)));
+        card->setName(qtTrId("xx_full_name").arg(lastName).arg(firstName));
     card->setUuid(SEASIDE_FIELD(Uuid, String));
     card->setThumbnail(SEASIDE_FIELD(Avatar, String));
     card->setCommFlags(SEASIDE_FIELD(CommType,Int));

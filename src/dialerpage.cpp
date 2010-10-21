@@ -152,11 +152,18 @@ void DialerPage::updateCall(CallItem *call)
         SEASIDE_SHORTCUTS
         SEASIDE_SET_MODEL_AND_ROW(match.model(), match.row());
 
-        // Contacts full, sortable name, defaults to "Lastname, Firstname"
-        //% "%1, %2"
-        name = QString(qtTrId("xx_full_name"))
-                                .arg(SEASIDE_FIELD(LastName, String))
-                                .arg(SEASIDE_FIELD(FirstName, String));
+        QString firstName = SEASIDE_FIELD(FirstName, String);
+        QString lastName = SEASIDE_FIELD(LastName, String);
+
+        if (lastName.isEmpty())
+            // Contacts first (common) name
+            //% "%1"
+            name = qtTrId("xx_first_name").arg(firstName);
+        else
+            // Contacts full, sortable name, defaults to "Lastname, Firstname"
+            //% "%1, %2"
+            name = qtTrId("xx_full_name").arg(lastName).arg(firstName);
+
         photo = SEASIDE_FIELD(Avatar, String);
     }
 
