@@ -2,13 +2,17 @@
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node name="">
 	<interface name="org.ofono.Manager">
-		<method name="GetProperties">
-			<arg type="a{sv}" direction="out"/>
-			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		<method name="GetModems">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
 		</method>
-		<signal name="PropertyChanged">
-			<arg type="s"/>
-			<arg type="v"/>
+		<signal name="ModemAdded">
+			<arg type="o"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+		<signal name="ModemRemoved">
+			<arg type="o"/>
 		</signal>
 	</interface>
 	<interface name="org.ofono.CallHistory">

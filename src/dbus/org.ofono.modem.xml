@@ -77,11 +77,45 @@
 		<method name="SendTones">
 			<arg type="s" direction="in"/>
 		</method>
+		<method name="GetCalls">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+		<signal name="CallAdded">
+			<arg type="o"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+		<signal name="CallRemoved">
+			<arg type="o"/>
+		</signal>
+	</interface>
+<!-- Commenting out unused interface...
+	<interface name="org.ofono.SimToolkit">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="SelectItem">
+			<arg type="y" direction="in"/>
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="RegisterAgent">
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="UnregisterAgent">
+			<arg type="o" direction="in"/>
+		</method>
 		<signal name="PropertyChanged">
 			<arg type="s"/>
 			<arg type="v"/>
 		</signal>
 	</interface>
+-->
 	<interface name="org.ofono.MessageWaiting">
 		<method name="GetProperties">
 			<arg type="a{sv}" direction="out"/>
@@ -157,6 +191,11 @@
 			<arg type="v"/>
 		</signal>
 	</interface>
+	<interface name="org.ofono.Phonebook">
+		<method name="Import">
+			<arg type="s" direction="out"/>
+		</method>
+	</interface>
 	<interface name="org.ofono.SupplementaryServices">
 		<method name="Initiate">
 			<arg type="s" direction="in"/>
@@ -216,6 +255,26 @@
 			<arg type="v"/>
 		</signal>
 	</interface>
+	<interface name="org.ofono.NetworkRegistration">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+		</method>
+		<method name="Register"/>
+		<method name="Deregister"/>
+		<method name="GetOperators">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
+		</method>
+		<method name="Scan">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
 	<interface name="org.ofono.CellBroadcast">
 		<method name="GetProperties">
 			<arg type="a{sv}" direction="out"/>
@@ -239,27 +298,42 @@
 			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
 		</signal>
 	</interface>
-	<interface name="org.ofono.NetworkRegistration">
+<!-- Commenting out unused interface...
+	<interface name="org.ofono.ConnectionManager">
 		<method name="GetProperties">
 			<arg type="a{sv}" direction="out"/>
 			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
 		</method>
-		<method name="Register"/>
-		<method name="Deregister"/>
-		<method name="ProposeScan">
-			<arg type="ao" direction="out"/>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="AddContext">
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="RemoveContext">
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="DeactivateAll"/>
+		<method name="GetContexts">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
 		</method>
 		<signal name="PropertyChanged">
 			<arg type="s"/>
 			<arg type="v"/>
 		</signal>
+		<signal name="ContextAdded">
+			<arg type="o"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+		<signal name="ContextRemoved">
+			<arg type="o"/>
+		</signal>
 	</interface>
-	<interface name="org.ofono.Phonebook">
-		<method name="Import">
-			<arg type="s" direction="out"/>
-		</method>
-	</interface>
-	<interface name="org.ofono.SmsManager">
+	<interface name="org.ofono.MessageManager">
 		<method name="GetProperties">
 			<arg type="a{sv}" direction="out"/>
 			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
@@ -271,6 +345,11 @@
 		<method name="SendMessage">
 			<arg type="s" direction="in"/>
 			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="GetMessages">
+			<arg type="a(oa{sv})" direction="out"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QArrayOfPathProperties"/>
 		</method>
 		<signal name="PropertyChanged">
 			<arg type="s"/>
@@ -286,28 +365,30 @@
 			<arg type="a{sv}"/>
 			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
 		</signal>
-	</interface>
-	<interface name="org.ofono.DataConnectionManager">
-		<method name="GetProperties">
-			<arg type="a{sv}" direction="out"/>
-			<annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
-		</method>
-		<method name="SetProperty">
-			<arg type="s" direction="in"/>
-			<arg type="v" direction="in"/>
-		</method>
-		<method name="CreateContext">
-			<arg type="s" direction="in"/>
-			<arg type="s" direction="in"/>
-			<arg type="o" direction="out"/>
-		</method>
-		<method name="RemoveContext">
-			<arg type="o" direction="in"/>
-		</method>
-		<method name="DeactivateAll"/>
-		<signal name="PropertyChanged">
-			<arg type="s"/>
-			<arg type="v"/>
+		<signal name="MessageAdded">
+			<arg type="o"/>
+			<arg type="a{sv}"/>
+			<annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+		</signal>
+		<signal name="MessageRemoved">
+			<arg type="o"/>
 		</signal>
 	</interface>
+	<interface name="org.ofono.SmartMessaging">
+		<method name="RegisterAgent">
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="UnregisterAgent">
+			<arg type="o" direction="in"/>
+		</method>
+		<method name="SendBusinessCard">
+			<arg type="ab" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="SendAppointment">
+			<arg type="ab" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+	</interface>
+-->
 </node>

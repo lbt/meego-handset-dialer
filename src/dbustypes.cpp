@@ -29,3 +29,23 @@ const QDBusArgument & operator >> (const QDBusArgument &argument,
     argument.endStructure();
     return argument;
 }
+
+// Marshall the OfonoPathProperties data into a D-BUS argument
+QDBusArgument & operator << (QDBusArgument &argument,
+                             const OfonoPathProperties &d)
+{
+    argument.beginStructure();
+    argument << d.path << d.properties;
+    argument.endStructure();
+    return argument;
+}
+
+// Retrieve the OfonoPathProperties data from the D-BUS argument
+const QDBusArgument & operator >> (const QDBusArgument &argument,
+                                   OfonoPathProperties &d)
+{
+    argument.beginStructure();
+    argument >> d.path >> d.properties;
+    argument.endStructure();
+    return argument;
+}
