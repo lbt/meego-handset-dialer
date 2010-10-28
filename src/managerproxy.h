@@ -75,7 +75,11 @@ public:
     VoicemailProxy* voicemail() const;
 
 public slots:
-    void managerDBusGetPropDone(QDBusPendingCallWatcher *call);
+    void managerDBusGetModemsDone(QDBusPendingCallWatcher *call);
+
+private Q_SLOTS:
+    void modemAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
+    void modemRemoved(const QDBusObjectPath &in0);
 
 private:
     QString       m_modemPath;

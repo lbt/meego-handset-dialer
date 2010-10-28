@@ -19,21 +19,38 @@ CallManager::CallManager(const QString &modemPath)
 {
     TRACE
 
-    if (!org::ofono::VoiceCallManager::isValid())
+    if (!org::ofono::VoiceCallManager::isValid()) {
         qCritical() << QString("Failed to connect to %1 on modem %2:\n\t%3")
                        .arg(staticInterfaceName())
                        .arg(modemPath)
                        .arg(lastError().message());
-    else {
-        QDBusPendingReply<QVariantMap> reply;
+    } else {
+        QDBusPendingReply<QArrayOfPathProperties> callsReply;
+        QDBusPendingReply<QVariantMap> propsReply;
         QDBusPendingCallWatcher *watcher;
 
-        reply = GetProperties();
-        watcher = new QDBusPendingCallWatcher(reply);
+        callsReply = GetCalls();
+        watcher = new QDBusPendingCallWatcher(callsReply);
 
-        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                         SLOT(getPropertiesFinished(QDBusPendingCallWatcher*)));
-        connect(this, SIGNAL(PropertyChanged(const QString&, const QDBusVariant&)),
+        // Force this to be sync to ensure we have initial properties
+        watcher->waitForFinished();
+        getCallsFinished(watcher);
+        delete watcher;
+
+        propsReply = GetProperties();
+        watcher = new QDBusPendingCallWatcher(propsReply);
+
+        connect(watcher,
+                SIGNAL(finished(QDBusPendingCallWatcher*)),
+                SLOT(getPropertiesFinished(QDBusPendingCallWatcher*)));
+        connect(this,
+                SIGNAL(CallAdded(const QDBusObjectPath&, const QVariantMap&)),
+                SLOT(callAdded(const QDBusObjectPath&, const QVariantMap&)));
+        connect(this,
+                SIGNAL(CallRemoved(const QDBusObjectPath&)),
+                SLOT(callRemoved(const QDBusObjectPath&)));
+        connect(this,
+                SIGNAL(PropertyChanged(const QString&, const QDBusVariant&)),
                 SLOT(propertyChanged(const QString&, const QDBusVariant&)));
     }
 }
@@ -468,7 +485,7 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     QDBusPendingReply<QVariantMap> reply = *watcher;
 
     if (reply.isError()) {
-        qCritical() << QString("Failed to connect to %1 on modem %2:\n\t%3")
+        qCritical() << QString("GetProperties: Failed to connect to %1 on modem %2:\n\t%3")
                        .arg(staticInterfaceName())
                        .arg(path())
                        .arg(lastError().message());
@@ -476,14 +493,8 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     }
 
     QVariantMap props = reply.value();
-
-    QList<QDBusObjectPath> calls, mpcalls;
-
-    calls   = qdbus_cast<QList<QDBusObjectPath> >(props["Calls"]);
-    mpcalls = qdbus_cast<QList<QDBusObjectPath> >(props["MultipartyCalls"]);
-
-    setCalls(calls);
-    setMultipartyCalls(mpcalls);
+    m_emergencyNumbers = qdbus_cast<QStringList>(props["EmergencyNumbers"].toStringList());
+    qDebug() << QString("EmergencyNumbers = %1").arg(m_emergencyNumbers.join(","));
 
     // Indicate for this instance, that we've actually performed at least
     // one round trip call to this VoiceCallManager and we are in sync with it
@@ -491,6 +502,72 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     if (!m_connected) {
         m_connected = true;
         emit connected();
+        TRACE
+    }
+}
+
+void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)
+{
+    TRACE
+
+    QDBusPendingReply<QArrayOfPathProperties> reply = *watcher;
+
+    if (reply.isError()) {
+        qCritical() << QString("GetCalls: %1 request failed on modem %2:\n\t%3")
+                       .arg(staticInterfaceName())
+                       .arg(path())
+                       .arg(lastError().message());
+        return;
+    }
+
+    QArrayOfPathProperties props = reply.value();
+
+    QList<QDBusObjectPath> calls, mpcalls;
+    foreach (OfonoPathProperties p, props) {
+        calls   << p.path;
+        if (p.properties["Multiparty"].toBool()) {
+            mpcalls << p.path;
+        }
+    }
+
+    setCalls(calls);
+    setMultipartyCalls(mpcalls);
+}
+
+void CallManager::callAdded(const QDBusObjectPath &in0,const QVariantMap &in1)
+{
+    TRACE
+
+    QString path = in0.path();
+    bool isMultiparty = in1["Multiparty"].toBool();
+
+    qDebug() << QString("CallAdded: \"%1\"").arg(path);
+
+    m_calls << path;
+
+    updateCallItems();
+
+    if (isMultiparty) {
+        m_multipartyCalls << path;
+        updateMultipartyCallItems();
+    }
+}
+
+void CallManager::callRemoved(const QDBusObjectPath &in0)
+{
+    TRACE
+
+    QString path = in0.path();
+
+    qDebug() << QString("CallRemoved: \"%1\"").arg(path);
+    if (m_calls.contains(path))
+        m_calls.removeAt(m_calls.indexOf(path));
+
+    updateCallItems();
+
+    if (m_multipartyCalls.contains(path)) {
+        m_multipartyCalls.removeAt(m_multipartyCalls.indexOf(path));
+        updateMultipartyCallItems();
     }
 }
 

@@ -38,15 +38,22 @@ ManagerProxy::ManagerProxy(const QString &service,
     if (!isValid()) {
         qDebug() << "Failed to connect to Ofono: \n\t" << lastError().message();
     } else {
-        QDBusPendingReply<QVariantMap> reply;
+        QDBusPendingReply<QArrayOfPathProperties> reply;
         QDBusPendingCallWatcher * watcher;
 
-        reply = GetProperties();
+        reply = GetModems();
         watcher = new QDBusPendingCallWatcher(reply);
 
         // Force this to be sync to ensure we have initial properties
         watcher->waitForFinished();
-        managerDBusGetPropDone(watcher);
+        managerDBusGetModemsDone(watcher);
+
+        connect(this,
+                SIGNAL(ModemAdded(const QDBusObjectPath&, const QVariantMap&)),
+                SLOT(modemAdded(const QDBusObjectPath&, const QVariantMap&)));
+        connect(this,
+                SIGNAL(ModemRemoved(const QDBusObjectPath&)),
+                SLOT(modemRemoved(const QDBusObjectPath&)));
     }
 
     gManager = this;
@@ -81,35 +88,52 @@ ManagerProxy::~ManagerProxy()
     gManager=0;
 }
 
-void ManagerProxy::managerDBusGetPropDone(QDBusPendingCallWatcher *call)
+void ManagerProxy::managerDBusGetModemsDone(QDBusPendingCallWatcher *call)
 {
-    QDBusPendingReply<QVariantMap> reply = *call;
+    QDBusPendingReply<QArrayOfPathProperties> reply = *call;
 
     if (reply.isError()) {
-      // TODO: Handle this properly, by setting states, or disabling features...
-      qWarning() << "org.ofono.Manager.getProperties() failed: " <<
-                    reply.error().message();
+        // TODO: Handle this properly, by setting states, or disabling features
+        qWarning() << "org.ofono.Manager.GetModems() failed: " <<
+                      reply.error().message();
     } else {
-      QVariantMap properties = reply.value();
-      QList<QDBusObjectPath> paths =
-          qdbus_cast<QList<QDBusObjectPath> >(properties["Modems"]);
-
-      // Read the list of available Modems
-      foreach (QDBusObjectPath p, paths) {
-        // FIXME: Handle multiple modems...
-        if (m_modemPath.isNull() || m_modemPath.isEmpty()) {
-            m_modemPath = QString(p.path());
-            m_modem = new ModemProxy(m_modemPath);
-            m_network = new NetworkProxy(m_modemPath);
-            m_callManager = new CallManager(m_modemPath);
-            m_volumeManager = new VolumeManager(m_modemPath);
-            m_voicemail = new VoicemailProxy(m_modemPath);
-        // TODO: Connect to service proxies as available/needed here
+        QArrayOfPathProperties modems = reply.value();
+        if (modems.count() >= 1) {
+            // FIXME: Handle multiple modems...
+            OfonoPathProperties p = modems[0];
+            if (m_modemPath.isNull() || m_modemPath.isEmpty()) {
+                qDebug() << QString("\n======\nUsing modem: \"%1\"\n======").arg(p.path.path());
+                m_modemPath = QString(p.path.path());
+                m_modem = new ModemProxy(m_modemPath);
+                m_network = new NetworkProxy(m_modemPath);
+                m_callManager = new CallManager(m_modemPath);
+                m_volumeManager = new VolumeManager(m_modemPath);
+                m_voicemail = new VoicemailProxy(m_modemPath);
+            // TODO: Connect to service proxies as available/needed here
+            }
         }
-      }
 
-      m_history = HistoryProxy::instance();
+        m_history = HistoryProxy::instance();
     }
+}
+
+void ManagerProxy::modemAdded(const QDBusObjectPath &in0,const QVariantMap &in1)
+{
+    Q_UNUSED(in1)
+    TRACE
+
+    // TODO: Handle modem additions, maybe...
+    qWarning() << QString("Unhandled ModemAdded event: \"%1\"")
+                  .arg(in0.path());
+}
+
+void ManagerProxy::modemRemoved(const QDBusObjectPath &in0)
+{
+    TRACE
+
+    // TODO: Handle modem removals, currently active for sure, others, maybe...
+    qWarning() << QString("Unhandled ModemRemoved event: \"%1\"")
+                  .arg(in0.path());
 }
 
 ManagerProxy *ManagerProxy::instance()

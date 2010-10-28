@@ -95,6 +95,9 @@ private Q_SLOTS:
     void setCalls(QList<QDBusObjectPath> calls);
     void setMultipartyCalls(QList<QDBusObjectPath> calls);
     void getPropertiesFinished(QDBusPendingCallWatcher *watcher);
+    void getCallsFinished(QDBusPendingCallWatcher *watcher);
+    void callAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
+    void callRemoved(const QDBusObjectPath &in0);
     void dialFinished(QDBusPendingCallWatcher *watcher);
     void hangupAllFinished(QDBusPendingCallWatcher *watcher);
     void swapFinished(QDBusPendingCallWatcher *watcher);
@@ -110,6 +113,7 @@ private Q_SLOTS:
 
 private:
     QStringList        m_properties;
+    QStringList        m_emergencyNumbers;
     QList<QString>     m_calls;
     QList<CallItem *>  m_callItems;
     QList<QString>     m_multipartyCalls;
