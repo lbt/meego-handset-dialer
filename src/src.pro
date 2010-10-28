@@ -1,8 +1,8 @@
 include (../common.pri)
 TEMPLATE = app
 QT += dbus opengl
-CONFIG += qdbus mobility
-PKGCONFIG += QtNetwork QtContacts meegobluetooth
+CONFIG += qdbus mobility link_pkgconfig
+PKGCONFIG += QtNetwork QtContacts meegobluetooth libresourceqt1
 MOBILITY += contacts multimedia
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
@@ -40,6 +40,7 @@ SOURCES += main.cpp \
     debugpage.cpp \
     historytablemodel.cpp \
     dbustypes.cpp \
+    resourceproxy.cpp \
 
 HEADERS += \
     common.h \
@@ -64,6 +65,7 @@ HEADERS += \
     debugpage.h \
     historytablemodel.h \
     dbustypes.h \
+    resourceproxy.h \
     $$MODEL_HEADERS \
     $$STYLE_HEADERS \
     $$DBUS_INTERFACE_HEADERS \

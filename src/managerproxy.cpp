@@ -28,7 +28,8 @@ ManagerProxy::ManagerProxy(const QString &service,
       m_callManager(0),
       m_volumeManager(0),
       m_history(0),
-      m_voicemail(0)
+      m_voicemail(0),
+      m_resource(0)
 {
     if (gManager)
         qFatal("ManagerProxy: There can be only one!");
@@ -61,6 +62,10 @@ ManagerProxy::ManagerProxy(const QString &service,
 
 ManagerProxy::~ManagerProxy()
 {
+    if (m_resource)
+        delete m_resource;
+    m_resource = 0;
+
     if (m_history)
         delete m_history;
     m_history = 0;
@@ -114,6 +119,7 @@ void ManagerProxy::managerDBusGetModemsDone(QDBusPendingCallWatcher *call)
         }
 
         m_history = HistoryProxy::instance();
+        m_resource = ResourceProxy::instance();
     }
 }
 
@@ -172,6 +178,11 @@ HistoryProxy* ManagerProxy::history() const
 VoicemailProxy* ManagerProxy::voicemail() const
 {
     return m_voicemail;
+}
+
+ResourceProxy* ManagerProxy::resource() const
+{
+    return m_resource;
 }
 
 /*

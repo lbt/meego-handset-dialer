@@ -15,6 +15,7 @@
 #include "modemproxy.h"
 #include "networkproxy.h"
 #include "callmanager.h"
+#include "resourceproxy.h"
 #include <QtDBus>
 #include <QDebug>
 
@@ -73,6 +74,7 @@ public:
     VolumeManager* volumeManager() const;
     HistoryProxy* history() const;
     VoicemailProxy* voicemail() const;
+    ResourceProxy* resource() const;
 
 public slots:
     void managerDBusGetModemsDone(QDBusPendingCallWatcher *call);
@@ -89,6 +91,7 @@ private:
     VolumeManager *m_volumeManager;
     HistoryProxy  *m_history;
     VoicemailProxy *m_voicemail;
+    ResourceProxy  *m_resource;
 };
 
 #endif
