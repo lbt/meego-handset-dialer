@@ -1,3 +1,17 @@
+Changes in 0.1.17
+
+1e49 Fixed:   BMC#8736 - Unable to make calls from recent and people page
+56e6 Fixed:   BMC#9113 - Fails to connect to ofono due to API changes
+95a7 Initial changes needed to migrate to new oFono APIs (BMC#9113)
+0816 Make devel lib requirements more explicit at initial qmake invocation
+e41c Fixed:   BMC#8079 - The comma shouldn't be displayed in the name of the incoming call
+e3ad Fixed:   BMC#7659 - Contact's name is displayed as number while receiving a call
+eb05 Fixed:   BMC#8522 - No new voicemail count displayed in the top center of the status bar
+4d5b Fixed:   BMC#8322 - The initiated call can not be ended before accepting at the other end
+f81f Fixed:   BMC#2661 - Dialer application ringing tones
+64a5 Fixed:   BMC#6208 - Unable to received voice mail indicator
+8450 Fixed:   BMC#7536 - Tapping outside incoming call dialog causes invalid UI state
+
 Changes in 0.1.16
 
 2104 Fixed:   Can't make 2nd outgoing call, partial fix for BMC#3581
