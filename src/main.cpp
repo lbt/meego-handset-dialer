@@ -34,7 +34,12 @@ QString stripLineID(QString lineid)
     TRACE
     static QRegExp rx = QRegExp("([^0-9*#])");
 
-    return lineid.replace(rx, "");
+    if (lineid.indexOf('+') == 0) {
+        lineid.replace(rx, "");
+        return lineid.insert(0,"+");
+    }
+    else
+        return lineid.replace(rx, "");
 }
 
 bool currentPageIs(int pagenum)
