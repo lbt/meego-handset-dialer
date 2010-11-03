@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "callmanager.h"
+#include "managerproxy.h"
 
 CallManager::CallManager(const QString &modemPath)
     : org::ofono::VoiceCallManager(OFONO_SERVICE,
@@ -165,6 +166,15 @@ void CallManager::dial(const PeopleItem *person)
 }
 
 void CallManager::dial(const QString number)
+{
+    TRACE
+
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
+
+    resource->acquireDialResource(number);
+}
+
+void CallManager::proceedCallDial(const QString number)
 {
     TRACE
 
@@ -350,6 +360,7 @@ void CallManager::updateCallItems()
 {
     TRACE
     bool changed = false;
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
 
     // If ofono call list is empty (no calls), empty our CallItem list too.
     if (m_calls.isEmpty() && !m_callItems.isEmpty()) {
@@ -360,6 +371,9 @@ void CallManager::updateCallItems()
         }
         m_callItems.clear();
         emit callsChanged();
+
+        resource->releaseResources();
+
         return;
     }
 
@@ -407,6 +421,16 @@ void CallManager::updateCallItems()
 
     if (changed)
         emit callsChanged();
+}
+
+void CallManager::proceedIncomingCall(CallItem *call)
+{
+    TRACE
+
+    qDebug() << QString("Insert new CallItem %1").arg(call->path());
+
+    emit incomingCall(call);
+    emit callsChanged();
 }
 
 void CallManager::updateMultipartyCallItems()
@@ -482,6 +506,7 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
 {
     TRACE
 
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
     QDBusPendingReply<QVariantMap> reply = *watcher;
 
     if (reply.isError()) {
@@ -504,6 +529,12 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
         emit connected();
         TRACE
     }
+
+    // Resource proxy binding
+    connect(resource, SIGNAL(incomingResourceAcquired(CallItem *)),
+            SLOT(proceedIncomingCall(CallItem *)));
+    connect(resource, SIGNAL(dialResourceAcquired(const QString)),
+            SLOT(proceedCallDial(const QString)));
 }
 
 void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)

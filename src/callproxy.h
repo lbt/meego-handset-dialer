@@ -70,6 +70,8 @@ private Q_SLOTS:
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void disconnectReason(const QString &in0);
 
+    void proceedCallAnswer();
+
 private:
     void setStartTimeFromString(const QString &val);
 

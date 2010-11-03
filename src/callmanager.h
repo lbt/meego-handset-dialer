@@ -111,6 +111,9 @@ private Q_SLOTS:
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
 
+    void proceedCallDial(const QString number);
+    void proceedIncomingCall(CallItem *call);
+
 private:
     QStringList        m_properties;
     QStringList        m_emergencyNumbers;

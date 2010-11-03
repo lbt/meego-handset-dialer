@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "callproxy.h"
+#include "managerproxy.h"
 
 CallProxy::CallProxy(const QString &callPath)
     : org::ofono::VoiceCall(OFONO_SERVICE,
@@ -101,6 +102,16 @@ QString CallProxy::reason() const
 }
 
 void CallProxy::answer()
+{
+    TRACE
+
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
+
+    connect(resource, SIGNAL(answerResourceAcquired()), SLOT(proceedCallAnswer()));
+    resource->acquireAnswerResource();
+}
+
+void CallProxy::proceedCallAnswer()
 {
     TRACE
 
