@@ -41,6 +41,7 @@ SOURCES += main.cpp \
     historytablemodel.cpp \
     dbustypes.cpp \
     resourceproxy.cpp \
+    notificationdialog.cpp \
 
 HEADERS += \
     common.h \
@@ -66,6 +67,7 @@ HEADERS += \
     historytablemodel.h \
     dbustypes.h \
     resourceproxy.h \
+    notificationdialog.h \
     $$MODEL_HEADERS \
     $$STYLE_HEADERS \
     $$DBUS_INTERFACE_HEADERS \

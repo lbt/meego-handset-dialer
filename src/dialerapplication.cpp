@@ -300,12 +300,15 @@ void DialerApplication::createMainWindow()
 {
     TRACE
     disconnect(m_callManager, SIGNAL(incomingCall(CallItem*)));
+    disconnect(m_callManager, SIGNAL(callResourceLost(const QString)));
 
     if (!m_mainWindow)
         m_mainWindow = new MainWindow();
 
     connect(m_callManager, SIGNAL(incomingCall(CallItem*)),
             m_mainWindow,  SLOT(handleIncomingCall(CallItem*)));
+    connect(m_callManager, SIGNAL(callResourceLost(const QString)),
+            m_mainWindow,  SLOT(handleResourceUnavailability(const QString)));
 
     m_mainWindow->show();
 

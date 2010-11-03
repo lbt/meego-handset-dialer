@@ -14,6 +14,7 @@
 #include "genericpage.h"
 #include "callitem.h"
 #include "alertdialog.h"
+#include "notificationdialog.h"
 #include "dialerkeypad.h"
 #include <QDebug>
 #include <MApplicationWindow>
@@ -36,6 +37,7 @@ public:
 
 public Q_SLOTS:
     void handleIncomingCall(CallItem *call);
+    void handleResourceUnavailability(const QString);
     void call(QString no);
     void accept();
     void showTBD();
@@ -46,6 +48,7 @@ private Q_SLOTS:
 private:
     MApplicationPage *m_lastPage;
     AlertDialog        *m_alert;
+    NotificationDialog *m_notification;
     DialerKeyPad       *m_keypad;
     MRemoteAction       m_acceptAction;
     CallItem           *m_incomingCall;

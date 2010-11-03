@@ -29,6 +29,7 @@ MainWindow::MainWindow() :
     MApplicationWindow(),
     m_lastPage(0),
     m_alert(new AlertDialog()),
+    m_notification(new NotificationDialog()),
     m_keypad(0),
     m_acceptAction(DBUS_SERVICE, DBUS_SERVICE_PATH, DBUS_SERVICE, "accept"),
     m_incomingCall(0),
@@ -128,6 +129,18 @@ void MainWindow::handleIncomingCall(CallItem *call)
         notice.publish();
 
         qDebug() << QString("%1: %2").arg(summary).arg(body);
+    }
+}
+
+void MainWindow::handleResourceUnavailability(const QString message)
+{
+    TRACE
+
+    DialerApplication *app = DialerApplication::instance();
+
+    if (isOnDisplay()) {
+	m_notification->setNotification(message);
+	m_notification->appear();
     }
 }
 
