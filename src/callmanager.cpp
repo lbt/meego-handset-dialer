@@ -433,6 +433,16 @@ void CallManager::proceedIncomingCall(CallItem *call)
     emit callsChanged();
 }
 
+void CallManager::deniedIncomingCall(CallItem *call)
+{
+    TRACE
+
+    qDebug() << QString("Insert new CallItem %1").arg(call->path());
+
+    emit incomingCall(call);
+    emit callsChanged();
+}
+
 void CallManager::updateMultipartyCallItems()
 {
     TRACE
@@ -533,6 +543,8 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     // Resource proxy binding
     connect(resource, SIGNAL(incomingResourceAcquired(CallItem *)),
             SLOT(proceedIncomingCall(CallItem *)));
+    connect(resource, SIGNAL(incomingResourceDenied(CallItem *)),
+            SLOT(deniedIncomingCall(CallItem *)));
     connect(resource, SIGNAL(dialResourceAcquired(const QString)),
             SLOT(proceedCallDial(const QString)));
 }

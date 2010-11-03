@@ -113,6 +113,7 @@ private Q_SLOTS:
 
     void proceedCallDial(const QString number);
     void proceedIncomingCall(CallItem *call);
+    void deniedIncomingCall(CallItem *call);
 
 private:
     QStringList        m_properties;
