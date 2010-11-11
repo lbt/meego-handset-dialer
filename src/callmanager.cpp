@@ -28,20 +28,26 @@ CallManager::CallManager(const QString &modemPath)
     } else {
         QDBusPendingReply<QArrayOfPathProperties> callsReply;
         QDBusPendingReply<QVariantMap> propsReply;
-        QDBusPendingCallWatcher *watcher;
+        QDBusPendingCallWatcher *calls_watcher, *props_watcher;
 
         callsReply = GetCalls();
-        watcher = new QDBusPendingCallWatcher(callsReply);
+        calls_watcher = new QDBusPendingCallWatcher(callsReply);
 
+	// unsync, but feel relief about recursion in manager proxy.
+#if 0
         // Force this to be sync to ensure we have initial properties
         watcher->waitForFinished();
         getCallsFinished(watcher);
-        delete watcher;
+        delete call_watcher;
+#endif
 
         propsReply = GetProperties();
-        watcher = new QDBusPendingCallWatcher(propsReply);
+        props_watcher = new QDBusPendingCallWatcher(propsReply);
 
-        connect(watcher,
+        connect(calls_watcher,
+                SIGNAL(finished(QDBusPendingCallWatcher*)),
+                SLOT(getCallsFinished(QDBusPendingCallWatcher*)));
+        connect(props_watcher,
                 SIGNAL(finished(QDBusPendingCallWatcher*)),
                 SLOT(getPropertiesFinished(QDBusPendingCallWatcher*)));
         connect(this,
