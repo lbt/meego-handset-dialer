@@ -207,8 +207,7 @@ void CallItemView::drawBackground(QPainter* painter,
 
     // Draw backgroundImage if it exists, otherwise backgroundColor
     if (style()->backgroundImage())
-        style()->backgroundImage()->draw(0, 0, size().width(), size().height(),
-                                         painter);
+        style()->backgroundImage()->draw(QPoint(0,0), size(), painter);
     else if (style()->backgroundColor().isValid())
         painter->fillRect(QRectF(QPointF(0, 0), size()),
                           style()->backgroundColor());
