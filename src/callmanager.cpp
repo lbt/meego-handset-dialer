@@ -581,6 +581,9 @@ void CallManager::dialFinished(QDBusPendingCallWatcher *watcher)
         qCritical() << QString("Dial() Failed: %1 - %2")
                        .arg(reply.error().name())
                        .arg(reply.error().message());
+        // Fix BMC#10848:
+        // Notify that state of the call has changed when the dialing fails
+        emit callsChanged();
         return;
     } else {
         QDBusObjectPath val = reply.value();
