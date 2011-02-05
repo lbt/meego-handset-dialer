@@ -730,6 +730,7 @@ void DialerKeyPad::callPressed(bool checked)
             QString number = stripLineID(m_target->text());
             qDebug() << "Placing call to: " << number;
             cm->dial(number);
+            this->setKeypadVisible(false); // BMC# 6809 - NW
         }
         else
             // No number to dial, set back to unchecked, Fixes BMC#3284
