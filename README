@@ -3,9 +3,27 @@ Copyright (C) 2009, Intel Corporation, 2008, 2009.
 
 dialer is a simple Voice Call Dialer/Manager based on Qt 4.7 and MTF 0.20+
 It depends on:
- - ofono, for telephony services
- - callhistory ofono plugin, for call history tracking
- - libseaside, for contacts data access
+ - Following libraries to compile
+        qdbusxml2cpp (QtDBus XML Compiler)
+        libqtopengl
+        libmeegotouch
+        libmeegobluetooth
+        qt-mobility
+        qtcontact
+        libseaside
+        libqt-devel
+
+        As an example use zypper to download and install these in a MeeGo
+        based development system:
+                $ sudo zypper in -t pattern meego-handset-desktop-devel
+                $ sudo zypper si -d meego-handset-dialer
+ - Runtime requirements
+        oFono for telephony services
+        callhistory ofono plugin for call history tracking
+        seaside for contacts data access
+ - Optional packages
+        phonesim
+
 
 -----------------------------------------------------------------------------
  Build
@@ -22,3 +40,27 @@ $ sudo make install
  Running
 -----------------------------------------------------------------------------
 $ dialer
+
+-----------------------------------------------------------------------------
+ Configure phone simulator
+-----------------------------------------------------------------------------
+If the GUI for the dialer doesn't show and you don't have a modem recognized
+by and working with oFono, execute the following steps to configure the
+phone simulator.
+As root
+# vi /etc/ofono/phonesim.conf # Un-comment the following lines in
+        [phonesim]
+        Address=127.0.0.1
+        Port=12345
+# killall ofonod
+# killall phonesim
+# ofonod
+As normal user
+$ startphonesim
+
+-----------------------------------------------------------------------------
+ Troubleshotting
+-----------------------------------------------------------------------------
+If build errors are encountered during the early part of the initial make
+process, execute the following before retrying the build at the qmake step.
+$ make distclean
