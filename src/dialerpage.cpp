@@ -160,9 +160,16 @@ void DialerPage::updateCall(CallItem *call)
             //% "%1"
             name = qtTrId("xx_first_name").arg(firstName);
         else
-            // Contacts full, sortable name, defaults to "Lastname, Firstname"
-            //% "%1, %2"
-            name = qtTrId("xx_full_name").arg(lastName).arg(firstName);
+            // BMC# 8079 - NW
+            if (firstName.isEmpty())
+               // Contacts last (sur) name
+               //% "%1"
+               name = qtTrId("xx_last_name").arg(lastName);
+            else
+               // Contacts full, sortable name, is "Firstname Lastname"
+               //% "%1 %2"
+               name = qtTrId("xx_first_last_name").arg(firstName)
+                                                  .arg(lastName);
 
         photo = SEASIDE_FIELD(Avatar, String);
     }
