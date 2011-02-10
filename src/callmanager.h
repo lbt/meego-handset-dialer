@@ -81,11 +81,15 @@ public Q_SLOTS:
     // Sends the DTMF tones to the network
     void sendTones(const QString toneid);
 
+    // Push denied answer signal to upper layers from call proxy
+    void deniedCallAnswer();
+
 Q_SIGNALS:
     void callsChanged();
     void incomingCall(CallItem *call);
     void incomingCall(QString path);
     void callDisconnected(const CallItem &call);
+    void callResourceLost(const QString);
     void connected();
     void disconnected();
 
@@ -112,8 +116,14 @@ private Q_SLOTS:
     void callStateChanged();
 
     void proceedCallDial(const QString number);
+    void deniedCallDial();
+    void lostCallDial();
+
     void proceedIncomingCall(CallItem *call);
     void deniedIncomingCall(CallItem *call);
+    void lostIncomingCall(CallItem *call);
+
+    void error(const QString message);
 
 private:
     QStringList        m_properties;

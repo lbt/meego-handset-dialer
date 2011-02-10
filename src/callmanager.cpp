@@ -180,6 +180,27 @@ void CallManager::dial(const QString number)
     resource->acquireDialResource(number);
 }
 
+void CallManager::deniedCallDial()
+{
+    TRACE
+
+    QString message = QString("Denied: Dial resource");
+    qCritical() << message;
+
+    emit callResourceLost(message);
+}
+
+void CallManager::lostCallDial()
+{
+    TRACE
+
+    QString message = QString("Lost: Dial resource");
+    qCritical() << message;
+
+    hangupAll();
+    emit callResourceLost(message);
+}
+
 void CallManager::proceedCallDial(const QString number)
 {
     TRACE
@@ -192,6 +213,18 @@ void CallManager::proceedCallDial(const QString number)
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                      SLOT(dialFinished(QDBusPendingCallWatcher*)));
+}
+
+void CallManager::deniedCallAnswer()
+{
+    TRACE
+
+    QString message = QString("Denied: Call resource");
+    qCritical() << message;
+
+    hangupAll();
+
+    emit callResourceLost(message);
 }
 
 void CallManager::swapCalls()
@@ -449,6 +482,13 @@ void CallManager::deniedIncomingCall(CallItem *call)
     emit callsChanged();
 }
 
+void CallManager::lostIncomingCall(CallItem *call)
+{
+    TRACE
+
+    qCritical() << QString("Lost: Incoming Call resource");
+}
+
 void CallManager::updateMultipartyCallItems()
 {
     TRACE
@@ -551,8 +591,15 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
             SLOT(proceedIncomingCall(CallItem *)));
     connect(resource, SIGNAL(incomingResourceDenied(CallItem *)),
             SLOT(deniedIncomingCall(CallItem *)));
+    connect(resource, SIGNAL(incomingResourceLost(CallItem *)),
+            SLOT(lostIncomingCall(CallItem *)));
+
     connect(resource, SIGNAL(dialResourceAcquired(const QString)),
             SLOT(proceedCallDial(const QString)));
+    connect(resource, SIGNAL(dialResourceDenied()),
+            SLOT(deniedCallDial()));
+    connect(resource, SIGNAL(callResourceLost()),
+            SLOT(lostCallDial()));
 }
 
 void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)
@@ -823,4 +870,9 @@ QStringList CallManager::dumpProperties()
         m_properties << "<ul><li>None</li></ul></ul>";
 
     return m_properties;
+}
+
+void CallManager::error(const QString message)
+{
+    qCritical() << QString("Streamer error: %1").arg(message);
 }

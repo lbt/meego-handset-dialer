@@ -71,6 +71,7 @@ private Q_SLOTS:
     void disconnectReason(const QString &in0);
 
     void proceedCallAnswer();
+    void deniedCallAnswer();
 
 private:
     void setStartTimeFromString(const QString &val);

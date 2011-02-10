@@ -108,6 +108,8 @@ void CallProxy::answer()
     ResourceProxy *resource = ManagerProxy::instance()->resource();
 
     connect(resource, SIGNAL(answerResourceAcquired()), SLOT(proceedCallAnswer()));
+    connect(resource, SIGNAL(answerResourceDenied()), SLOT(deniedCallAnswer()));
+
     resource->acquireAnswerResource();
 }
 
@@ -115,14 +117,33 @@ void CallProxy::proceedCallAnswer()
 {
     TRACE
 
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
     QDBusPendingReply<QDBusObjectPath> reply;
     QDBusPendingCallWatcher *watcher;
+
+    disconnect(resource, SIGNAL(answerResourceAcquired()));
+    disconnect(resource, SIGNAL(answerResourceDenied()));
 
     reply = Answer();
     watcher = new QDBusPendingCallWatcher(reply);
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                      SLOT(answerFinished(QDBusPendingCallWatcher*)));
+}
+
+void CallProxy::deniedCallAnswer()
+{
+    TRACE
+
+    ResourceProxy *resource = ManagerProxy::instance()->resource();
+
+    disconnect(resource, SIGNAL(answerResourceAcquired()));
+    disconnect(resource, SIGNAL(answerResourceDenied()));
+
+    // Hang up the incoming call, if resources to accept it are inavailabe
+    hangup();
+
+    emit ManagerProxy::instance()->callManager()->deniedCallAnswer();
 }
 
 void CallProxy::deflect(const QString toNumber)
