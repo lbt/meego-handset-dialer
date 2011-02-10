@@ -157,6 +157,30 @@ ResourceProxy::ResourceProxy(QObject *parent) : QObject(parent)
     if (gResource)
 	qFatal("ResourceProxy: There can be only one!");
 
+    // Call resource set
+    resourceSetCall = new ResourceSet("call", this);
+    resourceSetCall->setAutoRelease();
+    resourceSetCall->setAlwaysReply();
+
+    audioResourceCall = new ResourcePolicy::AudioResource("call");
+    audioResourceCall->setProcessID(QCoreApplication::applicationPid());
+    audioResourceCall->setStreamTag("media.name", "*");
+
+    resourceSetCall->addResourceObject(audioResourceCall);
+
+    connect(resourceSetCall,
+            SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)), this,
+            SLOT(acquireHandlerCall()));
+    connect(resourceSetCall,
+            SIGNAL(lostResources()), this,
+            SLOT(lostHandlerCall()));
+    connect(resourceSetCall,
+            SIGNAL(resourcesReleased()), this,
+            SLOT(releaseHandlerCall()));
+    connect(resourceSetCall,
+            SIGNAL(resourcesDenied()), this,
+            SLOT(deniedHandlerCall()));
+
     // Ringtone resource set
     resourceSetRingtone = new ResourceSet("ringtone", this);
     resourceSetRingtone->setAutoRelease();
@@ -180,30 +204,6 @@ ResourceProxy::ResourceProxy(QObject *parent) : QObject(parent)
     connect(resourceSetRingtone,
 	    SIGNAL(resourcesDenied()), this,
 	    SLOT(deniedHandlerRingtone()));
-
-    // Call resource set
-    resourceSetCall = new ResourceSet("call", this);
-    resourceSetCall->setAutoRelease();
-    resourceSetCall->setAlwaysReply();
-
-    audioResourceCall = new ResourcePolicy::AudioResource("call");
-    audioResourceCall->setProcessID(QCoreApplication::applicationPid());
-    audioResourceCall->setStreamTag("media.name", "*");
-
-    resourceSetCall->addResourceObject(audioResourceCall);
-
-    connect(resourceSetCall,
-	    SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)), this,
-	    SLOT(acquireHandlerCall()));
-    connect(resourceSetCall,
-	    SIGNAL(lostResources()), this,
-	    SLOT(lostHandlerCall()));
-    connect(resourceSetCall,
-	    SIGNAL(resourcesReleased()), this,
-	    SLOT(releaseHandlerCall()));
-    connect(resourceSetCall,
-	    SIGNAL(resourcesDenied()), this,
-	    SLOT(deniedHandlerCall()));
 
     // Resource proxy internals
     stateCall     = Released;
