@@ -43,7 +43,56 @@ DialerApplication::DialerApplication(int &argc, char **argv, MApplicationService
     : MApplication(argc, argv, service)
 {
     TRACE
+
+    setPrestartMode(M::LazyShutdown);
     init();
+
+    if (!isPrestarted()) {
+        // Activate widgets now
+        for (int i=0; i < m_mainWindow->m_pages.length(); i++) {
+
+            m_mainWindow->m_pages.at(i)->activateWidgets();
+        }
+    }
+
+}
+
+void DialerApplication::releasePrestart()
+{
+    TRACE
+    // Now is the time for set up and display of information
+    // that needs to be done to allow the dialeror other
+    // pages to display correctly when opened. GenericPage has a
+    // activateWidgets() method for common setup and
+    // each Page type (dialer, people, favorites, etc) can also
+    // implement the method for Page specific setup and signal
+    // and slot connections
+
+    // Activate widgets now
+    qDebug() << QString("Release Prestart to Activate Widgets...");
+    for (int i=0; i < m_mainWindow->m_pages.length(); i++) {
+        m_mainWindow->m_pages.at(i)->activateWidgets();
+    }
+
+   MApplication::releasePrestart();
+}
+
+void DialerApplication::restorePrestart()
+{
+    TRACE
+    // Now is the time for clean up and resetting an information
+    // that needs to be done to allow the dialer pages to display
+    // correctly when reopened. GenericPage has a
+    // deactivateAndResetWidgets() method for common setup and
+    // each Page type (dialer, people, favorites, etc) can also
+    // implement the method for Page specific clean up
+    qDebug() << QString("Restore Prestart and Deactivate Widgets");
+    for (int i=0; i < m_mainWindow->m_pages.length(); i++) {
+        m_mainWindow->m_pages.at(i)->deactivateAndResetWidgets();
+    }
+
+    // Call the default implementation to hide the window.
+    MApplication::restorePrestart();
 }
 
 bool DialerApplication::isConnected()
@@ -128,6 +177,9 @@ void DialerApplication::init()
 
     m_lastPage = new MGConfItem("/apps/dialer/lastPage");
 
+    // We now have enough to get started with GUI stuff
+    createMainWindow();
+
     connect(m_manager->modem(), SIGNAL(connected()),
                                 SLOT(modemConnected()));
     connect(m_manager->modem(), SIGNAL(disconnected()),
@@ -147,6 +199,7 @@ void DialerApplication::init()
 void DialerApplication::modemConnected()
 {
     TRACE
+    //TODO: Handle multiple modems
     if (m_manager->modem() && m_manager->modem()->isValid())
         m_modem = m_manager->modem();
 }
@@ -154,6 +207,8 @@ void DialerApplication::modemConnected()
 void DialerApplication::modemDisconnected()
 {
     TRACE
+    //TODO: Handle multiple modems
+    m_modem = 0;
 }
 
 void DialerApplication::networkConnected()
@@ -166,6 +221,7 @@ void DialerApplication::networkConnected()
 void DialerApplication::networkDisconnected()
 {
     TRACE
+    m_network = 0;
 }
 
 void DialerApplication::callManagerConnected()
@@ -174,13 +230,27 @@ void DialerApplication::callManagerConnected()
     if (m_manager->callManager() && m_manager->callManager()->isValid())
         m_callManager = m_manager->callManager();
 
-    // We now have enough to get started with GUI stuff
-    createMainWindow();
+
+    qDebug() << QString("Disconnect incoming signal");
+    disconnect(m_callManager, SIGNAL(incomingCall(CallItem*)));
+
+    qDebug() << QString("Disconnect resource lost");
+    disconnect(m_callManager, SIGNAL(callResourceLost(const QString)));
+
+    qDebug() << QString("Connect incoming call");
+    connect(m_callManager, SIGNAL(incomingCall(CallItem*)),
+            m_mainWindow,  SLOT(handleIncomingCall(CallItem*)));
+
+    qDebug() << QString("Connect resource unavailable");
+    connect(m_callManager, SIGNAL(callResourceLost(const QString)),
+            m_mainWindow,  SLOT(handleResourceUnavailability(const QString)));
 }
 
 void DialerApplication::callManagerDisconnected()
 {
     TRACE
+    qDebug() << QString("CallMgr disconnected");
+    m_callManager = 0;
 }
 
 void DialerApplication::messagesWaitingChanged()
@@ -299,16 +369,9 @@ int DialerApplication::showErrorDialog()
 void DialerApplication::createMainWindow()
 {
     TRACE
-    disconnect(m_callManager, SIGNAL(incomingCall(CallItem*)));
-    disconnect(m_callManager, SIGNAL(callResourceLost(const QString)));
 
     if (!m_mainWindow)
         m_mainWindow = new MainWindow();
-
-    connect(m_callManager, SIGNAL(incomingCall(CallItem*)),
-            m_mainWindow,  SLOT(handleIncomingCall(CallItem*)));
-    connect(m_callManager, SIGNAL(callResourceLost(const QString)),
-            m_mainWindow,  SLOT(handleResourceUnavailability(const QString)));
 
     m_mainWindow->show();
 
@@ -385,6 +448,8 @@ void DialerApplication::createMainWindow()
                           << dynamic_cast<GenericPage *>(new PeoplePage())
                           << dynamic_cast<GenericPage *>(new FavoritesPage())
                           << dynamic_cast<GenericPage *>(new DebugPage());
+
+    qDebug() << QString("After creating pages...count - %1").arg(QString::number( m_mainWindow->m_pages.length()));
 
     for (int i=0; i < m_mainWindow->m_pages.length(); i++) {
         if (!m_mainWindow->m_pages.isEmpty() && m_mainWindow->m_pages.at(i)) {

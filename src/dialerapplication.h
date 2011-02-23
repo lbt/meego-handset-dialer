@@ -46,6 +46,9 @@ public:
     QSortFilterProxyModel *historyProxy();
     MButtonGroup          *headerButtonGroup();
 
+    virtual void releasePrestart();
+    virtual void restorePrestart();
+
 private Q_SLOTS:
     void modemConnected();
     void networkConnected();

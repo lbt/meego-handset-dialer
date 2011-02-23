@@ -42,6 +42,9 @@ public Q_SLOTS:
     void accept();
     void showTBD();
 
+protected:
+    virtual void closeEvent(QCloseEvent *event);
+
 private Q_SLOTS:
     void callStateChanged();
 

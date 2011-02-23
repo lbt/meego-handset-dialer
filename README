@@ -41,6 +41,25 @@ $ sudo make install
 -----------------------------------------------------------------------------
 $ dialer
 
+if you are running dialer in prestart mode, i.e. /usr/bin/dialer -prestart
+then you must add an entry into the /etc/prestart/nokia.conf file to allow
+lazyShutDown of the dialer application. Failure to do so results in applifed
+killing the dialer process on shutdown...
+
+Line to add to nokia.conf:
+
+<allow_lazy_shutdown binary_path="/usr/bin/dialer"/>
+
+In the /usr/share/dbus-1/services/dialer.service file -prestart must be added
+Exec=/usr/bin/dialer -prestart
+
+In the dialer.desktop file the /usr/share/applications/dialer.desktop add the
+following lines:
+
+OnlyShowIn=X-DUI;X-MeeGo;X-MeeGoTouch;
+X-Desktop-File-Install-Version=0.16
+X-Osso-Service=com.meego.dialer
+
 -----------------------------------------------------------------------------
  Configure phone simulator
 -----------------------------------------------------------------------------

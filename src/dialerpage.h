@@ -26,7 +26,8 @@ public:
     DialerPage();
     virtual ~DialerPage();
     virtual void createContent();
-
+    virtual void activateWidgets();
+    virtual void deactivateAndResetWidgets();
 private Q_SLOTS:
     void pageShown();
     void pageHidden();

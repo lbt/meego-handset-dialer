@@ -40,6 +40,10 @@ public:
 public slots:
     void pageShown();
 
+protected:
+    virtual void activateWidgets();
+    virtual void deactivateAndResetWidgets();
+
 private:
     MTextEdit * entry;
     MList   * matches;
