@@ -466,6 +466,7 @@ void CallManager::proceedIncomingCall(CallItem *call)
 {
     TRACE
 
+    qDebug() << QString("Acquired: Incoming Call resource");
     qDebug() << QString("Insert new CallItem %1").arg(call->path());
 
     emit incomingCall(call);
@@ -476,6 +477,7 @@ void CallManager::deniedIncomingCall(CallItem *call)
 {
     TRACE
 
+    qCritical() << QString("Denied: Incoming Call resource");
     qDebug() << QString("Insert new CallItem %1").arg(call->path());
 
     emit incomingCall(call);
@@ -485,6 +487,7 @@ void CallManager::deniedIncomingCall(CallItem *call)
 void CallManager::lostIncomingCall(CallItem *call)
 {
     TRACE
+    Q_UNUSED(call)
 
     qCritical() << QString("Lost: Incoming Call resource");
 }
