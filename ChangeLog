@@ -1,3 +1,25 @@
+Changes in 0.1.18
+
+81c8 Updated: AUTHORS file
+fbc9 Added:   Some useful Policy related debugging outputs
+1b63 Added: A simple notification dialog
+1f3c Changed: Workaround lack of ringtone stream name
+be1a Added: Additional policy signals and handlers
+84dd Changed: Allow creation of CallManager before ManagerProxy
+73bd Added: Handling of denied resource for incoming call
+717e Added: Basic policy awareness for non-multiparty calls
+ca6a Added: Initial version of resource proxy object.
+2292 Updated: AUTHORS file
+1a4d Changes to resolve BMC# 8079
+041d Changes to resolve BMC# 6809
+4f2f Update README to be more useful to new developers
+ca08 Removed: OnlyShowIn desktop visibility limitation
+39b1 Fixed: BMC#10848 - Invalid UI state for second MO call after first declined by MT
+927f Fix for issue BMC#9930
+1d1e callitemview:  MScalableImage::draw() api changed
+ecd0 Updated: AUTHORS file
+0973 Fixed: BMC#1505 - Number entry not empty after establishing call
+
 Changes in 0.1.17
 
 1e49 Fixed:   BMC#8736 - Unable to make calls from recent and people page
