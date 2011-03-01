@@ -13,3 +13,9 @@ Arun Ravindran <ext-arun.1.ravindran@nokia.com>
 
 Nick Woo <nicholas.woo@intel.com>
  - Misc fixes, updated README
+
+Vladimir Zapolskiy <vladimir.zapolskiy@nokia.com>
+ - Initial Resource Policy Manager integration
+
+Sami Sirkiä <sami.sirkia@cybercom.com>
+ - Misc Policy related changes
