@@ -67,7 +67,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void callStateChanged();
     void callDisconnected(const QString &reason);
-    void ringtoneRepeatCheck(qint64 position);
+    void ringtoneStateChanged(QMediaPlayer::State state);
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);
@@ -76,6 +76,8 @@ private:
     PeopleItem           *m_peopleItem;
     QMediaPlayer         *m_ringtone;
     MGConfItem           *m_rtKey;
+    bool                  m_isconnected;
+    QString               m_ringtonefile;
 
     Q_DISABLE_COPY(CallItem)
 };

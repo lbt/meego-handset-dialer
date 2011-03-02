@@ -27,16 +27,18 @@ CallItem::CallItem(const QString path, MWidget *parent)
       m_path(path),
       m_peopleItem(NULL),
       m_ringtone(new QMediaPlayer()),
-      m_rtKey(new MGConfItem("/apps/dialer/defaultRingtone"))
+      m_rtKey(new MGConfItem("/apps/dialer/defaultRingtone")),
+      m_isconnected(FALSE),
+      m_ringtonefile("")
 {
     TRACE
 
-    QString defaultRingtone = QString("%1/%2/stereo/%3")
+    m_ringtonefile = QString("%1/%2/stereo/%3")
                                      .arg(SOUNDS_DIR)
                                      .arg(MTheme::instance()->currentTheme())
                                      .arg(DEFAULT_RINGTONE);
     m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(
-                m_rtKey->value(QVariant(defaultRingtone)).toString())));
+                m_rtKey->value(QVariant(m_ringtonefile)).toString())));
     m_ringtone->setVolume(100);
 
     if (isValid())
@@ -80,10 +82,11 @@ void CallItem::init()
         state() == CallItemModel::STATE_WAITING)
     {
         // Start ringing
-        if (m_ringtone && (m_ringtone->state() != QMediaPlayer::PlayingState)) {
-            connect(m_ringtone, SIGNAL(positionChanged(qint64)),
-                                  SLOT(ringtoneRepeatCheck(qint64)));
-            m_ringtone->play();
+        if (!m_isconnected && m_ringtone) {
+           connect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)),
+                               SLOT(ringtoneStateChanged(QMediaPlayer::State)));
+           m_isconnected = TRUE;
+           m_ringtone->play();
         }
     }
 }
@@ -200,15 +203,17 @@ void CallItem::callStateChanged()
         state() == CallItemModel::STATE_WAITING)
     {
         // Start ringing
-        if (m_ringtone && (m_ringtone->state() != QMediaPlayer::PlayingState)) {
-            connect(m_ringtone, SIGNAL(positionChanged(qint64)),
-                                  SLOT(ringtoneRepeatCheck(qint64)));
+        if (!m_isconnected && m_ringtone) {
+            connect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)),
+                                SLOT(ringtoneStateChanged(QMediaPlayer::State)));
+            m_isconnected = TRUE;
             m_ringtone->play();
         }
     } else {
         // Stop ringing
         if (m_ringtone) {
-            disconnect(m_ringtone, SIGNAL(positionChanged(qint64)));
+            disconnect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)));
+            m_isconnected = FALSE;
             m_ringtone->stop();
         }
     }
@@ -230,14 +235,12 @@ QVariant CallItem::itemChange(GraphicsItemChange change, const QVariant &val)
     return QGraphicsItem::itemChange(change, val);
 }
 
-void CallItem::ringtoneRepeatCheck(qint64 position)
+void CallItem::ringtoneStateChanged(QMediaPlayer::State state)
 {
     TRACE
-    if (m_ringtone && !position) {
-        if (state() == CallItemModel::STATE_INCOMING ||
-            state() == CallItemModel::STATE_WAITING) {
-            // Continue playing until call state is not incomining or waiting
-            m_ringtone->play();
-        }
+    if (state != QMediaPlayer::PlayingState)
+    {
+      m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(m_ringtonefile)));
+      m_ringtone->play();
     }
 }
