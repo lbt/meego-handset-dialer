@@ -62,6 +62,7 @@ private Q_SLOTS:
     void setError(const QString msg);
     void switchPage(int id);
     void switchPageNow(int id);
+    void connectAll();
 
 private:
     void init();

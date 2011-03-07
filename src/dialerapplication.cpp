@@ -95,6 +95,28 @@ void DialerApplication::restorePrestart()
     MApplication::restorePrestart();
 }
 
+void DialerApplication::connectAll()
+{
+    TRACE
+    qDebug() << QString("ProxyMgr is alive");
+
+
+    connect(m_manager->modem(), SIGNAL(connected()),
+                                SLOT(modemConnected()));
+    connect(m_manager->modem(), SIGNAL(disconnected()),
+                                SLOT(modemDisconnected()));
+    connect(m_manager->network(), SIGNAL(connected()),
+                                  SLOT(networkConnected()));
+    connect(m_manager->network(), SIGNAL(disconnected()),
+                                  SLOT(networkDisconnected()));
+    connect(m_manager->callManager(), SIGNAL(connected()),
+                                      SLOT(callManagerConnected()));
+    connect(m_manager->callManager(), SIGNAL(disconnected()),
+                                      SLOT(callManagerDisconnected()));
+    connect(m_manager->voicemail(), SIGNAL(messagesWaitingChanged()),
+                                      SLOT(messagesWaitingChanged()));
+}
+
 bool DialerApplication::isConnected()
 {
     TRACE
@@ -168,6 +190,11 @@ void DialerApplication::init()
     m_historyProxy->sort(HistoryTableModel::COLUMN_CALLSTART,
                          Qt::DescendingOrder);
 
+    m_lastPage = new MGConfItem("/apps/dialer/lastPage");
+
+    // We now have enough to get started with GUI stuff
+    createMainWindow();
+
     m_manager = ManagerProxy::instance();
     if (!m_manager || !m_manager->isValid())
         //% "Failed to connect to org.ofono.Manager: is ofonod running?"
@@ -175,25 +202,8 @@ void DialerApplication::init()
     else
         m_connected = true;
 
-    m_lastPage = new MGConfItem("/apps/dialer/lastPage");
-
-    // We now have enough to get started with GUI stuff
-    createMainWindow();
-
-    connect(m_manager->modem(), SIGNAL(connected()),
-                                SLOT(modemConnected()));
-    connect(m_manager->modem(), SIGNAL(disconnected()),
-                                SLOT(modemDisconnected()));
-    connect(m_manager->network(), SIGNAL(connected()),
-                                  SLOT(networkConnected()));
-    connect(m_manager->network(), SIGNAL(disconnected()),
-                                  SLOT(networkDisconnected()));
-    connect(m_manager->callManager(), SIGNAL(connected()),
-                                      SLOT(callManagerConnected()));
-    connect(m_manager->callManager(), SIGNAL(disconnected()),
-                                      SLOT(callManagerDisconnected()));
-    connect(m_manager->voicemail(), SIGNAL(messagesWaitingChanged()),
-                                      SLOT(messagesWaitingChanged()));
+    connect(m_manager, SIGNAL(proxyAvail()),
+                            SLOT(connectAll()));
 }
 
 void DialerApplication::modemConnected()
@@ -208,7 +218,6 @@ void DialerApplication::modemDisconnected()
 {
     TRACE
     //TODO: Handle multiple modems
-    m_modem = 0;
 }
 
 void DialerApplication::networkConnected()
@@ -221,7 +230,6 @@ void DialerApplication::networkConnected()
 void DialerApplication::networkDisconnected()
 {
     TRACE
-    m_network = 0;
 }
 
 void DialerApplication::callManagerConnected()
@@ -250,7 +258,6 @@ void DialerApplication::callManagerDisconnected()
 {
     TRACE
     qDebug() << QString("CallMgr disconnected");
-    m_callManager = 0;
 }
 
 void DialerApplication::messagesWaitingChanged()
