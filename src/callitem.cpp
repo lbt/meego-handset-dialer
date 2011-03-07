@@ -83,8 +83,8 @@ void CallItem::init()
     {
         // Start ringing
         if (!m_isconnected && m_ringtone) {
-           connect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)),
-                               SLOT(ringtoneStateChanged(QMediaPlayer::State)));
+           connect(m_ringtone, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                               SLOT(ringtoneStatusChanged(QMediaPlayer::MediaStatus)));
            m_isconnected = TRUE;
            m_ringtone->play();
         }
@@ -204,15 +204,15 @@ void CallItem::callStateChanged()
     {
         // Start ringing
         if (!m_isconnected && m_ringtone) {
-            connect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)),
-                                SLOT(ringtoneStateChanged(QMediaPlayer::State)));
+            connect(m_ringtone, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                                SLOT(ringtoneStatusChanged(QMediaPlayer::MediaStatus)));
             m_isconnected = TRUE;
             m_ringtone->play();
         }
     } else {
         // Stop ringing
         if (m_ringtone) {
-            disconnect(m_ringtone, SIGNAL(stateChanged(QMediaPlayer::State)));
+            disconnect(m_ringtone, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
             m_isconnected = FALSE;
             m_ringtone->stop();
         }
@@ -235,10 +235,10 @@ QVariant CallItem::itemChange(GraphicsItemChange change, const QVariant &val)
     return QGraphicsItem::itemChange(change, val);
 }
 
-void CallItem::ringtoneStateChanged(QMediaPlayer::State state)
+void CallItem::ringtoneStatusChanged(QMediaPlayer::MediaStatus status)
 {
     TRACE
-    if (state != QMediaPlayer::PlayingState)
+    if (status == QMediaPlayer::EndOfMedia)
     {
       m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(m_ringtonefile)));
       m_ringtone->play();

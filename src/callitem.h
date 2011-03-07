@@ -67,7 +67,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void callStateChanged();
     void callDisconnected(const QString &reason);
-    void ringtoneStateChanged(QMediaPlayer::State state);
+    void ringtoneStatusChanged(QMediaPlayer::MediaStatus status);
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);
