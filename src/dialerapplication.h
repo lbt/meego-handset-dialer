@@ -37,6 +37,7 @@ public:
     DialerApplication(int &argc, char **argv);
     DialerApplication(int &argc, char **argv, MApplicationService *service);
     bool isConnected();
+    void setError(const QString msg);
     QString lastError();
     int showErrorDialog();
     static DialerApplication     *instance();
@@ -59,7 +60,6 @@ private Q_SLOTS:
     void messagesWaitingChanged();
     void createMainWindow();
     QStringList dumpDisplayInfo();
-    void setError(const QString msg);
     void switchPage(int id);
     void switchPageNow(int id);
     void connectAll();
