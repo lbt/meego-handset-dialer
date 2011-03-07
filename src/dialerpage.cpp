@@ -69,11 +69,33 @@ DialerPage::DialerPage() :
     m_layout->setPolicy(m_policy);
 
     m_bksp->setTextVisible(false);
+
+    m_manager = ManagerProxy::instance();
+    connect(m_manager, SIGNAL(proxyAvail()),
+                                SLOT(connectAll()));
+    // Set the Keypad Target when this window is shown
+    connect(this, SIGNAL(appeared()), SLOT(pageShown()));
+    connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
+
 }
 
 DialerPage::~DialerPage()
 {
     TRACE
+}
+
+void DialerPage::connectAll()
+{
+    TRACE
+
+    CallManager *cm = ManagerProxy::instance()->callManager();
+    if ((cm) && (cm->isValid())) {
+        connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
+        qDebug() << QString("CallMgr is connected");
+    }
+    else
+        qCritical("DialerPage: CallManager not ready yet!");
+
 }
 
 void DialerPage::createContent()
@@ -116,20 +138,6 @@ void DialerPage::createContent()
     portrait->addItem(m_bksp,   0, 1, 1, 1, Qt::AlignRight|Qt::AlignVCenter);
     portrait->addItem(m_layout, 1, 0, 1, 2, Qt::AlignCenter);
 
-    // Set the Keypad Target when this window is shown
-    connect(this, SIGNAL(appeared()), SLOT(pageShown()));
-    connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
-
-    CallManager *cm = ManagerProxy::instance()->callManager();
-    if (cm->isValid())
-        connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
-    else
-        qCritical("DialerPage: CallManager not ready yet!");
-
-    // Hook up backspace key
-    m_tapnhold.setSingleShot(true);
-    connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
-    connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
 }
 
 void DialerPage::activateWidgets()
@@ -138,6 +146,11 @@ void DialerPage::activateWidgets()
     // Add any setup necessary for display of this page
     // then call the genericpage setup
     // Add your code here
+
+    // Hook up backspace key
+    m_tapnhold.setSingleShot(true);
+    connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
+    connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
 
     GenericPage::activateWidgets();
 }
@@ -148,6 +161,11 @@ void DialerPage::deactivateAndResetWidgets()
     // Add any cleanup code for display of this page
     // then call the generic page cleanup
     // Add your code here
+
+    // Hook up backspace key
+    m_tapnhold.setSingleShot(false);
+    disconnect(m_bksp, SIGNAL(pressed()));
+    disconnect(m_bksp, SIGNAL(released()));
 
     GenericPage::deactivateAndResetWidgets();
 }

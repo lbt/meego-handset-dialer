@@ -12,6 +12,7 @@
 #define DIALERPAGE_H
 
 #include "genericpage.h"
+#include "managerproxy.h"
 #include "callitem.h"
 #include <MTextEdit>
 #include <MLinearLayoutPolicy>
@@ -37,6 +38,7 @@ private Q_SLOTS:
     void doBackspace();
     void handleBkspPress();
     void handleBkspRelease();
+    void connectAll();
 
 private:
     CallItem    *m_activeCall;
@@ -48,6 +50,7 @@ private:
     MButton     *m_bksp;
     bool         m_pressed;
     QTimer       m_tapnhold;
+    ManagerProxy *m_manager;
 };
 
 #endif // DIALERPAGE_H
