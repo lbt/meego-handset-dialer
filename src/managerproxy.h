@@ -83,6 +83,9 @@ private Q_SLOTS:
     void modemAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
     void modemRemoved(const QDBusObjectPath &in0);
 
+Q_SIGNALS:
+    void proxyAvail();
+
 private:
     QString       m_modemPath;
     ModemProxy   *m_modem;

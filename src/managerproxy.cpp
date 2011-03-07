@@ -58,6 +58,8 @@ ManagerProxy::ManagerProxy(const QString &service,
     }
 
     gManager = this;
+
+    emit proxyAvail();
 }
 
 ManagerProxy::~ManagerProxy()
