@@ -37,12 +37,13 @@ public:
     virtual void createContent();
     virtual MGridLayoutPolicy * policy(M::Orientation);
 
+    virtual void activateWidgets();
+    virtual void deactivateAndResetWidgets();
+
     MainWindow *mainWindow();
 
 protected:
     virtual void showEvent(QShowEvent *event);
-    virtual void activateWidgets();
-    virtual void deactivateAndResetWidgets();
 
     MLayout *           layout;
     MGridLayoutPolicy * landscape;
