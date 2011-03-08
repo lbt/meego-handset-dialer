@@ -240,8 +240,12 @@ void DialerKeyPad::updateButtonStates()
             m_mute->setText(qtTrId("xx_mute"));
     }
 
-    // Sync up the hold button state
     if (cm && cm->isValid()) {
+
+        haveCalls = ((cm->calls().length() > 0) ||
+                     (cm->multipartyCalls().length() > 0));
+
+        // Sync up the hold button state
         m_hold->setEnabled(true); // Start by re-enabling the button
         if (cm->activeCall() && cm->heldCall())
             //% "Swap"
@@ -260,10 +264,8 @@ void DialerKeyPad::updateButtonStates()
             m_hold->setEnabled(false);
             m_hold->setChecked(false);
         }
-    }
 
-    // Sync up the merge button state
-    if (cm && cm->isValid()) {
+        // Sync up the merge button state
         if (cm->multipartyCalls().length() > 0)
             //% "Add"
             m_nway->setText(qtTrId("xx_add"));
@@ -570,13 +572,19 @@ void DialerKeyPad::handleButtonClicked()
     }
 
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (!cm->isValid()) {
+    if (cm) {
+        if (!cm->isValid()) {
+            qDebug() << "Unable to determine if in active call, no valid connection";
+            return;
+        }
+
+        if (cm->activeCall()) {
+          cm->sendTones(button->text());
+        }
+    }
+    else
         qDebug() << "Unable to determine if in active call, no valid connection";
-        return;
-    }
-    if (cm->activeCall()) {
-      cm->sendTones(button->text());
-    }
+
 }
 
 void DialerKeyPad::callSpeedDial()
@@ -720,50 +728,60 @@ void DialerKeyPad::callPressed(bool checked)
 {
     TRACE
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (!cm->isValid()) {
-        qDebug() << "Unable to dial, no valid connection";
-        return;
-    }
-
-    if (checked) {
-        if (m_target && !m_target->text().isEmpty()) {
-            QString number = stripLineID(m_target->text());
-            qDebug() << "Placing call to: " << number;
-            cm->dial(number);
-            this->setKeypadVisible(false); // BMC# 6809 - NW
+    if (cm) {
+        if (!cm->isValid()) {
+            qDebug() << "Unable to dial, no valid connection";
+            DialerApplication::instance()->setError(QString("Unable to dial, no valid connection"));
+            DialerApplication::instance()->showErrorDialog();
+            return;
         }
-        else
-            // No number to dial, set back to unchecked, Fixes BMC#3284
-            m_call->setChecked(false);
+
+        if (checked) {
+            if (m_target && !m_target->text().isEmpty()) {
+                QString number = stripLineID(m_target->text());
+                qDebug() << "Placing call to: " << number;
+                cm->dial(number);
+                this->setKeypadVisible(false); // BMC# 6809 - NW
+            }
+            else
+                // No number to dial, set back to unchecked, Fixes BMC#3284
+                m_call->setChecked(false);
+        }
+        else {
+            CallItem *c = NULL;
+            if (cm->activeCall())
+                c = cm->activeCall();
+            else if (cm->heldCall())
+                c = cm->heldCall();
+            else if (cm->dialingCall()) // Fixes BMC#432
+                c = cm->dialingCall();
+            else if (cm->incomingCall()) // Fixes BMC#7536
+                c = cm->incomingCall();
+            else if (cm->waitingCall()) // Fixes BMC#7536
+                c = cm->waitingCall();
+            else if (cm->alertingCall()) // Fixes BMC#8322
+                c = cm->alertingCall();
+
+            if (c) {
+                if (cm->multipartyCalls().length() &&
+                    cm->multipartyCallsAsStrings().contains(c->path())) {
+                    qDebug() << "Hanging up MultipartyCall";
+                    cm->hangupMultipartyCall();
+                }
+                else {
+                    qDebug() << "Hanging up call to: " << c->lineID();
+                    c->callProxy()->hangup();
+                }
+            }
+            else
+                qWarning() << "Hangup requested when no active or held calls!";
+        }
     }
     else {
-        CallItem *c = NULL;
-        if (cm->activeCall())
-            c = cm->activeCall();
-        else if (cm->heldCall())
-            c = cm->heldCall();
-        else if (cm->dialingCall()) // Fixes BMC#432
-            c = cm->dialingCall();
-        else if (cm->incomingCall()) // Fixes BMC#7536
-            c = cm->incomingCall();
-        else if (cm->waitingCall()) // Fixes BMC#7536
-            c = cm->waitingCall();
-        else if (cm->alertingCall()) // Fixes BMC#8322
-            c = cm->alertingCall();
-
-        if (c) {
-            if (cm->multipartyCalls().length() &&
-                cm->multipartyCallsAsStrings().contains(c->path())) {
-                qDebug() << "Hanging up MultipartyCall";
-                cm->hangupMultipartyCall();
-            }
-            else {
-                qDebug() << "Hanging up call to: " << c->lineID();
-                c->callProxy()->hangup();
-            }
-        }
-        else
-            qWarning() << "Hangup requested when no active or held calls!";
+        qDebug() << "Unable to dial, no valid connection";
+        DialerApplication::instance()->setError(QString("Unable to dial, no valid connection"));
+        DialerApplication::instance()->showErrorDialog();
+        m_call->setChecked(false);
     }
 }
 
