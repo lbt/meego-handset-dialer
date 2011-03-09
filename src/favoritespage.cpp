@@ -165,7 +165,7 @@ void FavoritesPage::createContent()
        required inorder for us to call insert() on it when the keypad buttons
        are pressed.
      */
-    entry->setTextInteractionFlags(Qt::TextEditable);
+    entry->setTextInteractionFlags(Qt::TextEditorInteraction);
     //entry->setFocusPolicy(Qt::NoFocus);
 
     landscape->addItem(box,    0, 0, 2, 1, Qt::AlignLeft);
