@@ -446,15 +446,17 @@ void CallManager::updateCallItems()
             CallItem *call = new CallItem(callPath);
             connect (call, SIGNAL(stateChanged()), SLOT(callStateChanged()));
             m_callItems << call;
-            changed = true;
 
             // NOTE: Must explicity bubble this up since incoming and waiting
             //       calls do not "changeState" unless they are handled or
             //       timeout
-            if (call->state() == CallItemModel::STATE_INCOMING)
-                emit incomingCall(call);
-            else if (call->state() == CallItemModel::STATE_WAITING)
-                emit incomingCall(call);
+            if (call->state() == CallItemModel::STATE_INCOMING) {
+                resource->acquireIncomingResource(call);
+            } else if (call->state() == CallItemModel::STATE_WAITING) {
+                resource->acquireIncomingResource(call);
+            } else {
+                changed = true;
+            }
         }
     }
 
