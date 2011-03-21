@@ -46,8 +46,7 @@ MainWindow::MainWindow() :
 
     TRACE
     if (orientation() != M::Portrait)
-        setOrientationAngle(M::Angle270);
-    // TODO: If we *REALLY* only support portrait, need to uncomment next line
+        setPortraitOrientation();
     setOrientationLocked(true);
     setToolbarViewType(MToolBar::tabType);
     m_pages.clear();
