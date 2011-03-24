@@ -61,6 +61,10 @@ CallItem::~CallItem()
         delete m_rtKey;
     m_rtKey = 0;
 
+    if (m_peopleItem)
+        delete m_peopleItem;
+    m_peopleItem = 0;
+
     // delete the callproxy object
     if (callProxy())
         delete callProxy();
