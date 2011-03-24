@@ -73,6 +73,7 @@ private Q_SLOTS:
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);
+    void populatePeopleItem();
 
     QString               m_path;
     PeopleItem           *m_peopleItem;

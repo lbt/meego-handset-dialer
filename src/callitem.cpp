@@ -11,6 +11,8 @@
 #include "common.h"
 #include "callitem.h"
 #include "callitemmodel.h"
+#include "dialerapplication.h"
+#include "seasidesyncmodel.h"
 #include <QGraphicsItem>
 #include <QGraphicsWidget>
 #include <QDebug>
@@ -77,6 +79,8 @@ void CallItem::init()
             qCritical("Invalid CallProxy instance!");
     } else
         qCritical("Empty call path.  Can not create CallProxy!");
+
+    populatePeopleItem();
 
     if (state() == CallItemModel::STATE_INCOMING ||
         state() == CallItemModel::STATE_WAITING)
@@ -239,6 +243,70 @@ QVariant CallItem::itemChange(GraphicsItemChange change, const QVariant &val)
         model()->setSelected(val.toBool());
 
     return QGraphicsItem::itemChange(change, val);
+}
+
+void CallItem::populatePeopleItem()
+{
+    TRACE
+
+    QModelIndexList matches;
+    matches.clear();
+    int role = Seaside::SearchRole;
+    int hits = -1;
+
+    //% "Unknown Caller"
+    QString pi_name   = qtTrId("xx_unknown_caller");
+    QString pi_photo  = "icon-m-content-avatar-placeholder";
+    //% "Private"
+    QString pi_lineid = qtTrId("xx_private");
+
+    if (!lineID().isEmpty()) {
+        pi_lineid = stripLineID(lineID());
+        SeasideSyncModel *contacts = DA_SEASIDEMODEL;
+        QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
+        matches = contacts->match(first, role, QVariant(pi_lineid), hits);
+
+        QString firstName = QString();
+        QString lastName = QString();
+
+        if (!matches.isEmpty()) {
+            QModelIndex person = matches.at(0); //First match is all we look at
+            SEASIDE_SHORTCUTS
+            SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
+
+            firstName = SEASIDE_FIELD(FirstName, String);
+            lastName = SEASIDE_FIELD(LastName, String);
+            pi_photo = SEASIDE_FIELD(Avatar, String);
+        } else if (!name().isEmpty()) {
+            // We don't have a contact, but we have a callerid name, let's use it
+            firstName = name();
+        }
+
+        if (lastName.isEmpty() && !firstName.isEmpty())
+            // Contacts first (common) name
+            //% "%1"
+            pi_name = qtTrId("xx_first_name").arg(firstName);
+        else if (firstName.isEmpty() && !lastName.isEmpty())
+            // BMC# 8079 - NW
+            // Contacts last (sur) name
+            //% "%1"
+            pi_name = qtTrId("xx_last_name").arg(lastName);
+        else if (!firstName.isEmpty() && !lastName.isEmpty())
+            // Contacts full, sortable name, is "Firstname Lastname"
+            //% "%1 %2"
+            pi_name = qtTrId("xx_first_last_name").arg(firstName)
+                .arg(lastName);
+
+    } else {
+        //% "Unavailable"
+        pi_lineid = qtTrId("xx_unavailable");
+    }
+
+    m_peopleItem = new PeopleItem();
+
+    m_peopleItem->setName(pi_name);
+    m_peopleItem->setPhoto(pi_photo);
+    m_peopleItem->setPhone(pi_lineid);
 }
 
 void CallItem::ringtoneStatusChanged(QMediaPlayer::MediaStatus status)
