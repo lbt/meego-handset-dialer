@@ -139,6 +139,12 @@ QString CallItem::lineID() const
     return (isValid())?model()->lineID():QString();
 }
 
+QString CallItem::name() const
+{
+    TRACE
+    return (isValid())?model()->name():QString();
+}
+
 CallItemModel::CallState CallItem::state() const
 {
     TRACE

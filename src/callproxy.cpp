@@ -77,6 +77,12 @@ QString CallProxy::lineID() const
     return m_lineid;
 }
 
+QString CallProxy::name() const
+{
+    TRACE
+    return m_name;
+}
+
 QString CallProxy::state() const
 {
     TRACE
@@ -193,6 +199,7 @@ void CallProxy::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     QString l_start;
 
     m_lineid = qdbus_cast<QString>(props["LineIdentification"]);
+    m_name   = qdbus_cast<QString>(props["Name"]);
     m_state  = qdbus_cast<QString>(props["State"]);
     l_start  = qdbus_cast<QString>(props["StartTime"]);
 

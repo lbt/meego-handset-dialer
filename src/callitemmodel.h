@@ -56,6 +56,7 @@ public:
 
 public:
     const QString lineID() const;
+    const QString name() const;
     const QString state() const;
     const QString stateTr() const;
     const QDateTime startTime() const;

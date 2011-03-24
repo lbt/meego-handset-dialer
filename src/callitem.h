@@ -27,6 +27,7 @@ class CallItem: public MWidgetController
 
     Q_PROPERTY(QString path READ path WRITE setPath)
     Q_PROPERTY(QString lineID READ lineID)
+    Q_PROPERTY(QString name READ name)
     Q_PROPERTY(CallItemModel::CallState state READ state)
     Q_PROPERTY(CallItemModel::CallDirection direction READ direction WRITE setDirection)
     Q_PROPERTY(CallItemModel::CallDisconnectReason reason READ reason)
@@ -42,6 +43,7 @@ public:
 
     QString path() const;
     QString lineID() const;
+    QString name() const;
     CallItemModel::CallState state() const;
     CallItemModel::CallDirection direction() const;
     CallItemModel::CallDisconnectReason reason() const;

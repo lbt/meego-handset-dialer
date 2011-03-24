@@ -25,6 +25,7 @@ class CallProxy: public org::ofono::VoiceCall
     Q_OBJECT
 
     Q_PROPERTY(QString   lineID READ lineID)
+    Q_PROPERTY(QString   name READ name)
     Q_PROPERTY(QString   state READ state)
     Q_PROPERTY(QDateTime startTime READ startTime)
     Q_PROPERTY(int       duration READ duration)
@@ -36,6 +37,7 @@ public:
     bool isValid();
 
     QString lineID() const;
+    QString name() const;
     QString state() const;
     QDateTime startTime() const;
     int duration() const;
@@ -79,6 +81,7 @@ private:
 private:
     QStringList        m_properties;
     QString            m_lineid;
+    QString            m_name;
     QString            m_state;
     QDateTime          m_startTime;
     QString            m_reason;
