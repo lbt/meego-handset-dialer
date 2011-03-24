@@ -74,56 +74,26 @@ void MainWindow::handleIncomingCall(CallItem *call)
         m_alert->setCallItem(call);
         m_alert->appear();
     } else {
-        QString name;
-        QString photo  = DEFAULT_AVATAR_ICON;
-        //% "Private"
-        QString lineid = qtTrId("xx_private");
         //% "Incoming call"
         QString summary(qtTrId("xx_incoming_call"));
         QString body;
         MNotification notice(NOTIFICATION_CALL_EVENT);
 
         if (call && call->isValid() && !call->lineID().isEmpty()) {
-            lineid = stripLineID(call->lineID());
-            SeasideSyncModel *contacts = DA_SEASIDEMODEL;
-            QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-            QModelIndexList matches = contacts->match(first, Qt::DisplayRole,
-                                                      QVariant(lineid),1);
-            if (!matches.isEmpty()) {
-                QModelIndex person = matches.at(0); //First match wins
-                SEASIDE_SHORTCUTS
-                SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-
-                QString firstName = SEASIDE_FIELD(FirstName, String);
-                QString lastName = SEASIDE_FIELD(LastName, String);
-
-                if (lastName.isEmpty())
-                    // Contacts first (common) name
-                    //% "%1"
-                    name = qtTrId("xx_first_name").arg(firstName);
-                else
-                    // Contacts full, sortable name, is "Lastname, Firstname"
-                    //% "%1, %2"
-                    name = qtTrId("xx_full_name").arg(lastName).arg(firstName);
-
-                photo = SEASIDE_FIELD(Avatar, String);
-            }
             // Save this for when RemoteAction "accept" is called, but make sure
             // we null it out if the state changes before user takes action
             m_incomingCall = call;
             connect(m_incomingCall,SIGNAL(stateChanged()),SLOT(callStateChanged()));
-        } else {
-            //% "Unavailable"
-            lineid = qtTrId("xx_unavailable");
         }
-
         //% "You have an incoming call from %1"
         body = QString(qtTrId("xx_incoming_body"))
-                              .arg(name.isEmpty()?lineid:name);
+                              .arg(call->peopleItem()->name().isEmpty()?
+                              call->peopleItem()->phone():
+                              call->peopleItem()->name());
 
         notice.setSummary(summary);
         notice.setBody(body);
-        notice.setImage(photo);
+        notice.setImage(call->peopleItem()->photo());
         notice.setAction(m_acceptAction);
         notice.publish();
 
