@@ -246,6 +246,7 @@ void CallProxy::propertyChanged(const QString &in0, const QDBusVariant &in1)
 
     if (in0 == "LineIdentification") {
         m_lineid = qdbus_cast<QString>(in1.variant());
+        emit dataChanged();
     } else if (in0 == "State") {
         m_state  = qdbus_cast<QString>(in1.variant());
         emit stateChanged();

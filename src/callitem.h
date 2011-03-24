@@ -65,9 +65,11 @@ Q_SIGNALS:
     // TODO: handle tap-and-hold
     void clicked();
     void stateChanged();
+    void dataChanged();
 
 private Q_SLOTS:
     void callStateChanged();
+    void callDataChanged();
     void callDisconnected(const QString &reason);
     void ringtoneStatusChanged(QMediaPlayer::MediaStatus status);
 

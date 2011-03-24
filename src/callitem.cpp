@@ -75,6 +75,7 @@ void CallItem::init()
         if (call->isValid()) {
             model()->setCall(call);
             connect(call,SIGNAL(stateChanged()),this,SLOT(callStateChanged()));
+            connect(call,SIGNAL(dataChanged()),this,SLOT(callDataChanged()));
         } else
             qCritical("Invalid CallProxy instance!");
     } else
@@ -230,6 +231,14 @@ void CallItem::callStateChanged()
     emit stateChanged();
 }
 
+void CallItem::callDataChanged()
+{
+    // For now we only handle lineid because
+    // a) that's the only case where the signal is emitted
+    // b) I haven't read anything about callerid name changing in-call
+    populatePeopleItem();
+}
+
 void CallItem::callDisconnected(const QString &reason)
 {
     TRACE
@@ -301,7 +310,9 @@ void CallItem::populatePeopleItem()
         //% "Unavailable"
         pi_lineid = qtTrId("xx_unavailable");
     }
-
+    
+    if (m_peopleItem != NULL)
+        delete m_peopleItem;
     m_peopleItem = new PeopleItem();
 
     m_peopleItem->setName(pi_name);
