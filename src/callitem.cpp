@@ -237,6 +237,7 @@ void CallItem::callStateChanged()
 
 void CallItem::callDataChanged()
 {
+    TRACE
     populatePeopleItem();
 }
 
