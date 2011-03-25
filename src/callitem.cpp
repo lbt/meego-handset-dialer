@@ -237,9 +237,6 @@ void CallItem::callStateChanged()
 
 void CallItem::callDataChanged()
 {
-    // For now we only handle lineid because
-    // a) that's the only case where the signal is emitted
-    // b) I haven't read anything about callerid name changing in-call
     populatePeopleItem();
 }
 
@@ -314,7 +311,7 @@ void CallItem::populatePeopleItem()
         //% "Unavailable"
         pi_lineid = qtTrId("xx_unavailable");
     }
-    
+
     if (m_peopleItem != NULL)
         delete m_peopleItem;
     m_peopleItem = new PeopleItem();
