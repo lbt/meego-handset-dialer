@@ -30,6 +30,7 @@ class CallProxy: public org::ofono::VoiceCall
     Q_PROPERTY(QDateTime startTime READ startTime)
     Q_PROPERTY(int       duration READ duration)
     Q_PROPERTY(QString   reason READ reason)
+    Q_PROPERTY(bool   multiparty READ multiparty)
 
 public:
     CallProxy(const QString &callPath);
@@ -42,6 +43,7 @@ public:
     QDateTime startTime() const;
     int duration() const;
     QString reason() const;
+    bool multiparty() const;
 
     QStringList dumpProperties();
 
@@ -61,6 +63,7 @@ Q_SIGNALS:
     void callDisconnected(const QString &reason);
     void stateChanged();
     void dataChanged();
+    void multiPartyChanged();
 
 private Q_SLOTS:
     // Slots to handle asyncronous DBus replies
@@ -87,6 +90,7 @@ private:
     QDateTime          m_startTime;
     QString            m_reason;
     bool               m_connected;
+    bool               m_multiparty;
 
     Q_DISABLE_COPY(CallProxy)
 };

@@ -224,7 +224,7 @@ void DialerKeyPad::updateButtonStates()
 
     if (cm && cm->isValid())
         haveCalls = ((cm->calls().length() > 0) ||
-                     (cm->multipartyCalls().length() > 0));
+                     (cm->multipartyCalls()));
 
     // Sync up the dial/hangup button state
     m_call->setChecked(haveCalls);
@@ -264,7 +264,7 @@ void DialerKeyPad::updateButtonStates()
 
     // Sync up the merge button state
     if (cm && cm->isValid()) {
-        if (cm->multipartyCalls().length() > 0)
+        if (cm->multipartyCalls())
             //% "Add"
             m_nway->setText(qtTrId("xx_add"));
         else
@@ -752,8 +752,7 @@ void DialerKeyPad::callPressed(bool checked)
             c = cm->alertingCall();
 
         if (c) {
-            if (cm->multipartyCalls().length() &&
-                cm->multipartyCallsAsStrings().contains(c->path())) {
+            if (cm->multipartyCalls()) {
                 qDebug() << "Hanging up MultipartyCall";
                 cm->hangupMultipartyCall();
             }
@@ -834,7 +833,7 @@ void DialerKeyPad::nwayPressed(bool checked)
 
     // If there is already a MultipartyCall, then we want to add an new
     // participant
-    if (cm->multipartyCalls().length() > 0)
+    if (cm->multipartyCalls())
         if (cm->activeCall() && cm->heldCall())
             qCritical() << QString("Can't add participant all lines busy!");
         else

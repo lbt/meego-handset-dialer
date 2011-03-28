@@ -33,6 +33,7 @@ class CallItem: public MWidgetController
     Q_PROPERTY(CallItemModel::CallDisconnectReason reason READ reason)
     Q_PROPERTY(int duration READ duration)
     Q_PROPERTY(QDateTime startTime READ startTime)
+    Q_PROPERTY(bool multiparty READ multiparty)
 
     Q_PROPERTY(PeopleItem* peopleItem READ peopleItem WRITE setPeopleItem)
     Q_PROPERTY(CallProxy* callProxy READ callProxy)
@@ -53,6 +54,7 @@ public:
     CallProxy *callProxy() const;
     bool isValid();
     bool isValid() const;
+    bool multiparty();
 
 public Q_SLOTS:
     void init();
@@ -66,12 +68,14 @@ Q_SIGNALS:
     void clicked();
     void stateChanged();
     void dataChanged();
+    void multiPartyChanged();
 
 private Q_SLOTS:
     void callStateChanged();
     void callDataChanged();
     void callDisconnected(const QString &reason);
     void ringtoneStatusChanged(QMediaPlayer::MediaStatus status);
+    void callMultiPartyChanged();
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);

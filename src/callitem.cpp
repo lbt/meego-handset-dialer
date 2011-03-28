@@ -80,6 +80,7 @@ void CallItem::init()
             model()->setCall(call);
             connect(call,SIGNAL(stateChanged()),this,SLOT(callStateChanged()));
             connect(call,SIGNAL(dataChanged()),this,SLOT(callDataChanged()));
+            connect(call,SIGNAL(multiPartyChanged()),this,SLOT(callMultiPartyChanged()));
         } else
             qCritical("Invalid CallProxy instance!");
     } else
@@ -330,4 +331,16 @@ void CallItem::ringtoneStatusChanged(QMediaPlayer::MediaStatus status)
       m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(m_ringtonefile)));
       m_ringtone->play();
     }
+}
+
+bool CallItem::multiparty()
+{
+    TRACE
+    return (isValid())?model()->multiparty():false;
+}
+
+void CallItem::callMultiPartyChanged()
+{
+    TRACE
+    emit multiPartyChanged();
 }

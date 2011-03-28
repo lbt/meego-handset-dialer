@@ -20,7 +20,8 @@ CallProxy::CallProxy(const QString &callPath)
       m_state(QString()),
       m_startTime(QDateTime()),
       m_reason(QString()),
-      m_connected(false)
+      m_connected(false),
+      m_multiparty(false)
 {
     TRACE
 
@@ -108,6 +109,12 @@ QString CallProxy::reason() const
 {
     TRACE
     return m_reason;
+}
+
+bool CallProxy::multiparty() const
+{
+    TRACE
+    return m_multiparty;
 }
 
 void CallProxy::answer()
@@ -205,6 +212,7 @@ void CallProxy::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     m_name   = qdbus_cast<QString>(props["Name"]);
     m_state  = qdbus_cast<QString>(props["State"]);
     l_start  = qdbus_cast<QString>(props["StartTime"]);
+    m_multiparty  = qdbus_cast<bool>(props["Multiparty"]);
 
     setStartTimeFromString(l_start);
 
@@ -256,6 +264,9 @@ void CallProxy::propertyChanged(const QString &in0, const QDBusVariant &in1)
     } else if (in0 == "StartTime") {
         if (!m_startTime.isValid()) // No start time set yet
             setStartTimeFromString(qdbus_cast<QString>(in1.variant()));
+    } else if (in0 == "Multiparty") {
+        m_multiparty = qdbus_cast<bool>(in1.variant());
+        emit multiPartyChanged();
     } else {
         qDebug() << QString("Unexpected property \"%1\" changed...").arg(in0);
     }
@@ -287,6 +298,7 @@ QStringList CallProxy::dumpProperties()
     m_properties << QString("<li>State: %1</li>").arg(m_state);
     m_properties << QString("<li>StartTime: %1</li>")
                     .arg(m_startTime.toString());
+    m_properties << QString("<ul><li>Multiparty: %1</li>").arg((int)m_multiparty);
     if (!m_reason.isEmpty())
         m_properties << QString("<li>DisconnectReason: %1</li></ul>")
                         .arg(m_reason);

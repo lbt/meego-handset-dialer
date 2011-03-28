@@ -30,9 +30,6 @@ CallManager::CallManager(const QString &modemPath)
         QDBusPendingReply<QVariantMap> propsReply;
         QDBusPendingCallWatcher *calls_watcher, *props_watcher;
 
-        callsReply = GetCalls();
-        calls_watcher = new QDBusPendingCallWatcher(callsReply);
-
 	// unsync, but feel relief about recursion in manager proxy.
 #if 0
         // Force this to be sync to ensure we have initial properties
@@ -44,12 +41,17 @@ CallManager::CallManager(const QString &modemPath)
         propsReply = GetProperties();
         props_watcher = new QDBusPendingCallWatcher(propsReply);
 
-        connect(calls_watcher,
-                SIGNAL(finished(QDBusPendingCallWatcher*)),
-                SLOT(getCallsFinished(QDBusPendingCallWatcher*)));
         connect(props_watcher,
                 SIGNAL(finished(QDBusPendingCallWatcher*)),
                 SLOT(getPropertiesFinished(QDBusPendingCallWatcher*)));
+
+        callsReply = GetCalls();
+        calls_watcher = new QDBusPendingCallWatcher(callsReply);
+
+        connect(calls_watcher,
+                SIGNAL(finished(QDBusPendingCallWatcher*)),
+                SLOT(getCallsFinished(QDBusPendingCallWatcher*)));
+
         connect(this,
                 SIGNAL(CallAdded(const QDBusObjectPath&, const QVariantMap&)),
                 SLOT(callAdded(const QDBusObjectPath&, const QVariantMap&)));
@@ -86,10 +88,16 @@ QList<QString> CallManager::callsAsStrings() const
     return m_calls;
 }
 
-QList<CallItem *> CallManager::multipartyCalls() const
+bool CallManager::multipartyCalls() const
 {
     TRACE
-    return m_multipartyCallItems;
+    int call_count =0;
+    foreach (CallItem *c, m_callItems) {
+        if(c->multiparty())
+            call_count++;
+        }
+    qDebug()<<"Call Count: "<<call_count;
+    return call_count>=2?true:false;
 }
 
 QList<QString> CallManager::multipartyCallsAsStrings() const
@@ -424,6 +432,7 @@ void CallManager::updateCallItems()
         qDebug() << QString("Purging all CallItems");
         foreach (CallItem *item, m_callItems) {
             disconnect(item, SIGNAL(stateChanged()));
+            disconnect(item, SIGNAL(multiPartyChanged()));
             delete item;
         }
         m_callItems.clear();
@@ -442,6 +451,7 @@ void CallManager::updateCallItems()
         if (!m_calls.contains(item->path())) {
             qDebug() << QString("Removing old CallItem %1").arg(item->path());
             disconnect(item, SIGNAL(stateChanged()));
+            disconnect(item, SIGNAL(multiPartyChanged()));
             delete item;
             iter.remove();
             changed = true;
@@ -463,6 +473,7 @@ void CallManager::updateCallItems()
             qDebug() << QString("Inserting new CallItem %1").arg(callPath);
             CallItem *call = new CallItem(callPath);
             connect (call, SIGNAL(stateChanged()), SLOT(callStateChanged()));
+            connect (call, SIGNAL(multiPartyChanged()),SLOT(callMultiPartyChanged()));
             m_callItems << call;
 
             // NOTE: Must explicity bubble this up since incoming and waiting
@@ -512,51 +523,6 @@ void CallManager::lostIncomingCall(CallItem *call)
     qCritical() << QString("Lost: Incoming Call resource");
 }
 
-void CallManager::updateMultipartyCallItems()
-{
-    TRACE
-
-    // If ofono multiparty call list is empty (no calls), empty our
-    // multiparty CallItem list too.
-    if (m_multipartyCalls.isEmpty() && !m_multipartyCallItems.isEmpty()) {
-        qDebug() << QString("Purging all multiparty CallItems");
-        foreach (CallItem *item, m_multipartyCallItems) delete item;
-        m_multipartyCallItems.clear();
-        return;
-    }
-
-    // Remove CallItems that are not in the ofono "calls" list
-    QMutableListIterator<CallItem*> iter(m_multipartyCallItems);
-    while (iter.hasNext()) {
-        CallItem *item = iter.next();
-        // This item is not in the ofono list, remove it
-        if (!m_multipartyCalls.contains(item->path())) {
-            qDebug() << QString("Removing old multiparty CallItem %1")
-                        .arg(item->path());
-            delete item;
-            iter.remove();
-        }
-    }
-
-    // Insert new CallItems for paths in the ofono "calls" list we are missing
-    foreach (QString callPath, m_multipartyCalls) {
-        bool matchFound = false;
-        foreach (CallItem *item, m_multipartyCallItems) {
-            // This call is not in our CallItem list, insert it
-            if (item->path() == callPath) {
-                matchFound = true;
-                break;
-            }
-        }
-        // Insert a new CallItem
-        if (!matchFound) {
-            m_multipartyCallItems << new CallItem(callPath);
-            qDebug() << QString("Inserting new multiparty CallItem %1")
-                        .arg(callPath);
-        }
-    }
-}
-
 void CallManager::setCalls(QList<QDBusObjectPath> calls)
 {
     TRACE
@@ -567,18 +533,6 @@ void CallManager::setCalls(QList<QDBusObjectPath> calls)
         m_calls << QString(c.path());
 
     updateCallItems();
-}
-
-void CallManager::setMultipartyCalls(QList<QDBusObjectPath> calls)
-{
-    TRACE
-
-    m_multipartyCalls.clear();
-
-    foreach (QDBusObjectPath c, calls)
-        m_multipartyCalls << QString(c.path());
-
-    updateMultipartyCallItems();
 }
 
 void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
@@ -644,13 +598,9 @@ void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)
     QList<QDBusObjectPath> calls, mpcalls;
     foreach (OfonoPathProperties p, props) {
         calls   << p.path;
-        if (p.properties["Multiparty"].toBool()) {
-            mpcalls << p.path;
-        }
     }
 
     setCalls(calls);
-    setMultipartyCalls(mpcalls);
 }
 
 void CallManager::callAdded(const QDBusObjectPath &in0,const QVariantMap &in1)
@@ -658,18 +608,12 @@ void CallManager::callAdded(const QDBusObjectPath &in0,const QVariantMap &in1)
     TRACE
 
     QString path = in0.path();
-    bool isMultiparty = in1["Multiparty"].toBool();
 
     qDebug() << QString("CallAdded: \"%1\"").arg(path);
 
     m_calls << path;
 
     updateCallItems();
-
-    if (isMultiparty) {
-        m_multipartyCalls << path;
-        updateMultipartyCallItems();
-    }
 }
 
 void CallManager::callRemoved(const QDBusObjectPath &in0)
@@ -683,11 +627,6 @@ void CallManager::callRemoved(const QDBusObjectPath &in0)
         m_calls.removeAt(m_calls.indexOf(path));
 
     updateCallItems();
-
-    if (m_multipartyCalls.contains(path)) {
-        m_multipartyCalls.removeAt(m_multipartyCalls.indexOf(path));
-        updateMultipartyCallItems();
-    }
 }
 
 void CallManager::dialFinished(QDBusPendingCallWatcher *watcher)
@@ -839,7 +778,6 @@ void CallManager::propertyChanged(const QString &in0, const QDBusVariant &in1)
     } else if (in0 == "MultipartyCalls") {
         QList<QDBusObjectPath> calls;
         calls = qdbus_cast<QList<QDBusObjectPath> >(in1.variant());
-        setMultipartyCalls(calls);
     } else if (in0 == "EmergencyNumbers") {
         m_emergencyNumbers = qdbus_cast<QStringList>(in1.variant());
     } else
@@ -853,6 +791,14 @@ void CallManager::callStateChanged()
                 .arg(call->path())
                 .arg(call->lineID())
                 .arg(call->state());
+    emit callsChanged();
+}
+
+void CallManager::callMultiPartyChanged()
+{
+    TRACE
+    CallItem *call = dynamic_cast<CallItem *>(sender());
+    qDebug()<<"Multiparty Info: " <<call->multiparty();
     emit callsChanged();
 }
 

@@ -26,7 +26,7 @@ class CallManager: public org::ofono::VoiceCallManager
     Q_OBJECT
 
     Q_PROPERTY(QList<CallItem *> calls READ calls)
-    Q_PROPERTY(QList<CallItem *> multipartyCalls READ multipartyCalls)
+    Q_PROPERTY(bool multipartyCalls READ multipartyCalls)
 
 public:
     CallManager(const QString &modemPath);
@@ -35,7 +35,7 @@ public:
 
     QList<CallItem *> calls() const;
     QList<QString> callsAsStrings() const;
-    QList<CallItem *> multipartyCalls() const;
+    bool multipartyCalls() const;
     QList<QString> multipartyCallsAsStrings() const;
     CallItem *activeCall() const;
     CallItem *heldCall() const;
@@ -96,9 +96,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void updateCallItems();
-    void updateMultipartyCallItems();
     void setCalls(QList<QDBusObjectPath> calls);
-    void setMultipartyCalls(QList<QDBusObjectPath> calls);
     void getPropertiesFinished(QDBusPendingCallWatcher *watcher);
     void getCallsFinished(QDBusPendingCallWatcher *watcher);
     void callAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
@@ -115,6 +113,7 @@ private Q_SLOTS:
     void sendTonesFinished(QDBusPendingCallWatcher *watcher);
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
+    void callMultiPartyChanged();
 
     void proceedCallDial(const QString number);
     void deniedCallDial();

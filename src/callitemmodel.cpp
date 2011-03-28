@@ -155,3 +155,11 @@ bool CallItemModel::disconnected() const
 {
     return (stateType() == STATE_DISCONNECTED);
 }
+
+bool CallItemModel::multiparty() const
+{
+    if (call() && call()->isValid())
+        return call()->multiparty();
+    else
+        return false;
+}

@@ -69,6 +69,7 @@ public:
     bool incoming() const;
     bool waiting() const;
     bool disconnected() const;
+    bool multiparty() const;
     CallItemModel::CallState stateType() const;
     CallItemModel::CallDisconnectReason reasonType() const;
 };
