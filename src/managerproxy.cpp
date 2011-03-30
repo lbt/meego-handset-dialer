@@ -15,7 +15,7 @@
 #include <MNotification>
 #include <QDebug>
 
-static ManagerProxy *gManager = 0;
+ManagerProxy *ManagerProxy::gManager = 0;
 
 ManagerProxy::ManagerProxy(const QString &service,
                            const QString &path,
@@ -189,7 +189,7 @@ ResourceProxy* ManagerProxy::resource() const
  * Voice Call History ofono plugin manager class implimentation
  */
 
-static HistoryProxy *gHistory = 0;
+HistoryProxy *HistoryProxy::gHistory = 0;
 
 HistoryProxy::HistoryProxy(const QString &service,
                            const QString &path,

@@ -15,7 +15,7 @@
 
 using namespace ResourcePolicy;
 
-static ResourceProxy *gResource = 0;
+ResourceProxy *ResourceProxy::gResource = 0;
 
 void ResourceProxy::acquireAnswerResource(void)
 {

@@ -21,7 +21,6 @@ class ResourceProxy : public QObject
     Q_OBJECT
 
 public:
-    ResourceProxy(QObject *parent = 0);
     ~ResourceProxy(void);
 
     void acquireAnswerResource(void);
@@ -56,7 +55,13 @@ private slots:
     void releaseHandlerCall(void);
     void deniedHandlerCall(void);
 
+protected:
+    ResourceProxy(QObject *parent = 0);
+
 private:
+    ResourceProxy(const ResourceProxy&);
+    ResourceProxy& operator= (const ResourceProxy&);
+
     ResourcePolicy::ResourceSet *resourceSetRingtone;
     ResourcePolicy::ResourceSet *resourceSetCall;
 
@@ -67,6 +72,8 @@ private:
 
     QString  dialedNumber;
     CallItem *incomingCall;
+
+    static ResourceProxy *gResource;
 };
 
 #endif // RESOURCEPROXY_H

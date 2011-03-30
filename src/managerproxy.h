@@ -29,10 +29,6 @@ class HistoryProxy: public org::ofono::CallHistory
     Q_PROPERTY(QSettings* cache READ cache)
 
 public:
-    HistoryProxy(const QString &service=OFONO_SERVICE,
-                 const QString &path=OFONO_HISTORY_PATH,
-                 const QDBusConnection &connection=QDBusConnection::systemBus(),
-                 QObject *parent = 0);
     virtual ~HistoryProxy();
     static HistoryProxy *instance();
 
@@ -48,8 +44,19 @@ private slots:
     void voiceHistoryChanged(uint count);
     void initCache();
 
+protected:
+    HistoryProxy(const QString &service=OFONO_SERVICE,
+                 const QString &path=OFONO_HISTORY_PATH,
+                 const QDBusConnection &connection=QDBusConnection::systemBus(),
+                 QObject *parent = 0);
+
 private:
+    HistoryProxy(const HistoryProxy&);
+    HistoryProxy& operator= (const HistoryProxy&);
+
     QSettings         *m_cache;
+
+    static HistoryProxy *gHistory;
 };
 
 class ManagerProxy: public org::ofono::Manager
@@ -60,10 +67,6 @@ class ManagerProxy: public org::ofono::Manager
     Q_PROPERTY(HistoryProxy* history READ history)
 
 public:
-    ManagerProxy(const QString &service=OFONO_SERVICE,
-                 const QString &path=OFONO_MANAGER_PATH,
-                 const QDBusConnection &connection=QDBusConnection::systemBus(),
-                 QObject *parent = 0);
     virtual ~ManagerProxy();
 
     static ManagerProxy *instance();
@@ -83,7 +86,16 @@ private Q_SLOTS:
     void modemAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
     void modemRemoved(const QDBusObjectPath &in0);
 
+protected:
+    ManagerProxy(const QString &service=OFONO_SERVICE,
+                 const QString &path=OFONO_MANAGER_PATH,
+                 const QDBusConnection &connection=QDBusConnection::systemBus(),
+                 QObject *parent = 0);
+
 private:
+    ManagerProxy(const ManagerProxy&);
+    ManagerProxy& operator= (ManagerProxy&);
+
     QString       m_modemPath;
     ModemProxy   *m_modem;
     NetworkProxy *m_network;
@@ -92,6 +104,8 @@ private:
     HistoryProxy  *m_history;
     VoicemailProxy *m_voicemail;
     ResourceProxy  *m_resource;
+
+    static ManagerProxy *gManager;
 };
 
 #endif
