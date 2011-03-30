@@ -219,8 +219,14 @@ ResourceProxy::~ResourceProxy(void)
 {
     qDebug("ResourceProxy::%s", __func__);
 
-    if (gResource)
+    if (gResource) {
         resourceSetRingtone->release();
+        resourceSetCall->release();
+        delete resourceSetCall;
+        resourceSetCall = 0;
+        delete resourceSetRingtone;
+        resourceSetRingtone = 0;
+    }
 
     dialedNumber.clear();
     incomingCall = NULL;
