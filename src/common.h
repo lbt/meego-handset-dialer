@@ -45,4 +45,7 @@ QString stripLineID(QString lineid);
 
 bool currentPageIs(int pagenum);
 
+#include <QDateTime>
+QDateTime qDateTimeFromOfono(const QString &val);
+
 #endif // COMMON_H

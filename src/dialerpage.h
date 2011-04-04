@@ -32,7 +32,6 @@ public:
 private Q_SLOTS:
     void pageShown();
     void pageHidden();
-    void updateCall(CallItem *call);
     void updateCalls();
     void doClear();
     void doBackspace();

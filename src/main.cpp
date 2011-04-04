@@ -51,3 +51,51 @@ bool currentPageIs(int pagenum)
 
     return (c && p && (c == p));
 }
+
+// Returns a valid QDateTime if parsable as such, otherwise the result
+// will be !isValid()
+QDateTime qDateTimeFromOfono(const QString &val)
+{
+    TRACE
+    QDateTime result;
+
+    if (val.isEmpty())
+        return result;
+
+    // NOTE: Ofono formats time to string with the following format spec:
+    //       %Y-%m-%dT%H:%M:%S%z (for example: "2001-10-19T10:32:30-05:00")
+
+    // Start by trying to parse this as an ISODate "YYYY-MM-DDTHH:MM:SSTZD"
+    result = QDateTime::fromString(val,Qt::ISODate);
+#ifdef WANT_DEBUG
+    qDebug() << QString("Converted %1 with Qt::ISODate: %2")
+                       .arg(val)
+                       .arg(result.toString());
+#endif
+
+    if (!result.isValid()) {
+    // ISODate conversion has failed, fallback to manual method
+    // NOTE: QDateTime::fromString(val, Qt::ISODate) Fails since the date
+    //       format from Ofono is in RFC 822 form, but QDateTime can't parse it
+        struct tm time_tm;
+        QByteArray  bytes = val.toAscii();
+        const char *str = bytes.constData();
+        if (strptime(str, "%Y-%m-%dT%H:%M:%S%z", &time_tm) != NULL) {
+            time_t t = mktime(&time_tm);
+            if (t >= (time_t)(0)) {
+                result.setTime_t(t);
+#ifdef WANT_DEBUG
+                qDebug() << QString("Converted %1 with strptime: %2")
+                                   .arg(val)
+                                   .arg(result.toString());
+#endif
+            }
+        }
+
+        if (!result.isValid())
+            qCritical() << QString("Format error, unknown date/time: %1")
+                                  .arg(str);
+    }
+
+    return result;
+}

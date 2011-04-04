@@ -1,3 +1,19 @@
+Changes in 0.1.19
+
+85e2 Added:   Missing TRACE macro to new function
+0b62 Updated: AUTHORS file
+4872 Fixed:   For FEA#4419, remove wrong comment and whitespace cleanup
+1d9a Changed: For FEA#4419, free m_peopleItem object on object deletion
+1fd0 Added:   Add a dataChanged signal and use it to update the CallItem
+4341 Added:   For FEA#4419, Modify classes to use the CallItem::peopleItem()
+8ee6 Added:   For FEA#4419, Create a people item with the right info
+1961d Added:   For FEA#4419, Add name property where needed
+0834 Fixed:   BMC# 14321 - The whole dialer UI will move down ...
+e26f Added: audio resource acquire during the ringtone playing
+8ddd Fixed:   BMC# 13280 - Unable to mark text in Dialer application
+e2f0 Fixed:   BMC# 14206 - Dialer ringtone does not stop
+c7e0 Fixed:   BMC# 13292 - Ringtones are cut short
+
 Changes in 0.1.18
 
 81c8 Updated: AUTHORS file

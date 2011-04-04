@@ -158,54 +158,7 @@ void AlertDialog::updateInfo()
 {
     TRACE
 
-    QModelIndexList matches;
-    matches.clear();
-    int role = Seaside::SearchRole;
-    int hits = -1;
-
-    //% "Unknown Caller"
-    QString name   = qtTrId("xx_unknown_caller");
-    QString photo  = "icon-m-content-avatar-placeholder";
-    //% "Private"
-    QString lineid = qtTrId("xx_private");
-
-    if (m_call && m_call->isValid() && !m_call->lineID().isEmpty()) {
-        lineid = stripLineID(m_call->lineID());
-        SeasideSyncModel *contacts = DA_SEASIDEMODEL;
-        QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-        matches = contacts->match(first, role, QVariant(lineid), hits);
-        if (matches.count()) {
-            QModelIndex person = matches.at(0); //First match is all we look at
-            SEASIDE_SHORTCUTS
-            SEASIDE_SET_MODEL_AND_ROW(person.model(), person.row());
-
-            QString firstName = SEASIDE_FIELD(FirstName, String);
-            QString lastName = SEASIDE_FIELD(LastName, String);
-
-            if (lastName.isEmpty())
-                // Contacts first (common) name
-                //% "%1"
-                name = qtTrId("xx_first_name").arg(firstName);
-            else
-                // BMC# 8079 - NW
-                if (firstName.isEmpty())
-                   // Contacts last (sur) name
-                   //% "%1"
-                   name = qtTrId("xx_last_name").arg(lastName);
-                else
-                   // Contacts full, sortable name, is "Firstname Lastname"
-                   //% "%1 %2"
-                   name = qtTrId("xx_first_last_name").arg(firstName)
-                                                      .arg(lastName);
-
-            photo = SEASIDE_FIELD(Avatar, String);
-        }
-    } else {
-        //% "Unavailable"
-        lineid = qtTrId("xx_unavailable");
-    }
-
-    m_name->setText(name);
-    m_photo->setImage(photo);
-    m_number->setText(lineid);
+    m_name->setText(m_call->peopleItem()->name());
+    m_photo->setImage(m_call->peopleItem()->photo());
+    m_number->setText(m_call->peopleItem()->phone());
 }

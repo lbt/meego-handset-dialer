@@ -18,6 +18,14 @@ const QString CallItemModel::lineID() const
         return QString();
 }
 
+const QString CallItemModel::name() const
+{
+    if (call() && call()->isValid())
+        return call()->name();
+    else
+        return QString();
+}
+
 const QString CallItemModel::state() const
 {
     if (call() && call()->isValid())

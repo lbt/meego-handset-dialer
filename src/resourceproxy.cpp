@@ -15,7 +15,7 @@
 
 using namespace ResourcePolicy;
 
-static ResourceProxy *gResource = 0;
+ResourceProxy *ResourceProxy::gResource = 0;
 
 void ResourceProxy::acquireAnswerResource(void)
 {
@@ -163,8 +163,7 @@ ResourceProxy::ResourceProxy(QObject *parent) : QObject(parent)
     resourceSetCall->setAlwaysReply();
 
     audioResourceCall = new ResourcePolicy::AudioResource("call");
-    audioResourceCall->setProcessID(QCoreApplication::applicationPid());
-    audioResourceCall->setStreamTag("media.name", "*");
+    // No dynamical rules for call. So handled by static rules in xpolicy.conf
 
     resourceSetCall->addResourceObject(audioResourceCall);
 
@@ -188,7 +187,7 @@ ResourceProxy::ResourceProxy(QObject *parent) : QObject(parent)
 
     audioResourceRingtone = new ResourcePolicy::AudioResource("ringtone");
     audioResourceRingtone->setProcessID(QCoreApplication::applicationPid());
-    audioResourceRingtone->setStreamTag("media.name", "*");
+    audioResourceRingtone->setStreamTag("media.name", "Playback Stream");
 
     resourceSetRingtone->addResourceObject(audioResourceRingtone);
 
@@ -219,8 +218,14 @@ ResourceProxy::~ResourceProxy(void)
 {
     qDebug("ResourceProxy::%s", __func__);
 
-    if (gResource)
+    if (gResource) {
         resourceSetRingtone->release();
+        resourceSetCall->release();
+        delete resourceSetCall;
+        resourceSetCall = 0;
+        delete resourceSetRingtone;
+        resourceSetRingtone = 0;
+    }
 
     dialedNumber.clear();
     incomingCall = NULL;

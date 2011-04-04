@@ -114,25 +114,18 @@ void CallItemView::initLayout()
     statusLabel()->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
                                              QSizePolicy::Expanding));
     statusLabel()->setAlignment(Qt::AlignRight);
-    if (peopleItem()) {
-        peopleItem()->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                                QSizePolicy::Expanding));
-        layout()->addItem(peopleItem(),0, 0, 1, 3, Qt::AlignTop|Qt::AlignLeft);
-    } else {
-        MLabel *lineid = new MLabel(m_controller->lineID());
-        layout()->addItem(lineid,  0, 0, 1, 3, Qt::AlignTop|Qt::AlignLeft);
-    }
+
+    peopleItem()->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
+                QSizePolicy::Expanding));
+    layout()->addItem(peopleItem(),    0, 0, 1, 3, Qt::AlignTop|Qt::AlignLeft);
     layout()->addItem(spacer,          1, 0, 1, 1, Qt::AlignCenter);
     layout()->addItem(statusLabel(),   1, 1, 1, 1, Qt::AlignRight);
     layout()->addItem(durationLabel(), 1, 2, 1, 1, Qt::AlignRight);
-
-    m_updateTimer.start(1000);
-    connect(&m_updateTimer, SIGNAL(timeout()), SLOT(updateDurationLabel()));
 }
 
 void CallItemView::updateDurationLabel()
 {
-    QTime t = QTime(0,0).addSecs(m_controller->duration()/1000);
+    QTime t = QTime(0,0).addSecs(m_controller->duration());
     durationLabel()->setText(t.toString(Qt::TextDate));
 }
 
@@ -180,6 +173,17 @@ void CallItemView::updateStatusLabel()
         qDebug("CallItemView: setModeDefault()");
         style().setModeDefault();
         break;
+    }
+
+    // We only start tracking the duration for connected (Active or Held) calls
+    bool trackDuration = ((model()->stateType()==CallItemModel::STATE_ACTIVE)||
+                          (model()->stateType()==CallItemModel::STATE_HELD));
+    if (trackDuration && !m_updateTimer.isActive()) {
+        m_updateTimer.start(1000);
+        connect(&m_updateTimer, SIGNAL(timeout()), SLOT(updateDurationLabel()));
+    } else if (!trackDuration && m_updateTimer.isActive()) {
+        disconnect(&m_updateTimer, SIGNAL(timeout()));
+        m_updateTimer.stop();
     }
 
     applyStyle();

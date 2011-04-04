@@ -170,57 +170,6 @@ void DialerPage::deactivateAndResetWidgets()
     GenericPage::deactivateAndResetWidgets();
 }
 
-void DialerPage::updateCall(CallItem *call)
-{
-    // FIXME: Need to do something different with multiparty calls
-
-    if (!call || call->peopleItem())
-        return;
-
-    QString lineid = call->lineID();
-    //% "Unknown Caller"
-    QString name = qtTrId("xx_unknown");
-    QString photo  = DEFAULT_AVATAR_ICON;
-    SeasideSyncModel *contacts = DA_SEASIDEMODEL;
-    QModelIndex first = contacts->index(0,Seaside::ColumnPhoneNumbers);
-    QModelIndexList matches = contacts->match(first, Seaside::SearchRole,
-                                              QVariant(lineid),1);
-    if (!matches.isEmpty()) {
-        QModelIndex match = matches.at(0); //First match wins
-        SEASIDE_SHORTCUTS
-        SEASIDE_SET_MODEL_AND_ROW(match.model(), match.row());
-
-        QString firstName = SEASIDE_FIELD(FirstName, String);
-        QString lastName = SEASIDE_FIELD(LastName, String);
-
-        if (lastName.isEmpty())
-            // Contacts first (common) name
-            //% "%1"
-            name = qtTrId("xx_first_name").arg(firstName);
-        else
-            // BMC# 8079 - NW
-            if (firstName.isEmpty())
-               // Contacts last (sur) name
-               //% "%1"
-               name = qtTrId("xx_last_name").arg(lastName);
-            else
-               // Contacts full, sortable name, is "Firstname Lastname"
-               //% "%1 %2"
-               name = qtTrId("xx_first_last_name").arg(firstName)
-                                                  .arg(lastName);
-
-        photo = SEASIDE_FIELD(Avatar, String);
-    }
-
-    PeopleItem *person = new PeopleItem();
-    person->setName(name);
-    person->setPhoto(photo);
-    person->setPhone(lineid);
-
-    call->setPeopleItem(person);
-    doClear();
-}
-
 void DialerPage::updateCalls()
 {
     CallManager *cm = dynamic_cast<CallManager *>(sender());
@@ -229,21 +178,6 @@ void DialerPage::updateCalls()
     CallItem *incomingCall = cm->incomingCall();
     CallItem *waitingCall = cm->waitingCall();
     CallItem *dialingCall = cm->dialingCall();
-
-    if (activeCall && !activeCall->peopleItem())
-        updateCall(activeCall);
-
-    if (heldCall && !heldCall->peopleItem())
-        updateCall(heldCall);
-
-    if (incomingCall && !incomingCall->peopleItem())
-        updateCall(incomingCall);
-
-    if (waitingCall && !waitingCall->peopleItem())
-        updateCall(waitingCall);
-
-    if (dialingCall && !dialingCall->peopleItem())
-        updateCall(dialingCall);
 
     // Make sure active call is on top of the list
     if (activeCall && (m_policy->indexOf(activeCall) < 0)) {

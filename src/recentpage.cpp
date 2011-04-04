@@ -357,9 +357,12 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
     card->setButton("icon-m-telephony-call");
 
     // The rest comes from the history event, not the contact data
-    QDateTime startTime = qDateTimeFromString(index.model()->
+    QDateTime startTime = qDateTimeFromOfono(index.model()->
               index(index.row(),HistoryTableModel::COLUMN_CALLSTART)
               .data().value<QString>());
+    // Use Epoch if the value stored in History model is bogus
+    if (!startTime.isValid())
+        startTime = QDateTime::fromTime_t(0);
     card->setStatus(startTime.toString());
 
     int dir = index.model()->index(index.row(),HistoryTableModel::COLUMN_DIRECTION).data().value<int>();
@@ -371,28 +374,4 @@ void RecentItemCellCreator::updateCell(const QModelIndex& index,
         card->setCommFlags(Seaside::CommCallMissed);
     else
         card->setCommFlags(Seaside::CommCallMissed);
-}
-
-QDateTime RecentItemCellCreator::qDateTimeFromString(const QString &val) const
-{
-    TRACE
-
-    QDateTime result;
-
-    if (val.isEmpty())
-        return result;
-
-    // NOTE: QDateTime::fromString(val, Qt::ISODate) Fails since the date
-    //       format from Ofono is in RFC 822 form, but QDateTime can't parse it
-    // NOTE: Ofono formats time to string with the following format spec:
-    //       %Y-%m-%dT%H:%M:%S%z
-    struct tm time_tm;
-    QByteArray  bytes = val.toAscii();
-    const char *str = bytes.constData();
-    if (strptime(str, "%Y-%m-%dT%H:%M:%S%z", &time_tm) != NULL) {
-        time_t t = mktime(&time_tm);
-        if (t >= (time_t)(0))
-            result.setTime_t(t);
-    }
-    return result;
 }

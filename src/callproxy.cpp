@@ -77,6 +77,12 @@ QString CallProxy::lineID() const
     return m_lineid;
 }
 
+QString CallProxy::name() const
+{
+    TRACE
+    return m_name;
+}
+
 QString CallProxy::state() const
 {
     TRACE
@@ -92,7 +98,10 @@ QDateTime CallProxy::startTime() const
 int CallProxy::duration() const
 {
     TRACE
-    return m_startTime.time().elapsed();
+    if (m_startTime.isValid())
+        return m_startTime.secsTo(QDateTime::currentDateTime());
+    else
+        return 0;
 }
 
 QString CallProxy::reason() const
@@ -193,6 +202,7 @@ void CallProxy::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     QString l_start;
 
     m_lineid = qdbus_cast<QString>(props["LineIdentification"]);
+    m_name   = qdbus_cast<QString>(props["Name"]);
     m_state  = qdbus_cast<QString>(props["State"]);
     l_start  = qdbus_cast<QString>(props["StartTime"]);
 
@@ -239,6 +249,7 @@ void CallProxy::propertyChanged(const QString &in0, const QDBusVariant &in1)
 
     if (in0 == "LineIdentification") {
         m_lineid = qdbus_cast<QString>(in1.variant());
+        emit dataChanged();
     } else if (in0 == "State") {
         m_state  = qdbus_cast<QString>(in1.variant());
         emit stateChanged();
@@ -260,29 +271,10 @@ void CallProxy::disconnectReason(const QString &in0)
 void CallProxy::setStartTimeFromString(const QString &val)
 {
     TRACE
-    if (val.isEmpty())
-        return;
-
-    // NOTE: QDateTime::fromString(val, Qt::ISODate) Fails since the date
-    //       format from Ofono is in RFC 822 form, but QDateTime can't parse it
-    // NOTE: Ofono formats time to string with the following format spec:
-    //       %Y-%m-%dT%H:%M:%S%z
-    struct tm time_tm;
-    QByteArray  bytes = val.toAscii();
-    const char *str = bytes.constData();
-    if (strptime(str, "%Y-%m-%dT%H:%M:%S%z", &time_tm) != NULL) {
-        time_t t = mktime(&time_tm);
-        if (t >= (time_t)(0))
-            m_startTime.setTime_t(t);
-    }
+    m_startTime = qDateTimeFromOfono(val);
 
     if (!m_startTime.isValid())
-        qCritical() << QString("Format error, could not parse: %1").arg(str);
-    else
-        // FIXME: This could be a pre-existing call (i.e. a call is in progress
-        //        when we are started), in which case this start is not really
-        //        in sync with the *actuall* start time.
-        m_startTime.time().start(); // begin elapsed time timer
+        m_startTime = QDateTime::QDateTime::currentDateTime();
 }
 
 

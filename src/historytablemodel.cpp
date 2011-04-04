@@ -222,7 +222,7 @@ bool HistoryTableModel::removeRows(int row, int count,
 QString HistoryTableModel::toOfonoString(QDateTime when)
 {
     TRACE
-    return when.toString("yyyy-MM-ddThh:mm:ss+0000");
+    return when.toString(Qt::ISODate);
 }
 
 QString HistoryTableModel::toOfonoString(uint t)
