@@ -26,7 +26,7 @@ class CallManager: public org::ofono::VoiceCallManager
     Q_OBJECT
 
     Q_PROPERTY(QList<CallItem *> calls READ calls)
-    Q_PROPERTY(bool multipartyCalls READ multipartyCalls)
+    Q_PROPERTY(int multipartyCallCount READ multipartyCallCount)
 
 public:
     CallManager(const QString &modemPath);
@@ -35,8 +35,7 @@ public:
 
     QList<CallItem *> calls() const;
     QList<QString> callsAsStrings() const;
-    bool multipartyCalls() const;
-    QList<QString> multipartyCallsAsStrings() const;
+    int multipartyCallCount() const;
     CallItem *activeCall() const;
     CallItem *heldCall() const;
     CallItem *dialingCall() const;
@@ -113,7 +112,7 @@ private Q_SLOTS:
     void sendTonesFinished(QDBusPendingCallWatcher *watcher);
     void propertyChanged(const QString &in0, const QDBusVariant &in1);
     void callStateChanged();
-    void callMultiPartyChanged();
+    void callMultipartyChanged();
 
     void proceedCallDial(const QString number);
     void deniedCallDial();
@@ -130,8 +129,6 @@ private:
     QStringList        m_emergencyNumbers;
     QList<QString>     m_calls;
     QList<CallItem *>  m_callItems;
-    QList<QString>     m_multipartyCalls;
-    QList<CallItem *>  m_multipartyCallItems;
     bool               m_connected;
 
     Q_DISABLE_COPY(CallManager)

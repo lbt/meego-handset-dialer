@@ -63,7 +63,7 @@ Q_SIGNALS:
     void callDisconnected(const QString &reason);
     void stateChanged();
     void dataChanged();
-    void multiPartyChanged();
+    void multipartyChanged();
 
 private Q_SLOTS:
     // Slots to handle asyncronous DBus replies

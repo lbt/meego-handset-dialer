@@ -224,7 +224,7 @@ void DialerKeyPad::updateButtonStates()
 
     if (cm && cm->isValid())
         haveCalls = ((cm->calls().length() > 0) ||
-                     (cm->multipartyCalls()));
+                     (cm->multipartyCallCount() > 0));
 
     // Sync up the dial/hangup button state
     m_call->setChecked(haveCalls);
@@ -264,12 +264,17 @@ void DialerKeyPad::updateButtonStates()
 
     // Sync up the merge button state
     if (cm && cm->isValid()) {
-        if (cm->multipartyCalls())
-            //% "Add"
-            m_nway->setText(qtTrId("xx_add"));
-        else
-            //% "Merge Calls"
-            m_nway->setText(qtTrId("xx_merge"));
+        if (cm->multipartyCallCount() == 0) {
+            if (cm->calls().count() == 2)
+                m_nway->setEnabled(true);
+            else
+                m_nway->setEnabled(false);
+        } else {
+            if ((cm->calls().count() - cm->multipartyCallCount()) >= 1)
+                m_nway->setEnabled(true);
+            else
+                m_nway->setEnabled(false);
+        }
     }
 
     /*
@@ -752,7 +757,7 @@ void DialerKeyPad::callPressed(bool checked)
             c = cm->alertingCall();
 
         if (c) {
-            if (cm->multipartyCalls()) {
+            if (c->multiparty()) {
                 qDebug() << "Hanging up MultipartyCall";
                 cm->hangupMultipartyCall();
             }
@@ -824,24 +829,19 @@ void DialerKeyPad::nwayPressed(bool checked)
 {
     TRACE
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (!cm->isValid()) {
+    if (!cm || !cm->isValid()) {
         qDebug() << "Unable to merge, no valid connection";
         return;
     }
 
-    qDebug() << QString("nway option %1").arg((checked)?"set":"unset");
-
-    // If there is already a MultipartyCall, then we want to add an new
-    // participant
-    if (cm->multipartyCalls())
-        if (cm->activeCall() && cm->heldCall())
-            qCritical() << QString("Can't add participant all lines busy!");
-        else
-            qWarning() << QString("Add to MultipartyCall not yet working...");
-    // Otherwise, we're merging existing calls into a MultipartyCall
     // Fixes BMC#550, and BMC#2806
-    else
-        cm->createMultipartyCall();
+    if (cm->multipartyCallCount() == 0) {
+        if (cm->calls().count() == 2)
+            cm->createMultipartyCall();
+    } else {
+        if ((cm->calls().count() - cm->multipartyCallCount()) >= 1)
+            cm->createMultipartyCall();
+    }
 
     // Sync up the button states
     updateButtonStates();

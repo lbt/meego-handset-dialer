@@ -68,14 +68,14 @@ Q_SIGNALS:
     void clicked();
     void stateChanged();
     void dataChanged();
-    void multiPartyChanged();
+    void multipartyChanged();
 
 private Q_SLOTS:
     void callStateChanged();
     void callDataChanged();
     void callDisconnected(const QString &reason);
     void ringtoneStatusChanged(QMediaPlayer::MediaStatus status);
-    void callMultiPartyChanged();
+    void callMultipartyChanged();
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &val);

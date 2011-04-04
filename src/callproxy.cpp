@@ -266,7 +266,7 @@ void CallProxy::propertyChanged(const QString &in0, const QDBusVariant &in1)
             setStartTimeFromString(qdbus_cast<QString>(in1.variant()));
     } else if (in0 == "Multiparty") {
         m_multiparty = qdbus_cast<bool>(in1.variant());
-        emit multiPartyChanged();
+        emit multipartyChanged();
     } else {
         qDebug() << QString("Unexpected property \"%1\" changed...").arg(in0);
     }

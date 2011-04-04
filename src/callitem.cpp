@@ -80,7 +80,7 @@ void CallItem::init()
             model()->setCall(call);
             connect(call,SIGNAL(stateChanged()),this,SLOT(callStateChanged()));
             connect(call,SIGNAL(dataChanged()),this,SLOT(callDataChanged()));
-            connect(call,SIGNAL(multiPartyChanged()),this,SLOT(callMultiPartyChanged()));
+            connect(call,SIGNAL(multipartyChanged()),this,SLOT(callMultipartyChanged()));
         } else
             qCritical("Invalid CallProxy instance!");
     } else
@@ -339,8 +339,8 @@ bool CallItem::multiparty()
     return (isValid())?model()->multiparty():false;
 }
 
-void CallItem::callMultiPartyChanged()
+void CallItem::callMultipartyChanged()
 {
     TRACE
-    emit multiPartyChanged();
+    emit multipartyChanged();
 }

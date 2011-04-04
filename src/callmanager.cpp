@@ -88,22 +88,16 @@ QList<QString> CallManager::callsAsStrings() const
     return m_calls;
 }
 
-bool CallManager::multipartyCalls() const
+int CallManager::multipartyCallCount() const
 {
     TRACE
-    int call_count =0;
+    int call_count = 0;
     foreach (CallItem *c, m_callItems) {
-        if(c->multiparty())
+        if(c->multiparty()) {
             call_count++;
         }
-    qDebug()<<"Call Count: "<<call_count;
-    return call_count>=2?true:false;
-}
-
-QList<QString> CallManager::multipartyCallsAsStrings() const
-{
-    TRACE
-    return m_multipartyCalls;
+    }
+    return call_count;
 }
 
 CallItem *CallManager::activeCall() const
@@ -430,11 +424,8 @@ void CallManager::updateCallItems()
     // If ofono call list is empty (no calls), empty our CallItem list too.
     if (m_calls.isEmpty() && !m_callItems.isEmpty()) {
         qDebug() << QString("Purging all CallItems");
-        foreach (CallItem *item, m_callItems) {
-            disconnect(item, SIGNAL(stateChanged()));
-            disconnect(item, SIGNAL(multiPartyChanged()));
+        foreach (CallItem *item, m_callItems)
             delete item;
-        }
         m_callItems.clear();
         emit callsChanged();
 
@@ -450,8 +441,6 @@ void CallManager::updateCallItems()
         // This item is not in the ofono list, remove it
         if (!m_calls.contains(item->path())) {
             qDebug() << QString("Removing old CallItem %1").arg(item->path());
-            disconnect(item, SIGNAL(stateChanged()));
-            disconnect(item, SIGNAL(multiPartyChanged()));
             delete item;
             iter.remove();
             changed = true;
@@ -473,7 +462,7 @@ void CallManager::updateCallItems()
             qDebug() << QString("Inserting new CallItem %1").arg(callPath);
             CallItem *call = new CallItem(callPath);
             connect (call, SIGNAL(stateChanged()), SLOT(callStateChanged()));
-            connect (call, SIGNAL(multiPartyChanged()),SLOT(callMultiPartyChanged()));
+            connect (call, SIGNAL(multipartyChanged()),SLOT(callMultipartyChanged()));
             m_callItems << call;
 
             // NOTE: Must explicity bubble this up since incoming and waiting
@@ -605,6 +594,7 @@ void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)
 
 void CallManager::callAdded(const QDBusObjectPath &in0,const QVariantMap &in1)
 {
+    Q_UNUSED(in1)
     TRACE
 
     QString path = in0.path();
@@ -794,17 +784,16 @@ void CallManager::callStateChanged()
     emit callsChanged();
 }
 
-void CallManager::callMultiPartyChanged()
+void CallManager::callMultipartyChanged()
 {
     TRACE
-    CallItem *call = dynamic_cast<CallItem *>(sender());
-    qDebug()<<"Multiparty Info: " <<call->multiparty();
     emit callsChanged();
 }
 
 QStringList CallManager::dumpProperties()
 {
     m_properties.clear();
+    QStringList l_multipartyCalls;
 
     // Single party calls
     m_properties << "<ul><li>Calls:</li>";
@@ -815,6 +804,9 @@ QStringList CallManager::dumpProperties()
             m_properties << QString("<li>State   : %1</li>").arg(c->state());
             m_properties << QString("<li>Started : %1</li>")
                             .arg(c->startTime().toString());
+            if (c->multiparty())
+                l_multipartyCalls << c->path();
+
             if (c->state() == CallItemModel::STATE_DISCONNECTED)
                 m_properties << QString("<li>Reason: %1</li></ul></ul>")
                                 .arg(c->reason());
@@ -826,14 +818,10 @@ QStringList CallManager::dumpProperties()
 
     // Multi party calls
     m_properties << "<ul><li>Multiparty Calls:</li>";
-    if (m_multipartyCallItems.size())
-        foreach (CallItem *c, m_multipartyCallItems) {
-            m_properties << QString("<ul><li>Path: %1</li>").arg(c->path());
-            if (c->state() == CallItemModel::STATE_DISCONNECTED)
-                m_properties << QString("<li>Reason: %1</li></ul></ul>")
-                                .arg(c->reason());
-            else
-                m_properties << QString("</ul></ul>");
+    if (l_multipartyCalls.size() >= 2)
+        foreach (QString path, l_multipartyCalls) {
+            m_properties << QString("<ul><li>Path: %1</li>").arg(path);
+            m_properties << QString("</ul></ul>");
         }
     else
         m_properties << "<ul><li>None</li></ul></ul>";
