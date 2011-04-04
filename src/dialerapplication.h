@@ -39,6 +39,7 @@ public:
     bool isConnected();
     QString lastError();
     int showErrorDialog();
+    int showErrorDialog(const QString msg);
     static DialerApplication     *instance();
     SeasideSyncModel      *seasideModel();
     SeasideProxyModel     *seasideProxy();

@@ -43,6 +43,7 @@ QString ModemProxy::model() const { return m_model; }
 QString ModemProxy::revision() const { return m_revision; }
 QString ModemProxy::serial() const { return m_serial; }
 bool    ModemProxy::powered() const { return m_powered; }
+bool    ModemProxy::online() const { return m_online; }
 
 void ModemProxy::setPowered(bool is_powered)
 {
@@ -55,6 +56,19 @@ void ModemProxy::setPowered(bool is_powered)
         qCritical() << "SetProperty \"Powered\" failed!";
     else
         m_powered = is_powered;
+}
+
+void ModemProxy::setOnline(bool is_online)
+{
+    if (m_online == is_online)
+        return;
+
+    QDBusPendingReply<QVariantMap> reply;
+    reply = SetProperty("Online", QDBusVariant(m_online?"true":"false"));
+    if (reply.isError())
+        qCritical() << "SetProperty \"Powered\" failed!";
+    else
+        m_online = is_online;
 }
 
 void ModemProxy::modemDBusGetPropDone(QDBusPendingCallWatcher *call)
@@ -73,6 +87,7 @@ void ModemProxy::modemDBusGetPropDone(QDBusPendingCallWatcher *call)
       m_powered = qdbus_cast<bool>(properties["Powered"]);
       m_revision = qdbus_cast<QString>(properties["Revision"]);
       m_serial = qdbus_cast<QString>(properties["Serial"]);
+      m_online = qdbus_cast<bool>(properties["Online"]);
 
 #ifdef WANT_DEBUG
       qDebug() << "Modem Details:";

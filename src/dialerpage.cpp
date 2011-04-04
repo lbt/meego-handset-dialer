@@ -121,8 +121,10 @@ void DialerPage::createContent()
     connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
 
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (cm->isValid())
+    if (cm->isValid()) {
+        connect (cm, SIGNAL(onlyEmergencyCalls()),this, SLOT(notifyEmergencyCallsOnly()));
         connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
+    }
     else
         qCritical("DialerPage: CallManager not ready yet!");
 
@@ -130,6 +132,15 @@ void DialerPage::createContent()
     m_tapnhold.setSingleShot(true);
     connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
     connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
+}
+
+void DialerPage::notifyEmergencyCallsOnly()
+{
+    TRACE
+    DialerApplication *DA = DialerApplication::instance();
+    //% "Error: Only Emergency Calls Allowed"
+    DA->showErrorDialog(qtTrId("only_emergency_calls"));
+    return;
 }
 
 void DialerPage::updateCalls()

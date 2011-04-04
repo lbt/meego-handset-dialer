@@ -35,6 +35,7 @@ private Q_SLOTS:
     void doBackspace();
     void handleBkspPress();
     void handleBkspRelease();
+    void notifyEmergencyCallsOnly();
 
 private:
     CallItem    *m_activeCall;

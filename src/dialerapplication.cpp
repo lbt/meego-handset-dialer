@@ -264,6 +264,12 @@ void DialerApplication::messagesWaitingChanged()
     vmail->publish();
 }
 
+int DialerApplication::showErrorDialog(const QString msg)
+{
+    setError(msg);
+    return showErrorDialog();
+}
+
 int DialerApplication::showErrorDialog()
 {
     TRACE

@@ -92,6 +92,7 @@ Q_SIGNALS:
     void callResourceLost(const QString);
     void connected();
     void disconnected();
+    void onlyEmergencyCalls();
 
 private Q_SLOTS:
     void updateCallItems();

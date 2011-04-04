@@ -28,6 +28,7 @@ class ModemProxy: public org::ofono::Modem
     Q_PROPERTY(QString revision READ revision)
     Q_PROPERTY(QString serial READ serial)
     Q_PROPERTY(bool powered READ powered WRITE setPowered)
+    Q_PROPERTY(bool online READ online WRITE setOnline)
 
 public:
     ModemProxy(const QString &objectPath);
@@ -40,15 +41,19 @@ public:
     QString revision() const;
     QString serial() const;
     bool powered() const;
+    bool online() const;
 
     QStringList dumpProperties();
 
 public slots:
     void setPowered(bool is_powered);
+    void setOnline(bool is_online);
+
     void modemDBusGetPropDone(QDBusPendingCallWatcher *call);
 
 Q_SIGNALS:
     void poweredChanged(bool powered);
+    void onlineChanged(bool powered);
     void connected();
     void disconnected();
 
@@ -61,6 +66,7 @@ private:
     QString     m_revision;
     QString     m_serial;
     bool        m_powered;
+    bool        m_online;
     bool        m_connected;
 };
 

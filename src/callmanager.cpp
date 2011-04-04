@@ -174,6 +174,24 @@ void CallManager::dial(const PeopleItem *person)
 void CallManager::dial(const QString number)
 {
     TRACE
+    ModemProxy* p = ManagerProxy::instance()->modem();
+
+    // Nothing to do if the modem is not powered up
+    if(!p->powered()) {
+        emit callsChanged();
+        return;
+    }
+
+    // If not online (flight mode?), check if the requested number is
+    // one of the allowed EmergencyNumbers, in which case, continue.
+    // Otherwise, notify that only Emergency calls are permitted.
+    if(!p->online()) {
+        if(p->powered() && !m_emergencyNumbers.contains(number)) {
+            emit callsChanged();
+            emit onlyEmergencyCalls();
+            return;
+        }
+    }
 
     ResourceProxy *resource = ManagerProxy::instance()->resource();
 
@@ -823,7 +841,7 @@ void CallManager::propertyChanged(const QString &in0, const QDBusVariant &in1)
         calls = qdbus_cast<QList<QDBusObjectPath> >(in1.variant());
         setMultipartyCalls(calls);
     } else if (in0 == "EmergencyNumbers") {
-        qDebug() << QString("TODO: Handle EmergencyNumber...");
+        m_emergencyNumbers = qdbus_cast<QStringList>(in1.variant());
     } else
         qDebug() << QString("Unexpected property changed...");
 }
