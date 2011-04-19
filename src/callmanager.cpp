@@ -175,9 +175,8 @@ void CallManager::dial(const QString number)
 {
     TRACE
 
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
-
-    resource->acquireDialResource(number);
+    if (ResourceProxy::instance())
+        ResourceProxy::instance()->acquireDialResource(number);
 }
 
 void CallManager::deniedCallDial()
@@ -399,7 +398,6 @@ void CallManager::updateCallItems()
 {
     TRACE
     bool changed = false;
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
 
     // If ofono call list is empty (no calls), empty our CallItem list too.
     if (m_calls.isEmpty() && !m_callItems.isEmpty()) {
@@ -411,7 +409,8 @@ void CallManager::updateCallItems()
         m_callItems.clear();
         emit callsChanged();
 
-        resource->releaseResources();
+        if (ResourceProxy::instance())
+            ResourceProxy::instance()->releaseResources();
 
         return;
     }
@@ -451,9 +450,11 @@ void CallManager::updateCallItems()
             //       calls do not "changeState" unless they are handled or
             //       timeout
             if (call->state() == CallItemModel::STATE_INCOMING) {
-                resource->acquireIncomingResource(call);
+                if (ResourceProxy::instance())
+                    ResourceProxy::instance()->acquireIncomingResource(call);
             } else if (call->state() == CallItemModel::STATE_WAITING) {
-                resource->acquireIncomingResource(call);
+                if (ResourceProxy::instance())
+                    ResourceProxy::instance()->acquireIncomingResource(call);
             } else {
                 changed = true;
             }
@@ -567,7 +568,7 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
 {
     TRACE
 
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
+    ResourceProxy *resource = ResourceProxy::instance();
     QDBusPendingReply<QVariantMap> reply = *watcher;
 
     if (reply.isError()) {
@@ -592,19 +593,21 @@ void CallManager::getPropertiesFinished(QDBusPendingCallWatcher *watcher)
     }
 
     // Resource proxy binding
-    connect(resource, SIGNAL(incomingResourceAcquired(CallItem *)),
-            SLOT(proceedIncomingCall(CallItem *)));
-    connect(resource, SIGNAL(incomingResourceDenied(CallItem *)),
-            SLOT(deniedIncomingCall(CallItem *)));
-    connect(resource, SIGNAL(incomingResourceLost(CallItem *)),
-            SLOT(lostIncomingCall(CallItem *)));
+    if (resource) {
+        connect(resource, SIGNAL(incomingResourceAcquired(CallItem *)),
+                SLOT(proceedIncomingCall(CallItem *)));
+        connect(resource, SIGNAL(incomingResourceDenied(CallItem *)),
+                SLOT(deniedIncomingCall(CallItem *)));
+        connect(resource, SIGNAL(incomingResourceLost(CallItem *)),
+                SLOT(lostIncomingCall(CallItem *)));
 
-    connect(resource, SIGNAL(dialResourceAcquired(const QString)),
-            SLOT(proceedCallDial(const QString)));
-    connect(resource, SIGNAL(dialResourceDenied()),
-            SLOT(deniedCallDial()));
-    connect(resource, SIGNAL(callResourceLost()),
-            SLOT(lostCallDial()));
+        connect(resource, SIGNAL(dialResourceAcquired(const QString)),
+                SLOT(proceedCallDial(const QString)));
+        connect(resource, SIGNAL(dialResourceDenied()),
+                SLOT(deniedCallDial()));
+        connect(resource, SIGNAL(callResourceLost()),
+                SLOT(lostCallDial()));
+    }
 }
 
 void CallManager::getCallsFinished(QDBusPendingCallWatcher *watcher)

@@ -10,7 +10,6 @@
 
 #include <QDebug>
 
-#include "managerproxy.h"
 #include "resourceproxy.h"
 
 using namespace ResourcePolicy;

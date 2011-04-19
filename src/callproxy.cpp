@@ -11,6 +11,7 @@
 #include "common.h"
 #include "callproxy.h"
 #include "managerproxy.h"
+#include "resourceproxy.h"
 
 CallProxy::CallProxy(const QString &callPath)
     : org::ofono::VoiceCall(OFONO_SERVICE,
@@ -114,7 +115,7 @@ void CallProxy::answer()
 {
     TRACE
 
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
+    ResourceProxy *resource = ResourceProxy::instance();
 
     connect(resource, SIGNAL(answerResourceAcquired()), SLOT(proceedCallAnswer()));
     connect(resource, SIGNAL(answerResourceDenied()), SLOT(deniedCallAnswer()));
@@ -126,7 +127,7 @@ void CallProxy::proceedCallAnswer()
 {
     TRACE
 
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
+    ResourceProxy *resource = ResourceProxy::instance();
     QDBusPendingReply<QDBusObjectPath> reply;
     QDBusPendingCallWatcher *watcher;
 
@@ -144,7 +145,7 @@ void CallProxy::deniedCallAnswer()
 {
     TRACE
 
-    ResourceProxy *resource = ManagerProxy::instance()->resource();
+    ResourceProxy *resource = ResourceProxy::instance();
 
     disconnect(resource, SIGNAL(answerResourceAcquired()));
     disconnect(resource, SIGNAL(answerResourceDenied()));
