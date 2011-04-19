@@ -9,6 +9,7 @@
  */
 
 #include "common.h"
+#include "dbustypes.h"
 #include "dialerapplication.h"
 #include "dialerpage.h"
 #include "peoplepage.h"
@@ -171,6 +172,9 @@ void DialerApplication::init()
     m_header = 0;
     m_connected = false;
     m_lastError = QString();
+
+    // Notify Qt of our custom DBus MetaTypes
+    registerMyDataTypes();
 
     m_manager = ManagerProxy::instance();
     if (!m_manager || !m_manager->isValid())

@@ -8,7 +8,6 @@
  *
  */
 
-#include "dbustypes.h"
 #include "managerproxy.h"
 #include "manager_interface.h"
 #include "dialerapplication.h"
@@ -31,8 +30,6 @@ ManagerProxy::ManagerProxy(const QString &service,
 {
     if (gManager)
         qFatal("ManagerProxy: There can be only one!");
-
-    registerMyDataTypes();
 
     if (!isValid()) {
         qDebug() << "Failed to connect to Ofono: \n\t" << lastError().message();
