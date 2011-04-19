@@ -82,9 +82,6 @@ public:
 public slots:
     void managerDBusGetModemsDone(QDBusPendingCallWatcher *call);
 
-Q_SIGNALS:
-    void proxyAvail();
-
 private Q_SLOTS:
     void modemAdded(const QDBusObjectPath &in0, const QVariantMap &in1);
     void modemRemoved(const QDBusObjectPath &in0);

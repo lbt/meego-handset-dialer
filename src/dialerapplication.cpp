@@ -98,8 +98,6 @@ void DialerApplication::restorePrestart()
 void DialerApplication::connectAll()
 {
     TRACE
-    qDebug() << QString("ProxyMgr is alive");
-
 
     connect(m_manager->modem(), SIGNAL(connected()),
                                 SLOT(modemConnected()));
@@ -174,6 +172,13 @@ void DialerApplication::init()
     m_connected = false;
     m_lastError = QString();
 
+    m_manager = ManagerProxy::instance();
+    if (!m_manager || !m_manager->isValid())
+        //% "Failed to connect to org.ofono.Manager: is ofonod running?"
+        setError(qtTrId("xx_no_ofono_error"));
+    else
+        m_connected = true;
+
     m_seasideModel = new SeasideSyncModel();
     m_seasideProxy = new SeasideProxyModel();
     m_seasideProxy->setSourceModel(m_seasideModel);
@@ -192,18 +197,10 @@ void DialerApplication::init()
 
     m_lastPage = new MGConfItem("/apps/dialer/lastPage");
 
+    connectAll();
+
     // We now have enough to get started with GUI stuff
     createMainWindow();
-
-    m_manager = ManagerProxy::instance();
-    if (!m_manager || !m_manager->isValid())
-        //% "Failed to connect to org.ofono.Manager: is ofonod running?"
-        setError(qtTrId("xx_no_ofono_error"));
-    else
-        m_connected = true;
-
-    connect(m_manager, SIGNAL(proxyAvail()),
-                            SLOT(connectAll()));
 }
 
 void DialerApplication::modemConnected()

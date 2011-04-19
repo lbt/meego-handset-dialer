@@ -70,9 +70,8 @@ DialerPage::DialerPage() :
 
     m_bksp->setTextVisible(false);
 
-    m_manager = ManagerProxy::instance();
-    connect(m_manager, SIGNAL(proxyAvail()),
-                                SLOT(connectAll()));
+    connectAll();
+
     // Set the Keypad Target when this window is shown
     connect(this, SIGNAL(appeared()), SLOT(pageShown()));
     connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
@@ -90,8 +89,14 @@ void DialerPage::connectAll()
 
     CallManager *cm = ManagerProxy::instance()->callManager();
     if ((cm) && (cm->isValid())) {
+        disconnect(cm, SIGNAL(callsChanged()));
         connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
         qDebug() << QString("CallMgr is connected");
+    }
+    else if (cm) {
+        disconnect(cm, SIGNAL(connected()));
+        connect(cm, SIGNAL(connected()), this, SLOT(connectAll()));
+        qDebug() << QString("CallMgr is not yet valid");
     }
     else
         qCritical("DialerPage: CallManager not ready yet!");
