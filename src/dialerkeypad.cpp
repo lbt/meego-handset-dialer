@@ -190,15 +190,6 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
 
     setWidget(m_box);
 
-    ManagerProxy *mp = ManagerProxy::instance();
-    if (mp && mp->callManager() && mp->callManager()->isValid()) {
-        m_call->setChecked((mp->callManager()->calls().length() > 0));
-        connect (mp->callManager(), SIGNAL(callsChanged()),
-                                    SLOT(callsChanged()));
-    } else {
-        qWarning() << QString("No valid CallManager instance available, will not capture call state changes");
-    }
-
     connect(this, SIGNAL(appeared()), SLOT(updateLayoutPolicy()));
 
     foreach(QDBusObjectPath path, bluetoothDevices->devices()) {
@@ -425,6 +416,12 @@ void DialerKeyPad::close()
 {
     TRACE
     setKeypadVisible(false);
+}
+
+void DialerKeyPad::updateButtons()
+{
+    TRACE
+    updateLayoutPolicy();
 }
 
 void DialerKeyPad::createOptionBox()
@@ -864,20 +861,4 @@ void DialerKeyPad::nwayPressed(bool checked)
 
     // Sync up the button states
     updateButtonStates();
-}
-
-void DialerKeyPad::callsChanged()
-{
-    TRACE
-
-    if (isOnDisplay())
-        updateLayoutPolicy();
-/*
-    ManagerProxy *mp = ManagerProxy::instance();
-    if (mp && mp->callManager() && mp->callManager()->isValid()) {
-        m_call->setChecked((mp->callManager()->calls().length() > 0));
-    } else {
-        qWarning() << QString("No valid CallManager instance available, could not set call button state correctly");
-    }
-*/
 }

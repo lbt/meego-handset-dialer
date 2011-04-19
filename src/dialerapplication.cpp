@@ -240,11 +240,18 @@ void DialerApplication::callManagerConnected()
         m_callManager = m_manager->callManager();
 
 
+    qDebug() << QString("Disconnect calls changed signal");
+    disconnect(m_callManager, SIGNAL(callsChanged()));
+
     qDebug() << QString("Disconnect incoming signal");
     disconnect(m_callManager, SIGNAL(incomingCall(CallItem*)));
 
     qDebug() << QString("Disconnect resource lost");
     disconnect(m_callManager, SIGNAL(callResourceLost(const QString)));
+
+    qDebug() << QString("Connect calls changed");
+    connect(m_callManager, SIGNAL(callsChanged()),
+            this,  SLOT(handleCallsChanged()));
 
     qDebug() << QString("Connect incoming call");
     connect(m_callManager, SIGNAL(incomingCall(CallItem*)),
@@ -342,6 +349,12 @@ void DialerApplication::messagesWaitingChanged()
     vmail->publish();
 }
 
+void  DialerApplication::handleCallsChanged()
+{
+    if ((m_callManager && m_callManager->isValid()) &&
+        (m_mainWindow && m_mainWindow->keypad()))
+            m_mainWindow->keypad()->updateButtons();
+}
 int DialerApplication::showErrorDialog()
 {
     TRACE

@@ -63,6 +63,7 @@ private Q_SLOTS:
     void switchPage(int id);
     void switchPageNow(int id);
     void connectAll();
+    void handleCallsChanged();
 
 private:
     void init();
