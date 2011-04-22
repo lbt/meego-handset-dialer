@@ -148,16 +148,6 @@ Dialer Features
   BMC#:         
   Owner:        
 
-- Re-factor to take advantage of pre-start mode
-  Details:      In pre-start mode, dialer can perform more daemon-like tasks
-                while not consuming Gfx/System memory and CPU.  Allows it to
-                function as incoming call notifier/handler, event history 
-                capture, and other useful tasks even when not visible.
-  Priority:     High
-  Complexity:   C2
-  BMC#:         
-  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
-
 System Interaction tasks
 ------------------------
 
