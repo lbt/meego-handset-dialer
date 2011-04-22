@@ -1,3 +1,13 @@
+Changes in 0.1.20
+
+6a8a Changed: Namespace and code cleanups to complete fix for BMC# 14618
+2c72 Fixed: BMC# 14618 - Can not end entire multiparty call by pressing...
+7f4c Fixed:   BMC# 8559 - Non-emergency call can be made without SIM card
+e5b5 Protect proxy sigletons, that object cannot make outside of instance-function.
+a4d2 Fixed:   BMC# 14225 - Ringtone audio is routed wrong sometimes
+6226 Fixed: Memoryleak in resourceProxy
+d7e1 Fixed:   BMC# 14948 - The system time is displayed before the call is actived
+
 Changes in 0.1.19
 
 85e2 Added:   Missing TRACE macro to new function
