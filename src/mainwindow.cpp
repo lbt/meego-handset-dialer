@@ -52,6 +52,16 @@ MainWindow::MainWindow() :
     m_pages.clear();
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    TRACE
+    if (closeOnLazyShutdown()) {
+        setCloseOnLazyShutdown(false);
+        qDebug("Lazy shutdown - hide the window");
+    }
+    event->accept();
+}
+
 void MainWindow::showDebugPage()
 {
     TRACE

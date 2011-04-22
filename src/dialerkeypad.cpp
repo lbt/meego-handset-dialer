@@ -190,15 +190,6 @@ DialerKeyPad::DialerKeyPad(DialerKeypadType keypadType,
 
     setWidget(m_box);
 
-    ManagerProxy *mp = ManagerProxy::instance();
-    if (mp && mp->callManager() && mp->callManager()->isValid()) {
-        m_call->setChecked((mp->callManager()->calls().length() > 0));
-        connect (mp->callManager(), SIGNAL(callsChanged()),
-                                    SLOT(callsChanged()));
-    } else {
-        qWarning() << QString("No valid CallManager instance available, will not capture call state changes");
-    }
-
     connect(this, SIGNAL(appeared()), SLOT(updateLayoutPolicy()));
 
     foreach(QDBusObjectPath path, bluetoothDevices->devices()) {
@@ -240,8 +231,12 @@ void DialerKeyPad::updateButtonStates()
             m_mute->setText(qtTrId("xx_mute"));
     }
 
-    // Sync up the hold button state
     if (cm && cm->isValid()) {
+
+        haveCalls = ((cm->calls().length() > 0) ||
+                     (cm->multipartyCallCount() > 0));
+
+        // Sync up the hold button state
         m_hold->setEnabled(true); // Start by re-enabling the button
         if (cm->activeCall() && cm->heldCall())
             //% "Swap"
@@ -260,10 +255,8 @@ void DialerKeyPad::updateButtonStates()
             m_hold->setEnabled(false);
             m_hold->setChecked(false);
         }
-    }
 
-    // Sync up the merge button state
-    if (cm && cm->isValid()) {
+        // Sync up the merge button state
         if (cm->multipartyCallCount() == 0) {
             if (cm->calls().count() == 2)
                 m_nway->setEnabled(true);
@@ -430,6 +423,12 @@ void DialerKeyPad::close()
     setKeypadVisible(false);
 }
 
+void DialerKeyPad::updateButtons()
+{
+    TRACE
+    updateLayoutPolicy();
+}
+
 void DialerKeyPad::createOptionBox()
 {
     TRACE
@@ -575,13 +574,19 @@ void DialerKeyPad::handleButtonClicked()
     }
 
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (!cm->isValid()) {
+    if (cm) {
+        if (!cm->isValid()) {
+            qDebug() << "Unable to determine if in active call, no valid connection";
+            return;
+        }
+
+        if (cm->activeCall()) {
+          cm->sendTones(button->text());
+        }
+    }
+    else
         qDebug() << "Unable to determine if in active call, no valid connection";
-        return;
-    }
-    if (cm->activeCall()) {
-      cm->sendTones(button->text());
-    }
+
 }
 
 void DialerKeyPad::callSpeedDial()
@@ -725,49 +730,53 @@ void DialerKeyPad::callPressed(bool checked)
 {
     TRACE
     CallManager *cm = ManagerProxy::instance()->callManager();
-    if (!cm->isValid()) {
-        qDebug() << "Unable to dial, no valid connection";
-        return;
-    }
-
-    if (checked) {
-        if (m_target && !m_target->text().isEmpty()) {
-            QString number = stripLineID(m_target->text());
-            qDebug() << "Placing call to: " << number;
-            cm->dial(number);
-            this->setKeypadVisible(false); // BMC# 6809 - NW
-        }
-        else
-            // No number to dial, set back to unchecked, Fixes BMC#3284
-            m_call->setChecked(false);
-    }
-    else {
-        CallItem *c = NULL;
-        if (cm->activeCall())
-            c = cm->activeCall();
-        else if (cm->heldCall())
-            c = cm->heldCall();
-        else if (cm->dialingCall()) // Fixes BMC#432
-            c = cm->dialingCall();
-        else if (cm->incomingCall()) // Fixes BMC#7536
-            c = cm->incomingCall();
-        else if (cm->waitingCall()) // Fixes BMC#7536
-            c = cm->waitingCall();
-        else if (cm->alertingCall()) // Fixes BMC#8322
-            c = cm->alertingCall();
-
-        if (c) {
-            if (c->multiparty()) {
-                qDebug() << "Hanging up MultipartyCall";
-                cm->hangupMultipartyCall();
+    if (!cm || !cm->isValid()) {
+        //% "Unable to dial, no valid connection"
+        QString error = qtTrId("xx_no_valid_connection");
+        qDebug() << error;
+        DialerApplication::instance()->setError(error);
+        DialerApplication::instance()->showErrorDialog();
+        m_call->setChecked(false);
+    } else {
+        if (checked) {
+            if (m_target && !m_target->text().isEmpty()) {
+                QString number = stripLineID(m_target->text());
+                qDebug() << "Placing call to: " << number;
+                cm->dial(number);
+                this->setKeypadVisible(false); // BMC# 6809 - NW
             }
-            else {
-                qDebug() << "Hanging up call to: " << c->lineID();
-                c->callProxy()->hangup();
-            }
+            else
+                // No number to dial, set back to unchecked, Fixes BMC#3284
+                m_call->setChecked(false);
         }
-        else
-            qWarning() << "Hangup requested when no active or held calls!";
+        else {
+            CallItem *c = NULL;
+            if (cm->activeCall())
+                c = cm->activeCall();
+            else if (cm->heldCall())
+                c = cm->heldCall();
+            else if (cm->dialingCall()) // Fixes BMC#432
+                c = cm->dialingCall();
+            else if (cm->incomingCall()) // Fixes BMC#7536
+                c = cm->incomingCall();
+            else if (cm->waitingCall()) // Fixes BMC#7536
+                c = cm->waitingCall();
+            else if (cm->alertingCall()) // Fixes BMC#8322
+                c = cm->alertingCall();
+
+            if (c) {
+                if (c->multiparty()) {
+                    qDebug() << "Hanging up MultipartyCall";
+                    cm->hangupMultipartyCall();
+                }
+                else {
+                    qDebug() << "Hanging up call to: " << c->lineID();
+                    c->callProxy()->hangup();
+                }
+            }
+            else
+                qWarning() << "Hangup requested when no active or held calls!";
+        }
     }
 }
 
@@ -845,20 +854,4 @@ void DialerKeyPad::nwayPressed(bool checked)
 
     // Sync up the button states
     updateButtonStates();
-}
-
-void DialerKeyPad::callsChanged()
-{
-    TRACE
-
-    if (isOnDisplay())
-        updateLayoutPolicy();
-/*
-    ManagerProxy *mp = ManagerProxy::instance();
-    if (mp && mp->callManager() && mp->callManager()->isValid()) {
-        m_call->setChecked((mp->callManager()->calls().length() > 0));
-    } else {
-        qWarning() << QString("No valid CallManager instance available, could not set call button state correctly");
-    }
-*/
 }

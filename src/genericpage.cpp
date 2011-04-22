@@ -72,6 +72,20 @@ void GenericPage::createContent()
     MApplicationPage::createContent();
 }
 
+void GenericPage::activateWidgets()
+{
+    TRACE
+    // Add any common page setup that needs to be done
+    // to allow correct display when running in prestart mode
+}
+
+void GenericPage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any common page tear down that needs to be done
+    // to allow correct display when running in prestart mode
+}
+
 MGridLayoutPolicy * GenericPage::policy(
                       M::Orientation orientation=M::Landscape)
 {

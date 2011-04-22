@@ -36,6 +36,10 @@ public:
     virtual ~GenericPage();
     virtual void createContent();
     virtual MGridLayoutPolicy * policy(M::Orientation);
+
+    virtual void activateWidgets();
+    virtual void deactivateAndResetWidgets();
+
     MainWindow *mainWindow();
 
 protected:

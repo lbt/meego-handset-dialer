@@ -69,11 +69,41 @@ DialerPage::DialerPage() :
     m_layout->setPolicy(m_policy);
 
     m_bksp->setTextVisible(false);
+
+    connectAll();
+
+    // Set the Keypad Target when this window is shown
+    connect(this, SIGNAL(appeared()), SLOT(pageShown()));
+    connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
+
 }
 
 DialerPage::~DialerPage()
 {
     TRACE
+}
+
+void DialerPage::connectAll()
+{
+    TRACE
+
+    CallManager *cm = ManagerProxy::instance()->callManager();
+    if ((cm) && (cm->isValid())) {
+        disconnect(cm, SIGNAL(onlyEmergencyCalls()));
+        disconnect(cm, SIGNAL(callsChanged()));
+        connect (cm, SIGNAL(onlyEmergencyCalls()),
+                 this, SLOT(notifyEmergencyCallsOnly()));
+        connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
+        qDebug() << QString("CallMgr is connected");
+    }
+    else if (cm) {
+        disconnect(cm, SIGNAL(connected()));
+        connect(cm, SIGNAL(connected()), this, SLOT(connectAll()));
+        qDebug() << QString("CallMgr is not yet valid");
+    }
+    else
+        qCritical("DialerPage: CallManager not ready yet!");
+
 }
 
 void DialerPage::createContent()
@@ -115,23 +145,36 @@ void DialerPage::createContent()
     portrait->addItem(m_entry,  0, 0, 1, 1, Qt::AlignLeft);
     portrait->addItem(m_bksp,   0, 1, 1, 1, Qt::AlignRight|Qt::AlignVCenter);
     portrait->addItem(m_layout, 1, 0, 1, 2, Qt::AlignCenter);
+}
 
-    // Set the Keypad Target when this window is shown
-    connect(this, SIGNAL(appeared()), SLOT(pageShown()));
-    connect(this, SIGNAL(disappeared()), SLOT(pageHidden()));
-
-    CallManager *cm = ManagerProxy::instance()->callManager();
-    if (cm->isValid()) {
-        connect (cm, SIGNAL(onlyEmergencyCalls()),this, SLOT(notifyEmergencyCallsOnly()));
-        connect(cm, SIGNAL(callsChanged()), this, SLOT(updateCalls()));
-    }
-    else
-        qCritical("DialerPage: CallManager not ready yet!");
+void DialerPage::activateWidgets()
+{
+    TRACE
+    // Add any setup necessary for display of this page
+    // then call the genericpage setup
+    // Add your code here
 
     // Hook up backspace key
     m_tapnhold.setSingleShot(true);
     connect(m_bksp, SIGNAL(pressed()), SLOT(handleBkspPress()));
     connect(m_bksp, SIGNAL(released()), SLOT(handleBkspRelease()));
+
+    GenericPage::activateWidgets();
+}
+
+void DialerPage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any cleanup code for display of this page
+    // then call the generic page cleanup
+    // Add your code here
+
+    // Hook up backspace key
+    m_tapnhold.setSingleShot(false);
+    disconnect(m_bksp, SIGNAL(pressed()));
+    disconnect(m_bksp, SIGNAL(released()));
+
+    GenericPage::deactivateAndResetWidgets();
 }
 
 void DialerPage::notifyEmergencyCallsOnly()

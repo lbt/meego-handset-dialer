@@ -29,6 +29,10 @@ public:
 public slots:
     void toggleContainerVisible();
 
+protected:
+    virtual void activateWidgets();
+    virtual void deactivateAndResetWidgets();
+
 private slots:
     void refreshContent();
 

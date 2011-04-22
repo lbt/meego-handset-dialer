@@ -37,6 +37,7 @@ public:
     DialerApplication(int &argc, char **argv);
     DialerApplication(int &argc, char **argv, MApplicationService *service);
     bool isConnected();
+    void setError(const QString msg);
     QString lastError();
     int showErrorDialog();
     int showErrorDialog(const QString msg);
@@ -46,6 +47,9 @@ public:
     HistoryTableModel     *historyModel();
     QSortFilterProxyModel *historyProxy();
     MButtonGroup          *headerButtonGroup();
+
+    virtual void releasePrestart();
+    virtual void restorePrestart();
 
 private Q_SLOTS:
     void modemConnected();
@@ -57,9 +61,10 @@ private Q_SLOTS:
     void messagesWaitingChanged();
     void createMainWindow();
     QStringList dumpDisplayInfo();
-    void setError(const QString msg);
     void switchPage(int id);
     void switchPageNow(int id);
+    void connectAll();
+    void handleCallsChanged();
 
 private:
     void init();

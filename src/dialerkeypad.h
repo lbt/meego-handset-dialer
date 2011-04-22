@@ -44,6 +44,7 @@ public:
 public Q_SLOTS:
     void open();
     void close();
+    void updateButtons();
 
 signals:
     void closed();
@@ -91,7 +92,6 @@ private Q_SLOTS:
     void holdPressed(bool);
     void audiosinkPressed(bool);
     void nwayPressed(bool);
-    void callsChanged();
     void callSpeedDial();
     void setSpeedDial();
     void bluetoothDeviceCreated(QDBusObjectPath);

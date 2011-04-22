@@ -64,7 +64,6 @@ class ManagerProxy: public org::ofono::Manager
     Q_OBJECT
     Q_PROPERTY(ModemProxy* modem READ modem)
     Q_PROPERTY(NetworkProxy* network READ network)
-    Q_PROPERTY(HistoryProxy* history READ history)
 
 public:
     virtual ~ManagerProxy();
@@ -75,9 +74,7 @@ public:
     NetworkProxy* network() const;
     CallManager* callManager() const;
     VolumeManager* volumeManager() const;
-    HistoryProxy* history() const;
     VoicemailProxy* voicemail() const;
-    ResourceProxy* resource() const;
 
 public slots:
     void managerDBusGetModemsDone(QDBusPendingCallWatcher *call);
@@ -101,9 +98,7 @@ private:
     NetworkProxy *m_network;
     CallManager  *m_callManager;
     VolumeManager *m_volumeManager;
-    HistoryProxy  *m_history;
     VoicemailProxy *m_voicemail;
-    ResourceProxy  *m_resource;
 
     static ManagerProxy *gManager;
 };

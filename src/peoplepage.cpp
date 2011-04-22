@@ -43,6 +43,26 @@ void PeoplePage::pageShown()
     startCompleting(entry->text());
 }
 
+void PeoplePage::activateWidgets()
+{
+    TRACE
+    // Add any setup necessary for display of this page
+    // then call the genericpage setup
+    // Add your code here
+
+    GenericPage::activateWidgets();
+}
+
+void PeoplePage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any cleanup code for display of this page
+    // then call the generic page cleanup
+    // Add your code here
+
+    GenericPage::deactivateAndResetWidgets();
+}
+
 PeoplePage::PeoplePage() :
     GenericPage(), entry(new MTextEdit()),
     matches(new MList()), incall(false),

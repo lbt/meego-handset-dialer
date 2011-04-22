@@ -41,6 +41,26 @@ void RecentPage::pageShown()
     startCompleting(entry->text());
 }
 
+void RecentPage::activateWidgets()
+{
+    TRACE
+    // Add any setup necessary for display of this page
+    // then call the genericpage setup
+    // Add your code here
+
+    GenericPage::activateWidgets();
+}
+
+void RecentPage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any cleanup code for display of this page
+    // then call the generic page cleanup
+    // Add your code here
+
+    GenericPage::deactivateAndResetWidgets();
+}
+
 RecentPage::RecentPage() :
     GenericPage(),
     entry(new MTextEdit()),

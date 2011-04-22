@@ -40,6 +40,26 @@ DebugPage::~DebugPage()
 {
 }
 
+void DebugPage::activateWidgets()
+{
+    TRACE
+    // Add any setup necessary for display of this page
+    // then call the genericpage setup
+    // Add your code here
+
+    GenericPage::activateWidgets();
+}
+
+void DebugPage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any cleanup code for display of this page
+    // then call the generic page cleanup
+    // Add your code here
+
+    GenericPage::deactivateAndResetWidgets();
+}
+
 void DebugPage::refreshContent()
 {
     ManagerProxy *mp = ManagerProxy::instance();

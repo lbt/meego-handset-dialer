@@ -43,6 +43,26 @@ void FavoritesPage::pageShown()
     startCompleting(entry->text());
 }
 
+void FavoritesPage::activateWidgets()
+{
+    TRACE
+    // Add any setup necessary for display of this page
+    // then call the genericpage setup
+    // Add your code here
+
+    GenericPage::activateWidgets();
+}
+
+void FavoritesPage::deactivateAndResetWidgets()
+{
+    TRACE
+    // Add any cleanup code for display of this page
+    // then call the generic page cleanup
+    // Add your code here
+
+    GenericPage::deactivateAndResetWidgets();
+}
+
 FavoritesPage::FavoritesPage() :
     GenericPage(), entry(new MTextEdit()),
     matches(new MList()), incall(false),

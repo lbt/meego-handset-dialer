@@ -107,10 +107,12 @@ bool HistoryTableModel::insertRows(int row, int count,
     int max = count;
     int i = 0;
     QStringList newRow = QStringList();
-    ManagerProxy *mp = ManagerProxy::instance();
-    HistoryProxy* historyProxy = mp->history();
-    if(!historyProxy) return false; //abort
-    QSettings *cache = historyProxy->cache();
+    if (!HistoryProxy::instance()) {
+        qWarning() << QString("[HistoryTableModel] No connection to %1")
+                      .arg(HistoryProxy::staticInterfaceName());
+        return false; //abort
+    }
+    QSettings *cache = HistoryProxy::instance()->cache();
 
     cache->beginGroup("CallHistory");
     QStringList events = cache->childGroups();
@@ -163,8 +165,14 @@ void HistoryTableModel::appendRows(QStringList keys)
     int max = 0;
     int i = 0;
     QStringList newRow = QStringList();
-    ManagerProxy *mp = ManagerProxy::instance();
-    QSettings *cache = mp->history()->cache();
+
+    if (!HistoryProxy::instance()) {
+        qWarning() << QString("[HistoryTableModel] No connection to %1")
+                      .arg(HistoryProxy::staticInterfaceName());
+        return;
+    }
+
+    QSettings *cache = HistoryProxy::instance()->cache();
 
     cache->beginGroup("CallHistory");
     QStringList events = cache->childGroups();
