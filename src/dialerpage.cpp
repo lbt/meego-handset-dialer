@@ -195,6 +195,11 @@ void DialerPage::updateCalls()
     CallItem *waitingCall = cm->waitingCall();
     CallItem *dialingCall = cm->dialingCall();
 
+    // Clear the TextEntry after status changed.
+    // NOTE: May need to be smarter about where, or under what conditions,
+    // this is done as it feels a bit hackish here.
+    doClear();
+
     // Make sure active call is on top of the list
     if (activeCall && (m_policy->indexOf(activeCall) < 0)) {
         m_policy->insertItem(0, activeCall, Qt::AlignCenter);
