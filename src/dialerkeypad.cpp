@@ -358,6 +358,9 @@ void DialerKeyPad::updateLayoutPolicy()
 {
     TRACE
 
+    if (!isOnDisplay())
+        return;
+
     ManagerProxy *mp = ManagerProxy::instance();
     CallManager  *cm = (mp)?mp->callManager():0;
     bool haveCalls = false;
