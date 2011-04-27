@@ -1,3 +1,11 @@
+Changes in 0.2.1
+
+2e5e Fixed:   BMC# 2043 - call history information is not saved...
+5d99 Fixed:   Segfault during incoming call when keypad not yet displayed
+b762 Fixed:   BMC#1505 - Number entry not empty after establishing call
+baac Updated: TODO file - prestart is now functional
+04ec Changed: Default to using -prestart now
+
 Changes in 0.2.0
 
 dd79  Merged:  topic/headless (Fixes for BMC# 1977, 7074, 16436)
