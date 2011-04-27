@@ -119,6 +119,7 @@ bool HistoryTableModel::insertRows(int row, int count,
 
     if (events.size() == 0) {
         qWarning() << QString("[HistoryTableModel] Empty call history log!");
+        cache->endGroup();
         return true;
     }
 
@@ -179,6 +180,7 @@ void HistoryTableModel::appendRows(QStringList keys)
 
     if (events.size() == 0) {
         qWarning() << QString("[HistoryTableModel] Empty call history log!");
+        cache->endGroup();
         return;
     }
 
