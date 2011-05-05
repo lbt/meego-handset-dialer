@@ -351,6 +351,12 @@ void DialerApplication::messagesWaitingChanged()
 
 void  DialerApplication::handleCallsChanged()
 {
+    TRACE
+    // First release prestart if the application is
+    // in prestarted state.
+    if(isPrestarted())
+        setPrestarted(false);
+
     if ((m_callManager && m_callManager->isValid()) &&
         (m_mainWindow && m_mainWindow->keypad()))
             m_mainWindow->keypad()->updateButtons();

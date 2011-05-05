@@ -490,8 +490,8 @@ void CallManager::proceedIncomingCall(CallItem *call)
     qDebug() << QString("Acquired: Incoming Call resource");
     qDebug() << QString("Insert new CallItem %1").arg(call->path());
 
-    emit incomingCall(call);
     emit callsChanged();
+    emit incomingCall(call);
 }
 
 void CallManager::deniedIncomingCall(CallItem *call)
@@ -501,8 +501,8 @@ void CallManager::deniedIncomingCall(CallItem *call)
     qCritical() << QString("Denied: Incoming Call resource");
     qDebug() << QString("Insert new CallItem %1").arg(call->path());
 
-    emit incomingCall(call);
     emit callsChanged();
+    emit incomingCall(call);
 }
 
 void CallManager::lostIncomingCall(CallItem *call)
