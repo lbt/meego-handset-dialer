@@ -1,5 +1,5 @@
 load(meegotouch_defines)
-VERSION = 0.2.1
+VERSION = 0.2.2
 TARGET = dialer
 CONFIG += link_pkgconfig meegotouch debug
 PKGCONFIG += meegotouch QtNetwork QtContacts meegobluetooth QtOpenGL

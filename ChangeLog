@@ -1,3 +1,10 @@
+Changes in 0.2.2
+
+5a17 Fixed:   BMC# 17030,17118 - Keypad & Incoming call dialog issues
+7183 Fixed:   BMC# 16916 - No alert dialog for incoming calls
+6660 Fixed:   BMC# 16814 - Dialer fail to launch from UI...
+54e2 Added:   XDG autostart desktop file installation
+
 Changes in 0.2.1
 
 2e5e Fixed:   BMC# 2043 - call history information is not saved...
