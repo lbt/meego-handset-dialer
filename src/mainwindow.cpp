@@ -50,6 +50,8 @@ MainWindow::MainWindow() :
     setOrientationLocked(true);
     setToolbarViewType(MToolBar::tabType);
     m_pages.clear();
+
+    connect (this, SIGNAL(displayEntered()), this, SLOT(onDisplayEntered()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -76,6 +78,20 @@ void MainWindow::showDebugPage()
     }
 }
 
+void MainWindow::onDisplayEntered()
+{
+    TRACE
+    if (m_incomingCall) {
+        m_alert->setCallItem(m_incomingCall);
+        m_alert->appear();
+    }
+    CallManager *cm = ManagerProxy::instance()->callManager();
+    if (cm && cm->isValid()) {
+        qDebug() << QString("CALLING UPDATEBUTTONS onEnterDisplayEvent!!!!");
+        keypad()->updateButtons();
+    }
+}
+
 void MainWindow::handleIncomingCall(CallItem *call)
 {
     TRACE
@@ -84,30 +100,14 @@ void MainWindow::handleIncomingCall(CallItem *call)
         m_alert->setCallItem(call);
         m_alert->appear();
     } else {
-        //% "Incoming call"
-        QString summary(qtTrId("xx_incoming_call"));
-        QString body;
-        MNotification notice(NOTIFICATION_CALL_EVENT);
-
         if (call && call->isValid() && !call->lineID().isEmpty()) {
-            // Save this for when RemoteAction "accept" is called, but make sure
-            // we null it out if the state changes before user takes action
+            // Save this for when RemoteAction "accept" is called or onDisplay
+            // changes, but make sure we null it out if the state changes before
+            //user takes action
             m_incomingCall = call;
             connect(m_incomingCall,SIGNAL(stateChanged()),SLOT(callStateChanged()));
         }
-        //% "You have an incoming call from %1"
-        body = QString(qtTrId("xx_incoming_body"))
-                              .arg(call->peopleItem()->name().isEmpty()?
-                              call->peopleItem()->phone():
-                              call->peopleItem()->name());
-
-        notice.setSummary(summary);
-        notice.setBody(body);
-        notice.setImage(call->peopleItem()->photo());
-        notice.setAction(m_acceptAction);
-        notice.publish();
-
-        qDebug() << QString("%1: %2").arg(summary).arg(body);
+        activateWindow();
     }
 }
 
@@ -175,7 +175,7 @@ void MainWindow::accept()
     if(m_pages.size())
         m_pages.at(GenericPage::PAGE_DIALER)->appear();
 
-    showMaximized();
+    activateWindow();
 }
 
 void MainWindow::showTBD()

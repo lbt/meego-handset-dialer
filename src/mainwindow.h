@@ -47,6 +47,7 @@ protected:
 
 private Q_SLOTS:
     void callStateChanged();
+    void onDisplayEntered();
 
 private:
     MApplicationPage *m_lastPage;

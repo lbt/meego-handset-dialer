@@ -75,7 +75,11 @@ void DialerApplication::releasePrestart()
         m_mainWindow->m_pages.at(i)->activateWidgets();
     }
 
-   MApplication::releasePrestart();
+    MApplication::releasePrestart();
+
+    if ((m_callManager && m_callManager->isValid()) &&
+        (m_mainWindow && m_mainWindow->keypad()))
+        m_mainWindow->keypad()->updateButtons();
 }
 
 void DialerApplication::restorePrestart()
@@ -357,9 +361,8 @@ void  DialerApplication::handleCallsChanged()
     if(isPrestarted())
         setPrestarted(false);
 
-    if ((m_callManager && m_callManager->isValid()) &&
-        (m_mainWindow && m_mainWindow->keypad()))
-            m_mainWindow->keypad()->updateButtons();
+    if (m_mainWindow)
+        m_mainWindow->activateWindow();
 }
 
 int DialerApplication::showErrorDialog(const QString msg)
