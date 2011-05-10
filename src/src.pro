@@ -9,6 +9,8 @@ OBJECTS_DIR = .obj
 MGEN_OUTDIR = .gen
 LIBS += -lseaside
 
+#DEFINES += USE_MTF
+
 target.path = $$M_INSTALL_BIN
 
 STYLE_HEADERS += peopleitemstyle.h \

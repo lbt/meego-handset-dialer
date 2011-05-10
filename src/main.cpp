@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
     MApplicationService *service = new MApplicationService(DBUS_SERVICE);
     DialerApplication a(argc, argv, service);
 
+#if !defined(USE_MTF)
     QMLMainWindow *window = QMLMainWindow::instance();
-
-    /*
+#else
     MainWindow *window = MainWindow::instance();
 
     if (!a.isConnected()) {
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         else
             qDebug() << QString("Error ignored, continuing...");
     }
-    */
+#endif
 
     exit(a.exec());
 }
