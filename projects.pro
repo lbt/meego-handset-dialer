@@ -1,7 +1,7 @@
 include (common.pri)
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = src themes translations
+SUBDIRS = src qml themes translations
 
 OTHER_FILES += dialer.service
 

@@ -10,6 +10,7 @@
 
 #include "dialerapplication.h"
 #include "mainwindow.h"
+#include "qmlmainwindow.h"
 
 #include <QtGui>
 #include <QApplication>
@@ -20,6 +21,9 @@ int main(int argc, char *argv[])
     MApplicationService *service = new MApplicationService(DBUS_SERVICE);
     DialerApplication a(argc, argv, service);
 
+    QMLMainWindow *window = QMLMainWindow::instance();
+
+    /*
     MainWindow *window = MainWindow::instance();
 
     if (!a.isConnected()) {
@@ -28,6 +32,7 @@ int main(int argc, char *argv[])
         else
             qDebug() << QString("Error ignored, continuing...");
     }
+    */
 
     exit(a.exec());
 }
