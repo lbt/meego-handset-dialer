@@ -56,14 +56,16 @@ void GenericPage::showEvent(QShowEvent *event)
 
     MButton *pageButton=0;
     MButton *currentButton=0;
-    pageButton = DialerApplication::instance()->
-                                    headerButtonGroup()->button(m_pageType);
-    currentButton = DialerApplication::instance()->
-                                       headerButtonGroup()->checkedButton();
+    TRACE
+    pageButton = MainWindow::instance()->headerButtonGroup()->button(m_pageType);
+    TRACE
+    currentButton = MainWindow::instance()->headerButtonGroup()->checkedButton();
+    TRACE
 
     if (pageButton && currentButton &&
         (pageButton != currentButton) && !pageButton->isChecked())
         pageButton->setChecked(true);
+    TRACE
 }
 
 void GenericPage::createContent()

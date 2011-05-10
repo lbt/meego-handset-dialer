@@ -27,30 +27,54 @@ class MainWindow: public MApplicationWindow
     Q_OBJECT
 
 public:
-    MainWindow();
-    void showDebugPage();
-    void simulateIncomingCall();
+    static MainWindow* instance();
+
     bool event(QEvent *event);
+
     DialerKeyPad *keypad();
+    MButtonGroup *headerButtonGroup();
 
     QList<GenericPage *> m_pages;
 
 public Q_SLOTS:
+    void switchPage(int id);
+    void switchPageNow(int id);
+
     void handleIncomingCall(CallItem *call);
+    void handleCallsChanged();
     void handleResourceUnavailability(const QString);
+
     void call(QString no);
     void accept();
+
+    void showUi();
+    void hideUi();
+
+    int  showErrorDialog(const QString msg);
+    int  showErrorDialog();
+    void showDebugPage();
     void showTBD();
 
+    void simulateIncomingCall();
+
 protected:
+    void setupUi();
+
     virtual void closeEvent(QCloseEvent *event);
+
+    QStringList dumpDisplayInfo();
 
 private Q_SLOTS:
     void callStateChanged();
     void onDisplayEntered();
 
 private:
-    MApplicationPage *m_lastPage;
+    MainWindow();
+
+    MGConfItem         *m_configLastPage;
+
+    MButtonGroup       *m_header;
+    MApplicationPage   *m_lastPage;
     AlertDialog        *m_alert;
     NotificationDialog *m_notification;
     DialerKeyPad       *m_keypad;

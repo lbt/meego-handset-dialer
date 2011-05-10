@@ -32,39 +32,46 @@ class DialerApplication: public MApplication
 {
     Q_OBJECT
 
-public:
+    Q_PROPERTY(bool isConnected READ isConnected)
+    Q_PROPERTY(bool hasError READ hasError)
+    Q_PROPERTY(QString lastError READ lastError)
 
+public:
     DialerApplication(int &argc, char **argv);
     DialerApplication(int &argc, char **argv, MApplicationService *service);
-    bool isConnected();
-    void setError(const QString msg);
-    QString lastError();
-    int showErrorDialog();
-    int showErrorDialog(const QString msg);
-    static DialerApplication     *instance();
-    SeasideSyncModel      *seasideModel();
-    SeasideProxyModel     *seasideProxy();
-    HistoryTableModel     *historyModel();
-    QSortFilterProxyModel *historyProxy();
-    MButtonGroup          *headerButtonGroup();
+
+    static DialerApplication* instance();
 
     virtual void releasePrestart();
     virtual void restorePrestart();
 
+    bool hasError() const;
+    QString lastError() const;
+    void setError(const QString msg);
+
+    bool isConnected();
+
+    SeasideSyncModel      *seasideModel();
+    SeasideProxyModel     *seasideProxy();
+    HistoryTableModel     *historyModel();
+    QSortFilterProxyModel *historyProxy();
+
+Q_SIGNALS:
+    void showUi();
+    void hideUi();
+
 private Q_SLOTS:
-    void modemConnected();
-    void networkConnected();
-    void callManagerConnected();
-    void modemDisconnected();
-    void networkDisconnected();
-    void callManagerDisconnected();
-    void messagesWaitingChanged();
-    void createMainWindow();
-    QStringList dumpDisplayInfo();
-    void switchPage(int id);
-    void switchPageNow(int id);
     void connectAll();
-    void handleCallsChanged();
+    void messagesWaitingChanged();
+
+    void modemConnected();
+    void modemDisconnected();
+    void networkConnected();
+    void networkDisconnected();
+    void callManagerConnected();
+    void callManagerDisconnected();
+
+    void onCallsChanged();
 
 private:
     void init();
@@ -73,17 +80,15 @@ private:
     ModemProxy   *m_modem;
     NetworkProxy *m_network;
     CallManager  *m_callManager;
-    MainWindow   *m_mainWindow;
+
     bool          m_connected;
     QString       m_lastError;
 
     SeasideSyncModel      *m_seasideModel;
     SeasideProxyModel     *m_seasideProxy;
+
     HistoryTableModel     *m_historyModel;
     QSortFilterProxyModel *m_historyProxy;
-
-    MButtonGroup        *m_header;
-    MGConfItem          *m_lastPage;
 
     Q_DISABLE_COPY(DialerApplication);
 };

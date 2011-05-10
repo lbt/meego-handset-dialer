@@ -9,6 +9,8 @@
  */
 
 #include "dialerapplication.h"
+#include "mainwindow.h"
+
 #include <QtGui>
 #include <QApplication>
 #include <MApplication>
@@ -18,8 +20,10 @@ int main(int argc, char *argv[])
     MApplicationService *service = new MApplicationService(DBUS_SERVICE);
     DialerApplication a(argc, argv, service);
 
+    MainWindow *window = MainWindow::instance();
+
     if (!a.isConnected()) {
-        if (a.showErrorDialog() == M::AbortButton)
+        if (window->showErrorDialog() == M::AbortButton)
             qFatal("Aborting on user request...");
         else
             qDebug() << QString("Error ignored, continuing...");

@@ -737,8 +737,7 @@ void DialerKeyPad::callPressed(bool checked)
         //% "Unable to dial, no valid connection"
         QString error = qtTrId("xx_no_valid_connection");
         qDebug() << error;
-        DialerApplication::instance()->setError(error);
-        DialerApplication::instance()->showErrorDialog();
+        MainWindow::instance()->showErrorDialog(error);
         m_call->setChecked(false);
     } else {
         if (checked) {
