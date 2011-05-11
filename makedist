@@ -15,9 +15,17 @@ PROJECT="meego-handset-dialer"
 # Grab most recent tag from git
 TAG=$(git describe --tags --abbrev=0)
 
-# Parse out just the version number
-PARTS=(${TAG//-/ })
-VERSION=${PARTS[1]}
+# If arg1 is provided, use it as commit/tag/tree-ish id to start
+# the archive creation from...
+[ "${1}z" != "z" ] && {
+	TAG=${1}
+	echo "Creating release starting from: ${TAG}"
+}
+
+VERSION=$(git describe --tags ${1})
+VERSION=${VERSION//version-/}
+VERSION=${VERSION//-g/+}
+VERSION=${VERSION//-/+git}
 
 # Set name of toplevel directory for the archive
 BASE_PREFIX="${PROJECT}-${VERSION}/"
@@ -44,10 +52,10 @@ git archive --prefix=${BASE_PREFIX} ${TAG} | bzip2 -c -- > ${BASE_ARCHIVE} && {
 [ -e ${BRANDING_ARCHIVE} ] && rm -rf ${BRANDING_ARCHIVE} &&
 	echo "Removed: ${BRANDING_ARCHIVE}"
 # Generate the branding package release tar ball
-pushd themes
+pushd themes > /dev/null
 git archive --prefix=${BRANDING_PREFIX} ${TAG} meego/ themes.pro | bzip2 -c -- > ../${BRANDING_ARCHIVE} && {
 	echo "Created: ${BRANDING_ARCHIVE}"
 } || {
 	echo "Creation of release archive ${BRANDING_ARCHIVE} failed.  Reason unknown."
 }
-popd
+popd > /dev/null
