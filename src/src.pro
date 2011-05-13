@@ -9,7 +9,8 @@ OBJECTS_DIR = .obj
 MGEN_OUTDIR = .gen
 LIBS += -lseaside
 
-#DEFINES += USE_MTF
+#DEFINES += CONFIG_DEFAULT_TARGET_UX=\\\"meegotouch\\\"
+DEFINES += CONFIG_DEFAULT_TARGET_UX=\\\"meego-ux-components\\\"
 
 target.path = $$M_INSTALL_BIN
 

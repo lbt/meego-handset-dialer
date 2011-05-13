@@ -16,27 +16,66 @@
 #include <QApplication>
 #include <MApplication>
 
+#define CONFIG_KEY_TARGET_UX "/apps/dialer/ux"
+
+#define CONFIG_VAL_TARGET_UX_MEEGOTOUCH             "meegotouch"
+#define CONFIG_VAL_TARGET_UX_MEEGO_UX_COMPONENTS    "meego-ux-components"
+
+#if !defined(CONFIG_DEFAULT_TARGET_UX)
+#  define CONFIG_DEFAULT_TARGET_UX "meego-ux-components"
+#endif
+
 int main(int argc, char *argv[])
 {
     MApplicationService *service = new MApplicationService(DBUS_SERVICE);
     DialerApplication a(argc, argv, service);
 
-#if !defined(USE_MTF)
-    QMLMainWindow *window = QMLMainWindow::instance();
-#else
-    MainWindow *window = MainWindow::instance();
+    MGConfItem targetUxConfig(CONFIG_KEY_TARGET_UX);
+    QString targetUx = targetUxConfig.value(CONFIG_DEFAULT_TARGET_UX).toString();
 
-    if (!a.isConnected()) {
-        if (window->showErrorDialog() == M::AbortButton)
-            qFatal("Aborting on user request...");
-        else
-            qDebug() << QString("Error ignored, continuing...");
+    //   Command line '-ux' parameter takes priority over the previously
+    // retrieved value from GConf or compile time default.
+    if(a.arguments().contains("-ux"))
+    {
+        int keyIdx = a.arguments().indexOf("-ux");
+
+        if(keyIdx + 1 >= a.arguments().count())
+        {
+            qCritical() << "You must supply an option with -ux parameter";
+            return EXIT_FAILURE;
+        }
+
+        targetUx = a.arguments().at(keyIdx + 1);
+        qDebug() << "Using command line parameter for user experience:" << targetUx;
     }
-#endif
+
+    //   In the future this could be moved and replaced in DialerApplication
+    // class with a UX plugin loader.
+    if(targetUx == CONFIG_VAL_TARGET_UX_MEEGO_UX_COMPONENTS)
+    {
+        qDebug() << "Initializing QML User eXperience!";
+        QMLMainWindow::instance();
+    }
+    else if(targetUx == CONFIG_VAL_TARGET_UX_MEEGOTOUCH)
+    {
+        qDebug() << "Initializing MTF User eXperience!";
+        MainWindow *window = MainWindow::instance();
+
+        if (!a.isConnected()) {
+            if (window->showErrorDialog() == M::AbortButton)
+                qFatal("Aborting on user request...");
+            else
+                qDebug() << QString("Error ignored, continuing...");
+        }
+    }
+    else
+    {
+        qCritical() << "Could not determine target UX!";
+        return EXIT_FAILURE;
+    }
 
     exit(a.exec());
 }
-
 
 QString stripLineID(QString lineid)
 {
