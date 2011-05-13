@@ -30,7 +30,7 @@ Item
         anchors {left: root.left; verticalCenter: parent.verticalCenter}
         icon: style.icon('icon-m-framework-home')
         background: bg.color
-        onClicked: controller.hide();
+        onClicked: controller.showMinimized();
     }
 
     MenubarButton
