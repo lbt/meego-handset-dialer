@@ -22,9 +22,15 @@ static QString historyHeaderLabels[] = {
 HistoryTableModel::HistoryTableModel()
 {
     TRACE
+    QHash<int,QByteArray> roleNames;
 
     for (int i=0; i<COLUMN_LAST; i++)
+    {
         m_headers << (historyHeaderLabels[i]);
+        roleNames.insert(HistoryTableModel::LineIDRole + i, historyHeaderLabels[i].toAscii());
+    }
+
+    this->setRoleNames(roleNames);
 
     insertRows(0, -1); // -1 == special case, load all
 }
@@ -76,6 +82,23 @@ QVariant HistoryTableModel::data(const QModelIndex & index, int role) const
             return QVariant::fromValue(stripLineID(m_data.at(row).at(col)));
         }
         break;
+
+    case LineIDRole:
+        return QVariant::fromValue(stripLineID(m_data.at(row).at(COLUMN_LINEID)));
+        break;
+
+    case DirectionRole:
+        return QVariant::fromValue(m_data.at(row).at(COLUMN_DIRECTION).toInt());
+        break;
+
+    case CallStartRole:
+        return QVariant::fromValue(QDateTime::fromString(m_data.at(row).at(COLUMN_CALLSTART), Qt::ISODate));
+        break;
+
+    case CallEndRole:
+        return QVariant::fromValue(QDateTime::fromString(m_data.at(row).at(COLUMN_CALLEND), Qt::ISODate));
+        break;
+
     default:
         break;
     }

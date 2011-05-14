@@ -19,14 +19,8 @@ Item
     id: root
 
     property string    avatar: ''
-    property string   contact: model.display
-    property string    number: ''
-
+    property string   contact: ''
     property string    bearer: 'cellular'
-    property string    direction: ''
-
-    property string startedAt: ''
-    property int     duration: 0
 
     width: parent.width - 1; height: contents.height + 20
 
@@ -59,17 +53,22 @@ Item
             fillMode: Image.PreserveAspectFit
             smooth: true
             source: {
-                if(direction == "CallItem.In")
+                if(model.Direction == 0)
                 {
-                    style.icon('icon-m-telephony-call-received')
+                    style.icon('icon-m-telephony-call-initiated');
                 }
-                else if(direction == "CallItem.Out")
+                else if(model.Direction == 1)
                 {
-                    style.icon('icon-m-telephony-call-initiated')
+                    style.icon('icon-m-telephony-call-received');
+                }
+                else if(model.Direction == 2)
+                {
+                    style.icon('icon-m-telephony-call-missed');
                 }
                 else
                 {
-                    style.icon('icon-m-telephony-call-missed')
+                  console.log('*** QML *** :: Unrecognised call direction: ' + direction);
+                  style.icon('icon-m-telephony-call-missed');
                 }
             }
         }
@@ -93,7 +92,7 @@ Item
         {
             id: iContactNumber
             anchors {left: iContactName.left; top: iContactName.bottom}
-            text: number
+            text: model.LineID
             font {pixelSize: 18}
         }
 
@@ -101,7 +100,7 @@ Item
         {
             id: iStarted
             anchors {top: iAvatar.bottom; topMargin: 10; left: iAvatar.left}
-            text: (new Date()).getFormat();
+            text: Qt.formatDateTime(model.CallStart, 'yyyy-MM-dd | hh:mm:ss ap');
             font {pixelSize: 14}
         }
 
@@ -109,7 +108,7 @@ Item
         {
             id: iDuration
             anchors {top: iStarted.top; right: parent.right}
-            text: Support.friendlyDuration(duration)
+            text: Support.friendlyDuration(model.CallStart, model.CallEnd);
             font: iStarted.font
         }
     }
@@ -123,3 +122,4 @@ Item
         }
     }
 }
+

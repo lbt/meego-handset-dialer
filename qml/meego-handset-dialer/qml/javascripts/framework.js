@@ -20,10 +20,12 @@ Date.prototype.getFormat = function()
            (this.getSeconds() < 10 ? '0' : '') + this.getSeconds();
 }
 
-function friendlyDuration(duration)
+function friendlyDuration(start, end)
 {
+    var duration = Math.floor(((new Date(end)) - (new Date(start))) / 1000);
     var minutes = Math.floor(duration / 60);
     var seconds = duration % 60;
 
     return (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
+
