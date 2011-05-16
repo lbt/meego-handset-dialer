@@ -358,11 +358,16 @@ void  DialerApplication::handleCallsChanged()
     TRACE
     // First release prestart if the application is
     // in prestarted state.
-    if(isPrestarted())
+    if(isPrestarted()) {
         setPrestarted(false);
 
-    if (m_mainWindow)
-        m_mainWindow->activateWindow();
+        if (m_mainWindow)
+            m_mainWindow->activateWindow();
+    } else {
+        if ((m_callManager && m_callManager->isValid()) &&
+            (m_mainWindow && m_mainWindow->keypad()))
+            m_mainWindow->keypad()->updateButtons();
+    }
 }
 
 int DialerApplication::showErrorDialog(const QString msg)
