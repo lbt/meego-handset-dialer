@@ -38,7 +38,7 @@ Item
         console.log("");
 
         dialpage.activeCall = call
-        main.jumpTo(0)
+        main.jumpTo(0);
         controller.show();
       });
 
@@ -120,6 +120,13 @@ Item
             ContactsPage {id: contactspage}
             FavouritesPage {id: favouritespage}
         }
+    }
+
+    CallContextDialog {
+      id: callContextDialog
+      detail: '!! NAME'
+      number: '!! NUMBER'
+      state: 'hidden'
     }
 }
 

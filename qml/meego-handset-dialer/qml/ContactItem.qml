@@ -10,12 +10,14 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
 
 Item
 {
     id: root
 
     property string         name: ''
+    property string       number: ''
     property string       avatar: ''
     property string organisation: ''
     property bool      favourite: false
@@ -113,13 +115,12 @@ Item
 
     MouseArea
     {
-      anchors.fill: parent
-      onClicked: {
-        console.log("CLICKED!");
-        for(var prop in model)
-        {
-          console.log(prop);
+        anchors.fill: parent
+        onClicked: {
+            callContextDialog.detail = name
+            callContextDialog.number = number
+            callContextDialog.state  = 'shown'
         }
-      }
     }
 }
+

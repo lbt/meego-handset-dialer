@@ -117,6 +117,9 @@ Item
     {
         anchors.fill: parent
         onClicked: {
+            callContextDialog.detail = ''
+            callContextDialog.number = model.LineID
+            callContextDialog.state  = 'shown'
         }
         onPressAndHold: {
         }

@@ -10,6 +10,8 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
+
 import 'base'
 
 Page
@@ -22,10 +24,34 @@ Page
         clip: true
         spacing: 5
 
-        model: Seaside
+        model: ContactModel {
+            autoUpdate: true
 
-        delegate: ContactItem {}
+            filter: DetailFilter {
+                detail: ContactDetail.PhoneNumber
+                field: PhoneNumber.Number
+            }
+
+            sortOrders: [
+                SortOrder {
+                    detail: ContactDetail.Name
+                    field: Name.FirstName
+                    direction: Qt.AscendingOrder
+                },
+                SortOrder {
+                    detail: ContactDetail.Name
+                    field: Name.LastName
+                    direction: Qt.AscendingOrder
+                }
+            ]
+        }
+
+        delegate: ContactItem {
+            name: model.display
+            number: model.contact.phoneNumber.number
+        }
 
         ScrollIndicator {target: parent}
     }
 }
+
