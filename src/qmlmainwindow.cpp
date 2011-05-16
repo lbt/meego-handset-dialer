@@ -101,7 +101,6 @@ void QMLMainWindow::setupUi()
 
     d->engine->rootContext()->setContextProperty("controller", this); //TODO: Remove
     d->engine->rootContext()->setContextProperty("History", DialerApplication::instance()->historyProxy());
-    d->engine->rootContext()->setContextProperty("Seaside", DialerApplication::instance()->seasideProxy());
 
     d->component = new QDeclarativeComponent(d->engine, this);
     d->component->loadUrl(qmlUrl.value(DEFAULT_QML_LOAD_URL).toString());
