@@ -1,0 +1,38 @@
+Name: meego-handset-dialer
+Summary: MeeGo Touch Framework based Voice Call Application
+Version: 0.2.2
+Release: 2
+Group: System/GUI/Other
+License: Apache License, Version 2.0
+URL: http://www.meego.com
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+Description: MeeGo Touch Framework based Dialer Application
+Requires:
+    - ofono
+    - voicecallhistory
+    - meego-handset-dialer-branding
+    - meego-handset-sound-theme  
+PkgBR:
+    - libseaside-devel >= 0.0.35
+PkgConfigBR:
+    - QtOpenGL
+    - QtContacts >= 1.0.2
+    - QtMultimediaKit
+    - meegotouch
+    - qttracker
+    - meegobluetooth
+    - libresourceqt1
+Provides:
+    - dialer
+UseAsNeeded: false 
+Builder: qmake
+Files:
+- "%{_bindir}/dialer"
+- "%{_bindir}/dialer-keepalive.sh"
+- "%{_datadir}/dbus-1/services/dialer.service"
+- "%{_datadir}/applications/dialer.desktop"
+- "%{_datadir}/themes/base/meegotouch/dialer"
+- "%{_datadir}/pixmaps/icons-Applications-dialer.svg"
+- "%{_datadir}/l10n/meegotouch/dialer.qm"
+- "%config %{_sysconfdir}/xdg/autostart/dialer-prestart.desktop"

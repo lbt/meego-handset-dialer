@@ -383,13 +383,12 @@ void  MainWindow::handleCallsChanged()
     ManagerProxy *mp = ManagerProxy::instance();
     DialerApplication *ap = DialerApplication::instance();
 
-    if(ap->isPrestarted())
+    if(ap->isPrestarted()) {
         ap->setPrestarted(false);
-
-    this->activateWindow();
-
-    if(mp->callManager() && mp->callManager()->isValid() && this->keypad()) {
-        this->keypad()->updateButtons();
+        this->activateWindow();
+    } else {
+        if(mp->callManager() && mp->callManager()->isValid() && this->keypad())
+            this->keypad()->updateButtons();
     }
 }
 

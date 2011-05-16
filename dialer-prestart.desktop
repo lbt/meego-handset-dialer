@@ -2,6 +2,6 @@
 Type=Application
 Name=Dialer
 Icon=icons-Applications-dialer
-Exec=dialer
+Exec=dialer-keepalive -prestart
 Comment=MeeGo voice call application
 X-Desktop-File-Install-Version=0.16

@@ -35,12 +35,24 @@ CallItem::CallItem(const QString path, MWidget *parent)
 {
     TRACE
 
-    m_ringtonefile = QString("%1/%2/stereo/%3")
+    QString l_ringtoneFile = QString("%1/%2/stereo/%3")
                                      .arg(SOUNDS_DIR)
                                      .arg(MTheme::instance()->currentTheme())
                                      .arg(DEFAULT_RINGTONE);
-    m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(
-                m_rtKey->value(QVariant(m_ringtonefile)).toString())));
+    QString l_rtKeyValue = m_rtKey->value(QVariant(l_ringtoneFile)).toString();
+
+    if (QFileInfo(l_rtKeyValue).exists()) {
+        m_ringtonefile = l_ringtoneFile;
+        qDebug() << QString("CallItem: %1 using ringtone: %2")
+                           .arg(m_path)
+                           .arg(m_ringtonefile);
+    } else {
+        qWarning() << QString("CallItem: %1 ringtone not found: %2")
+                           .arg(m_path)
+                           .arg(l_rtKeyValue);
+    }
+
+    m_ringtone->setMedia(QMediaContent(QUrl::fromLocalFile(m_ringtonefile)));
     m_ringtone->setVolume(100);
 
     if (isValid())
