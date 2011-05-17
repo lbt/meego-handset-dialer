@@ -283,6 +283,9 @@ void CallProxy::disconnectReason(const QString &in0)
 void CallProxy::setStartTimeFromString(const QString &val)
 {
     TRACE
+    if (val.isEmpty())
+        return;
+
     m_startTime = qDateTimeFromOfono(val);
 
     if (!m_startTime.isValid())
