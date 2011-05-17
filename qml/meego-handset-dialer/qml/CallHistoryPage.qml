@@ -10,6 +10,7 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
 
 import 'base'
 
@@ -25,8 +26,14 @@ Page
 
         model: History
 
-        delegate: CallHistoryItem {}
+        delegate: CallHistoryItem {
+            contact: {
+                var contact = main.getContactByPhoneNumber(model.LineID);
+                return (contact ? contact.displayLabel : '');
+            }
+        }
 
         ScrollIndicator {target: parent}
     }
 }
+

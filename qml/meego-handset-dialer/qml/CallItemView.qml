@@ -10,6 +10,7 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
 
 import 'base'
 
@@ -30,6 +31,7 @@ Item
       console.log("*** QML *** :: CALL ITEM STATE CHANGED: " + state);
       console.log("*** QML *** ::    MSISDN: " + call.msisdn);
       console.log("");
+
       root.state = state;
     });
   }

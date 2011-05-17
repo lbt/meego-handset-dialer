@@ -117,6 +117,13 @@ Item
     {
         anchors.fill: parent
         onClicked: {
+            if(!number || number.trim().length == 0)
+            {
+                console.log("*** QML *** :: This contact card doesn't have an MSISDN!");
+                main.showErrorMessage("Contact has no number!");
+                return;
+            }
+
             callContextDialog.detail = name
             callContextDialog.number = number
             callContextDialog.state  = 'shown'

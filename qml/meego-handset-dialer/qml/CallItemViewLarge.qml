@@ -18,12 +18,14 @@ Item
   anchors.fill: parent
 
   property variant call
+  property string  callerLabelText: ''
 
   onCallChanged: {
-    if(call != undefined && call.msisdn)
-    {
-      callerInd.text = call.msisdn;
-    }
+    if(call && call.msisdn)
+      {
+        var contact = main.getContactByPhoneNumber(call.msisdn);
+        largeView.callerLabelText = (contact ? contact.displayLabel : call.msisdn);
+      }
   }
 
   states {
@@ -105,7 +107,7 @@ Item
     anchors {top: avatar.bottom; topMargin: 20; horizontalCenter: parent.horizontalCenter}
     color: '#ffffff'
     font {pixelSize: 22}
-    text: 'Tom Swindell'
+    text: callerLabelText
   }
 
   Item

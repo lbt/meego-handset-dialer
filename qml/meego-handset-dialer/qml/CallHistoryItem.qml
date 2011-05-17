@@ -10,6 +10,7 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
 
 import 'base'
 import "javascripts/framework.js" as Support
@@ -117,7 +118,7 @@ Item
     {
         anchors.fill: parent
         onClicked: {
-            callContextDialog.detail = ''
+            callContextDialog.detail = contact
             callContextDialog.number = model.LineID
             callContextDialog.state  = 'shown'
         }

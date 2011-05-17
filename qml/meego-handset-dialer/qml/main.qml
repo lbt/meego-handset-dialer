@@ -10,6 +10,7 @@
  */
 
 import Qt 4.7
+import QtMobility.contacts 1.2
 import com.meego.dialer 1.0
 
 import 'base'
@@ -22,6 +23,17 @@ Item
     width: 480; height: 800
 
     Dialer { id: adapter } // TODO: Refactor
+
+    ContactModel {
+        id: contactModel
+
+        autoUpdate: true
+
+        filter: DetailFilter {
+            detail: ContactDetail.PhoneNumber
+            field: PhoneNumber.Number
+        }
+    }
 
     Component.onCompleted: {
       console.log("######## Completed loading component, initializing...");
@@ -54,6 +66,29 @@ Item
     function showErrorMessage(mesg) {
         mesgDialog.mesg = mesg;
         mesgDialog.state = 'shown';
+    }
+
+    function getContactByPhoneNumber(number)
+    {
+        var result = null;
+
+        for(var i = 0; i < contactModel.contacts.length; i++)
+        {
+            var contact = contactModel.contacts[i];
+
+            for(var j = 0; i < contact.phoneNumbers.length; j++)
+            {
+                if(contact.phoneNumbers[i].number.substr(-10) == number.substr(-10))
+                {
+                    result = contact;
+                    break;
+                }
+            }
+
+            if(result) break;
+        }
+
+        return result;
     }
 
     function dial(msisdn) {

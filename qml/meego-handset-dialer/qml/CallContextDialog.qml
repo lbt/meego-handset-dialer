@@ -97,8 +97,7 @@ Item {
             onClicked: {
                 if(number.trim().length == 0)
                 {
-                    console.log("*** QML *** :: This contact card doesn't have an MSISDN!");
-                    main.showErrorMessage("Contact has no number!");
+                    main.showErrorMessage("No number to dial!");
                     root.state = 'hidden'
                     return;
                 }
