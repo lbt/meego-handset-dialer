@@ -95,7 +95,15 @@ Item {
             radius: 10
             icon: style.icon('icon-m-telephony-call')
             onClicked: {
-                adapter.dial(number);
+                if(number.trim().length == 0)
+                {
+                    console.log("*** QML *** :: This contact card doesn't have an MSISDN!");
+                    main.showErrorMessage("Contact has no number!");
+                    root.state = 'hidden'
+                    return;
+                }
+
+                main.dial(number);
                 root.state = 'hidden'
                 main.switchTo(0);
             }

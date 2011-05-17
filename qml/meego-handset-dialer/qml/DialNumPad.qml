@@ -181,7 +181,19 @@ Item
                 height: parent.height
                 radius: 10
                 icon: style.icon('icon-m-telephony-call');
-                onClicked: adapter.dial(entry.textInput)
+                onClicked: {
+                    if(entry.isBlank())
+                    {
+                        console.log('*** QML *** :: You can not dial without a number!');
+                        main.showErrorMessage("You can't dial without a number!");
+                        return;
+                    }
+
+                    if(main.dial(entry.textInput.text))
+                    {
+                        entry.clear();
+                    }
+                }
                 background: '#8fef8f'
             }
             ToolButton {

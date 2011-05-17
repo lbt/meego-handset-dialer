@@ -17,10 +17,13 @@ Item
 
   anchors.fill: parent
 
-  property QtObject call
+  property variant call
 
   onCallChanged: {
-    callerInd.text = call.msisdn;
+    if(call != undefined && call.msisdn)
+    {
+      callerInd.text = call.msisdn;
+    }
   }
 
   states {

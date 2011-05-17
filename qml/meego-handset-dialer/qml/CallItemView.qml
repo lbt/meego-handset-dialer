@@ -18,7 +18,7 @@ Item
   id: root
   width: parent.width * 0.9; height: parent.height
 
-  property QtObject call
+  property variant call
 
   state: 'disconnected'
 

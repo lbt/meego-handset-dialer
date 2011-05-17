@@ -24,6 +24,11 @@ Item
         input.text = placeHolderText;
     }
 
+    function isBlank()
+    {
+        return (input.text == placeHolderText);
+    }
+
     function appendChar(character)
     {
         if(input.text == placeHolderText) {input.text = character} else {input.text += character};

@@ -21,8 +21,6 @@ Item
 
     width: 480; height: 800
 
-    property QtObject currentCall
-
     Dialer { id: adapter } // TODO: Refactor
 
     Component.onCompleted: {
@@ -51,6 +49,30 @@ Item
       }
 
       main.jumpTo(0);
+    }
+
+    function showErrorMessage(mesg) {
+        mesgDialog.mesg = mesg;
+        mesgDialog.state = 'shown';
+    }
+
+    function dial(msisdn) {
+        if(msisdn.trim().length == 0)
+        {
+            console.log("*** QML *** :: You can't dial without a number!");
+            showErrorMessage("No number specified!");
+            return false;
+        }
+
+        console.log('*** QML *** :: Attempting to dial MSISDN: ' + msisdn);
+        adapter.dial(msisdn);
+
+        dialpage.activeCall = {
+          state: 'dialing',
+          msisdn: msisdn
+        };
+
+        return true;
     }
 
     function jumpTo(idx) {
@@ -123,10 +145,15 @@ Item
     }
 
     CallContextDialog {
-      id: callContextDialog
-      detail: '!! NAME'
-      number: '!! NUMBER'
-      state: 'hidden'
+        id: callContextDialog
+        detail: '!! NAME'
+        number: '!! NUMBER'
+        state: 'hidden'
+    }
+
+    MessageDialog {
+        id: mesgDialog
+        state: 'hidden'
     }
 }
 
