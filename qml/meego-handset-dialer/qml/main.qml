@@ -100,12 +100,13 @@ Item
         }
 
         console.log('*** QML *** :: Attempting to dial MSISDN: ' + msisdn);
-        adapter.dial(msisdn);
 
         dialpage.activeCall = {
           state: 'dialing',
           msisdn: msisdn
         };
+
+        adapter.dial(msisdn);
 
         return true;
     }

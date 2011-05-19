@@ -17,7 +17,7 @@ Page
 {
   id: root
 
-  property alias activeCall: activeCall.call
+  property alias activeCall: activeCallView.call
 
   DialNumberEntry
   {
@@ -39,7 +39,7 @@ Page
 
   CallItemView
   {
-    id: activeCall
+    id: activeCallView
 
     anchors {
         horizontalCenter: parent.horizontalCenter
