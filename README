@@ -61,6 +61,28 @@ X-Desktop-File-Install-Version=0.16
 X-Osso-Service=com.meego.dialer
 
 -----------------------------------------------------------------------------
+ Selecting which UI to use, MTF or QML
+-----------------------------------------------------------------------------
+The UI is now a runtime (and compile time) selectible option:
+
+   QML UI:
+     $ /usr/bin/dialer -ux meego-ux-components
+
+   MTF UI:
+     $ /usr/bin/dialer -ux meegotouch
+
+   The default will remain "meegotouch" (MTF) for now, until we draw
+   closer to Feature equivalence
+
+The UI can also be specified by setting the "/apps/dialer/ux" gconf
+key to the same string values as used on the commandline options:
+
+   QML UI:
+     $ gconftool-2 -s -t string /app/dialer/ux meego-ux-components
+   MTF UI:
+     $ gconftool-2 -s -t string /app/dialer/ux meegotouch
+
+-----------------------------------------------------------------------------
  Configure phone simulator
 -----------------------------------------------------------------------------
 If the GUI for the dialer doesn't show and you don't have a modem recognized
