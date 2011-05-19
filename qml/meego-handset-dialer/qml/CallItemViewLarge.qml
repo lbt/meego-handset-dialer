@@ -151,7 +151,7 @@ Item
         onClicked: {
           var divertTo = '';
           console.log('*** QML *** :: Diverting call to: ' + divertTo);
-          root.call.deflect(divertTo);
+          adapter.currentCall.deflect(divertTo);
         }
       }
     }
@@ -180,7 +180,7 @@ Item
         anchors.fill: parent
         onClicked: {
           console.log('*** QML *** :: Rejecting call');
-          root.call.hangup();
+          adapter.currentCall.hangup();
         }
       }
     }
@@ -212,7 +212,7 @@ Item
       anchors.fill: parent
       onClicked: {
         console.log('*** QML *** :: Answering call');
-        root.call.answer();
+        adapter.currentCall.answer();
       }
     }
   }
@@ -243,7 +243,9 @@ Item
       anchors.fill: parent
       onClicked: {
         console.log('*** QML *** :: Hanging up call');
-        root.call.hangup();
+        adapter.hangupAll();
+        root.parent.state = 'disconnected'
+        root.parent.call = null
       }
     }
   }
