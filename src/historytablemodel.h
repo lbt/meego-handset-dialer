@@ -28,6 +28,10 @@ public:
         SortRole,
         FilterRole,
         PhoneRole,
+        LineIDRole,
+        DirectionRole,
+        CallStartRole,
+        CallEndRole
     };
 
     enum HistoryColumn {

@@ -19,6 +19,7 @@ PkgConfigBR:
     - QtOpenGL
     - QtContacts >= 1.0.2
     - QtMultimediaKit
+    - QtDeclarative
     - meegotouch
     - qttracker
     - meegobluetooth
@@ -35,4 +36,5 @@ Files:
 - "%{_datadir}/themes/base/meegotouch/dialer"
 - "%{_datadir}/pixmaps/icons-Applications-dialer.svg"
 - "%{_datadir}/l10n/meegotouch/dialer.qm"
+- "%{_datadir}/meego-handset-dialer"
 - "%config %{_sysconfdir}/xdg/autostart/dialer-prestart.desktop"

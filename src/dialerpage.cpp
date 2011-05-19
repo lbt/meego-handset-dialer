@@ -180,9 +180,8 @@ void DialerPage::deactivateAndResetWidgets()
 void DialerPage::notifyEmergencyCallsOnly()
 {
     TRACE
-    DialerApplication *DA = DialerApplication::instance();
     //% "Error: Only Emergency Calls Allowed"
-    DA->showErrorDialog(qtTrId("only_emergency_calls"));
+    MainWindow::instance()->showErrorDialog(qtTrId("only_emergency_calls"));
     return;
 }
 

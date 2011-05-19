@@ -1,6 +1,6 @@
 include (../common.pri)
 TEMPLATE = app
-QT += dbus opengl
+QT += dbus opengl declarative
 CONFIG += qdbus mobility link_pkgconfig
 PKGCONFIG += QtNetwork QtContacts meegobluetooth libresourceqt1
 MOBILITY += contacts multimedia
@@ -8,6 +8,9 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 MGEN_OUTDIR = .gen
 LIBS += -lseaside
+
+#DEFINES += CONFIG_DEFAULT_TARGET_UX=\\\"meegotouch\\\"
+DEFINES += CONFIG_DEFAULT_TARGET_UX=\\\"meego-ux-components\\\"
 
 target.path = $$M_INSTALL_BIN
 
@@ -42,6 +45,9 @@ SOURCES += main.cpp \
     dbustypes.cpp \
     resourceproxy.cpp \
     notificationdialog.cpp \
+    qmlmainwindow.cpp \
+    qmldialer.cpp \
+    qmlcallitem.cpp
 
 HEADERS += \
     common.h \
@@ -72,6 +78,9 @@ HEADERS += \
     $$STYLE_HEADERS \
     $$DBUS_INTERFACE_HEADERS \
     $$DBUS_ADAPTOR_HEADERS \
+    qmlmainwindow.h \
+    qmldialer.h \
+    qmlcallitem.h
 
 DBUS_ADAPTORS += dbus/com.meego.dialer.xml
 

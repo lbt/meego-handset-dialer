@@ -13,6 +13,13 @@
 #include "dialerapplication.h"
 #include "managerproxy.h"
 #include "genericpage.h"
+#include "dialerpage.h"
+#include "recentpage.h"
+#include "peoplepage.h"
+#include "favoritespage.h"
+#include "debugpage.h"
+#include <QApplication>
+#include <QDesktopWidget>
 #include <MDialog>
 #include <MImageWidget>
 #include <MButton>
@@ -22,11 +29,14 @@
 #include <MStylableWidget>
 #include <MNotification>
 #include <MToolBar>
+#include <MSceneManager>
+#include <MWidgetAction>
 #include <QDateTime>
 #include "dialer_adaptor.h"
 
 MainWindow::MainWindow() :
     MApplicationWindow(),
+    m_configLastPage(new MGConfItem("/apps/dialer/lastPage", this)),
     m_lastPage(0),
     m_alert(new AlertDialog()),
     m_notification(new NotificationDialog()),
@@ -52,6 +62,147 @@ MainWindow::MainWindow() :
     m_pages.clear();
 
     connect (this, SIGNAL(displayEntered()), this, SLOT(onDisplayEntered()));
+}
+
+MainWindow* MainWindow::instance()
+{
+    TRACE
+    static MainWindow *_instance = NULL;
+
+    if(_instance == NULL)
+    {
+        _instance = new MainWindow;
+        _instance->setupUi();
+    }
+
+    return _instance;
+}
+
+void MainWindow::setupUi()
+{
+    TRACE
+    qDebug() << dumpDisplayInfo().join("\n");
+
+    if (this->orientation() != M::Portrait)
+        this->setOrientationAngle(M::Angle270);
+
+    // TODO: If we *REALLY* only support portrait, need to uncomment next line
+    //m_mainWindow->setKeepCurrentOrientation(true);
+
+    // Create the buttons and button group to be put in the toolbar
+    MButton *dial, *recent, *people, *favs;
+    MWidgetAction *dAction, *rAction, *pAction, *fAction;
+
+    // Dial button
+    dAction = new MWidgetAction(this);
+    dAction->setLocation(MAction::ToolBarLocation);
+    dAction->setCheckable(true);
+    dial = new MButton();
+    dial->setObjectName("headerButton");
+    dial->setViewType("toolbartab");
+    dial->setCheckable(true);
+    dial->setIconID("icon-dialer-phone-off");
+    dial->setToggledIconID("icon-dialer-phone-on");
+    dAction->setWidget(dial);
+
+    // Recent button
+    rAction = new MWidgetAction(this);
+    rAction->setCheckable(true);
+    rAction->setLocation(MAction::ToolBarLocation);
+    recent = new MButton();
+    recent->setObjectName("headerButton");
+    recent->setViewType("toolbartab");
+    recent->setCheckable(true);
+    recent->setIconID("icon-dialer-history-off");
+    recent->setToggledIconID("icon-dialer-history-on");
+    rAction->setWidget(recent);
+
+    // People button
+    pAction = new MWidgetAction(this);
+    pAction->setCheckable(true);
+    pAction->setLocation(MAction::ToolBarLocation);
+    people = new MButton();
+    people->setObjectName("headerButton");
+    people->setViewType("toolbartab");
+    people->setCheckable(true);
+    people->setIconID("icon-dialer-people-off");
+    people->setToggledIconID("icon-dialer-people-on");
+    pAction->setWidget(people);
+
+    // Favorites button
+    fAction = new MWidgetAction(this);
+    fAction->setCheckable(true);
+    fAction->setLocation(MAction::ToolBarLocation);
+    favs = new MButton();
+    favs->setObjectName("headerButton");
+    favs->setViewType("toolbartab");
+    favs->setCheckable(true);
+    favs->setIconID("icon-dialer-favorite-off");
+    favs->setToggledIconID("icon-dialer-favorite-on");
+    fAction->setWidget(favs);
+
+    // Button group
+    m_header = new MButtonGroup();
+    m_header->addButton(dial,   (int)GenericPage::PAGE_DIALER);
+    m_header->addButton(recent, (int)GenericPage::PAGE_RECENT);
+    m_header->addButton(people, (int)GenericPage::PAGE_PEOPLE);
+    m_header->addButton(favs,   (int)GenericPage::PAGE_FAVORITE);
+
+    // Create pages
+    m_pages << dynamic_cast<GenericPage *>(new DialerPage())
+            << dynamic_cast<GenericPage *>(new RecentPage())
+            << dynamic_cast<GenericPage *>(new PeoplePage())
+            << dynamic_cast<GenericPage *>(new FavoritesPage())
+            << dynamic_cast<GenericPage *>(new DebugPage());
+
+    qDebug() << QString("After creating pages...count - %1").arg(QString::number(m_pages.length()));
+
+    foreach(GenericPage *page, m_pages)
+    {
+        page->addAction(dAction);
+        page->addAction(rAction);
+        page->addAction(pAction);
+        page->addAction(fAction);
+    }
+
+    QObject::connect(m_header, SIGNAL(buttonClicked(int)), this, SLOT(switchPage(int)));
+
+    // Jump to the last shown page on startup, default to DialerPage otherwise
+    int lastPage = m_configLastPage->value(QVariant(GenericPage::PAGE_DIALER)).toInt();
+    switchPageNow(lastPage);
+    m_header->button(lastPage)->click(); // Set ButtonGroup state to match page
+
+    QObject::connect(DialerApplication::instance(), SIGNAL(prestartReleased()), SLOT(showUi()));
+    QObject::connect(DialerApplication::instance(), SIGNAL(prestartRestored()), SLOT(hideUi()));
+
+    CallManager *cm = ManagerProxy::instance()->callManager();
+
+    qDebug() << QString("Connect calls changed");
+    connect(cm, SIGNAL(callsChanged()), SLOT(handleCallsChanged()));
+
+    qDebug() << QString("Connect incoming call");
+    connect(cm, SIGNAL(incomingCall(CallItem*)), SLOT(handleIncomingCall(CallItem*)));
+
+    qDebug() << QString("Connect resource unavailable");
+    connect(cm, SIGNAL(callResourceLost(const QString)), SLOT(handleResourceUnavailability(const QString)));
+
+    this->show();
+}
+
+void MainWindow::showUi()
+{
+    foreach(GenericPage *page, m_pages)
+    {
+        page->activateWidgets();
+    }
+}
+
+void MainWindow::hideUi()
+{
+    foreach(GenericPage *page, m_pages)
+    {
+        page->deactivateAndResetWidgets();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -114,7 +265,6 @@ void MainWindow::handleIncomingCall(CallItem *call)
 void MainWindow::handleResourceUnavailability(const QString message)
 {
     TRACE
-
     DialerApplication *app = DialerApplication::instance();
 
     if (isOnDisplay()) {
@@ -225,4 +375,103 @@ DialerKeyPad *MainWindow::keypad()
                                             QSizePolicy::MinimumExpanding));
     }
     return m_keypad;
+}
+
+void  MainWindow::handleCallsChanged()
+{
+    TRACE
+    ManagerProxy *mp = ManagerProxy::instance();
+    DialerApplication *ap = DialerApplication::instance();
+
+    if(ap->isPrestarted()) {
+        ap->setPrestarted(false);
+        this->activateWindow();
+    } else {
+        if(mp->callManager() && mp->callManager()->isValid() && this->keypad())
+            this->keypad()->updateButtons();
+    }
+}
+
+int MainWindow::showErrorDialog(const QString msg)
+{
+    //FIXME: Bit of a nasty hack.
+    DialerApplication::instance()->setError(msg);
+    return showErrorDialog();
+}
+
+int MainWindow::showErrorDialog()
+{
+    TRACE
+    static MLabel *msg = 0;
+    static MDialog *dialog = 0;
+
+    if (!this->isVisible()) this->show();
+
+    if (!msg) {
+        msg = new MLabel();
+        msg->setObjectName("errorMsg");
+        msg->setWordWrap(true);
+    }
+    if (!dialog) {
+        //% "Error"
+        dialog = new MDialog(qtTrId("xx_error"),M::IgnoreButton|M::AbortButton);
+        dialog->setObjectName("errorDialog");
+        dialog->setCloseButtonVisible(false);
+        dialog->setCentralWidget(msg);
+    }
+
+    msg->setText(DialerApplication::instance()->lastError());
+
+    dialog->appear();
+
+    return dialog->exec(this);
+}
+
+void MainWindow::switchPage(int id)
+{
+    TRACE
+    qDebug() << QString("Switching to page %1").arg(id);
+    this->m_pages.at(id)->appear();
+    m_configLastPage->set(QVariant(id));
+}
+
+void MainWindow::switchPageNow(int id)
+{
+    TRACE
+    qDebug() << QString("Switching to page %1").arg(id);
+    this->m_pages.at(id)->appear();
+    m_configLastPage->set(QVariant(id));
+}
+
+QStringList MainWindow::dumpDisplayInfo()
+{
+    TRACE
+    static QStringList m_displayInfo;
+    QDesktopWidget *desktop = QApplication::desktop();
+
+    if (m_displayInfo.isEmpty()) {
+        QSize s = this->sceneManager()->visibleSceneSize();
+        double dppmm_w = 1.0 * desktop->width() / desktop->widthMM();
+        double dppmm_h = 1.0 * desktop->height() / desktop->heightMM();
+        m_displayInfo << QString("Scene   %1 x %2 mm (%3 x %4 px)")
+                         .arg(int(s.width()/dppmm_w))
+                         .arg(int(s.height()/dppmm_h))
+                         .arg(s.width())
+                         .arg(s.height());
+        m_displayInfo << QString("Desktop %1 x %2 mm (%3 x %4 px)")
+                         .arg(desktop->widthMM())
+                         .arg(desktop->heightMM())
+                         .arg(desktop->width())
+                         .arg(desktop->height());
+        m_displayInfo << QString("Display %1 x %2 px/mm")
+                         .arg(dppmm_w, 0, 'f', 2)
+                         .arg(dppmm_h, 0, 'f', 2);
+    }
+    return m_displayInfo;
+}
+
+MButtonGroup* MainWindow::headerButtonGroup()
+{
+    TRACE
+    return m_header;
 }
