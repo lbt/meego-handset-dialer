@@ -24,7 +24,13 @@ Item
     if(call && call.msisdn)
       {
         var contact = main.getContactByPhoneNumber(call.msisdn);
-        largeView.callerLabelText = (contact ? contact.displayLabel : call.msisdn);
+        if(contact){
+            largeView.callerLabelText = contact.displayLabel;
+        } else if (call.name) {
+            largeView.callerLabelText = call.name;
+        } else {
+            largeView.callerLabelText = call.msisdn;
+        }
       }
   }
 
