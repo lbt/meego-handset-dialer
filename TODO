@@ -149,15 +149,13 @@ System Interaction tasks
 Misc other tasks
 ----------------
 
-- Turn ofono interfaces and proxy classes into a standalone library
-  Details:      Since there are now more than one app using/needing the 
-                ofono proxy classes I wrote for dialer originally, it is time
-                to break this out into it's own lib to be used by dialer,
-                settings, status monitoring, emergency calling from lock screen,
-                and maybe even sms eventually.
+- Migrate to using libofono-qt
+  Details:      With the maturing of libofono-qt, we need to standardize
+                upon it's API rather than our own local introspected XML
+                interface proxies.
   Priority:     High
   Complexity:   C1
   BMC#:         
-  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+  Owner:        
 
 
