@@ -59,17 +59,6 @@ Dialer Features
   BMC#:         BMC#2658
   Owner:        Shane Bryan <shane.bryan@linux.intel.com>
 
-- Convert to libseaside contact widgets
-  Details:      Once libseaside provides widgets for contact cards (simple,
-                full and edit) and lists, dialer needs to rip our it's local
-                versions and use the libseaside ones. This includes using
-                avatars provided by libseaside
-
-  Priority:     High
-  Complexity:   C1
-  BMC#:         BMC#3244
-  Owner:        Shane Bryan <shane.bryan@linux.intel.com>
-
 - Multi-party call capabilities
   Details:      
   Priority:     High
