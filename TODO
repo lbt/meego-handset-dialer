@@ -138,12 +138,12 @@ System Interaction tasks
   Owner:        
 
 - Call settings UI
-  Details:      A meegotouchcp plugin for letting the user see (and change
+  Details:      A settings plugin for letting the user see (and change
                 when allowed) the various dialer and ofono settings
   Priority:     High
   Complexity:   C2
   BMC#:         
-  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
+  Owner:        
 
 
 Misc other tasks
