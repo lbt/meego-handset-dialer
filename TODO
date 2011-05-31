@@ -66,13 +66,6 @@ Dialer Features
   BMC#:         BMC#550, BMC#2806
   Owner:        Shane Bryan <shane.bryan@linux.intel.com>
 
-- Audio routing integration
-  Details:      
-  Priority:     High
-  Complexity:   C4
-  BMC#:         
-  Owner:        Kevron Rees <kevron.m.rees@intel.com>
-
 - Volume up/down and Mute
   Details:      
                 NOTE: Depends on Audio routing integration
