@@ -145,13 +145,6 @@ System Interaction tasks
   BMC#:         
   Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
 
-- Visual voice mail
-  Details:      
-  Priority:     Low
-  Complexity:   C4
-  BMC#:         
-  Owner:        Michael Leibowitz <michael.leibowitz@intel.com>
-
 
 Misc other tasks
 ----------------
