@@ -116,13 +116,6 @@ Dialer Features
   BMC#:         
   Owner:        
 
-- Play ringtones on incoming call
-  Details:      
-  Priority:     Medium
-  Complexity:   C2
-  BMC#:         BMC#2661
-  Owner:        
-
 - Integrated hands-free
   Details:      
   Priority:     Low
