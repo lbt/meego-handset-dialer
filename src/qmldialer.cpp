@@ -53,6 +53,18 @@ void QMLDialer::setMailbox(const QString &number)
     ManagerProxy::instance()->voicemail()->setMailbox(number);
 }
 
+QString QMLDialer::speedDial(int index) const
+{
+    TRACE
+    return MGConfItem(QString("/apps/dialer/speeddial/%1").arg(index)).value().toString();
+}
+
+void QMLDialer::setSpeedDial(int index, const QString &number)
+{
+    TRACE
+    MGConfItem(QString("/apps/dialer/speeddial/%1").arg(index)).set(number);
+}
+
 QMLCallItem* QMLDialer::currentCall() const
 {
     TRACE

@@ -71,13 +71,13 @@ Item
                     text: "2";
                     detail: "abc";
                     onClicked: root.insertText('2');
-                    onPressAndHold: Dialer.dialSpeedDial(2);
+                    onPressAndHold: main.dialSpeedDial(1);
                 }
                 DialNumPadButton {
                     text: "3";
                     detail: "def";
                     onClicked: root.insertText('3');
-                    onPressAndHold: Dialer.dialSpeedDial(3);
+                    onPressAndHold: main.dialSpeedDial(2);
                 }
             }
             Row
@@ -88,19 +88,19 @@ Item
                     text: "4";
                     detail: "ghi";
                     onClicked: root.insertText('4');
-                    onPressAndHold: Dialer.dialSpeedDial(4);
+                    onPressAndHold: main.dialSpeedDial(3);
                 }
                 DialNumPadButton {
                     text: "5";
                     detail: "jkl";
                     onClicked: root.insertText('5');
-                    onPressAndHold: Dialer.dialSpeedDial(5);
+                    onPressAndHold: main.dialSpeedDial(4);
                 }
                 DialNumPadButton {
                     text: "6";
                     detail: "mno";
                     onClicked: root.insertText('6');
-                    onPressAndHold: Dialer.dialSpeedDial(6);
+                    onPressAndHold: main.dialSpeedDial(5);
                 }
             }
             Row
@@ -111,19 +111,19 @@ Item
                     text: "7";
                     detail: "pqrs";
                     onClicked: root.insertText('7');
-                    onPressAndHold: Dialer.dialSpeedDial(7);
+                    onPressAndHold: main.dialSpeedDial(6);
                 }
                 DialNumPadButton {
                     text: "8";
                     detail: "tuv";
                     onClicked: root.insertText('8');
-                    onPressAndHold: Dialer.dialSpeedDial(8);
+                    onPressAndHold: main.dialSpeedDial(7);
                 }
                 DialNumPadButton {
                     text: "9";
                     detail: "wxyz";
                     onClicked: root.insertText('9');
-                    onPressAndHold: Dialer.dialSpeedDial(9);
+                    onPressAndHold: main.dialSpeedDial(8);
                 }
             }
             Row

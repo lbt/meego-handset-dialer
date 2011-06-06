@@ -120,6 +120,16 @@ Item
         }
     }
 
+    function dialSpeedDial(index) {
+        if(adapter.speedDial(index))
+        {
+            console.log('*** QML *** :: Calling speed dial ' + index + ': ' + adapter.speedDial(index));
+            main.dial(adapter.speedDial(index));
+        } else {
+            console.log('*** QML *** :: No speed dial number defined for: ' + index);
+        }
+    }
+
     function jumpTo(idx) {
         switcher.jumpTo(idx);
 

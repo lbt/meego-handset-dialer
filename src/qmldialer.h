@@ -35,6 +35,9 @@ Q_SIGNALS:
 public Q_SLOTS:
     void setMailbox(const QString &number);
 
+    QString speedDial(int index) const;
+    void setSpeedDial(int index, const QString &number);
+
     void dial(const QString &msisdn);
     void hangupAll();
 
