@@ -76,7 +76,7 @@ Item
         {
             var contact = contactModel.contacts[i];
 
-            for(var j = 0; i < contact.phoneNumbers.length; j++)
+            for(var j = 0; j < contact.phoneNumbers.length; j++)
             {
                 if(contact.phoneNumbers[i].number.substr(-10) == number.substr(-10))
                 {
