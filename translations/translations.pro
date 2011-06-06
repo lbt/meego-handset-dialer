@@ -2,7 +2,7 @@ include (../common.pri)
 DISABLE_QTTRID_ENGINEERING_ENGLISH=no
 LANGUAGES =  # We only create engineering English in the application package
 CATALOGNAME = $$TARGET
-SOURCEDIR = ../src/
+SOURCEDIR = ../src/ ../qml/
 TRANSLATIONDIR = .
 
 # Fix for BMC# 9282
