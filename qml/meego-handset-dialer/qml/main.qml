@@ -111,6 +111,15 @@ Item
         return true;
     }
 
+    function dialMailbox() {
+        if(adapter.mailbox) {
+            console.log('*** QML *** :: Attempting to call mailbox number: ' + adapter.mailbox);
+            main.dial(adapter.mailbox);
+        } else {
+            console.log('*** QML *** :: No mailbox number defined!');
+        }
+    }
+
     function jumpTo(idx) {
         switcher.jumpTo(idx);
 

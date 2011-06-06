@@ -65,7 +65,7 @@ Item
                     text: "1";
                     detail: "voicemail";
                     onClicked: root.insertText('1');
-                    onPressAndHold: Dialer.dialVoiceMail();
+                    onPressAndHold: main.dialMailbox();
                 }
                 DialNumPadButton {
                     text: "2";

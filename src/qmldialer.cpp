@@ -41,6 +41,18 @@ QMLDialer::~QMLDialer()
     delete this->d;
 }
 
+QString QMLDialer::mailbox() const
+{
+    TRACE
+    return ManagerProxy::instance()->voicemail()->mailbox();
+}
+
+void QMLDialer::setMailbox(const QString &number)
+{
+    TRACE
+    ManagerProxy::instance()->voicemail()->setMailbox(number);
+}
+
 QMLCallItem* QMLDialer::currentCall() const
 {
     TRACE

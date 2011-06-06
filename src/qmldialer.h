@@ -19,18 +19,22 @@ class QMLDialer : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString mailbox READ mailbox WRITE setMailbox)
     Q_PROPERTY(QMLCallItem* currentCall READ currentCall)
 
 public:
     explicit QMLDialer(QObject *parent = 0);
             ~QMLDialer();
 
+    QString      mailbox        () const;
     QMLCallItem* currentCall    () const;
 
 Q_SIGNALS:
     void incomingCall();
 
 public Q_SLOTS:
+    void setMailbox(const QString &number);
+
     void dial(const QString &msisdn);
     void hangupAll();
 
